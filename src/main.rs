@@ -41,11 +41,10 @@ pub fn main()
 {
 	let mut c = conf::Conf::new();
 	c.window_mode.width = 1500;
-	c.window_mode.height = 1200;
+	c.window_mode.height = 926;
 	c.window_mode.fullscreen_type = conf::FullscreenType::Off;
-	c.window_setup.resizable = true;
+	c.window_setup.resizable = false;
 	c.window_setup.title = String::from("Gomoku");
-
 	let ctx = &mut Context::load_from_conf("shadows", "amerelo-ocarta", c).unwrap();
 
 	if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR")
