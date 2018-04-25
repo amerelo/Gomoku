@@ -1,7 +1,7 @@
 [package]
 name = "gomoku"
 version = "0.1.0"
-authors = ["Alexis Merelo <amerelo@student.42.fr>", "Oren Carta-lag <ocarta-l@student.42.fr>"]
+authors = ["Alexis Merelo <amerelo@student.42.fr>", "oren <oren.carta-lag@hotmail.fr>"]
 
 [dependencies]
 piston = "0.36.0"
