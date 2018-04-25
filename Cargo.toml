@@ -4,6 +4,4 @@ version = "0.1.0"
 authors = ["Alexis Merelo <amerelo@student.42.fr>", "Oren Carta-lag <ocarta-l@student.42.fr>"]
 
 [dependencies]
-ggez = "*"
-gfx = "0.17"
-rand = "0.4"
+piston2d-graphics = "0.26.0"
