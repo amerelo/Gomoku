@@ -14,8 +14,6 @@ use graphic::gomoku_graphic::start;
 fn main()
 {
 	start();
-}
-
 
 	// let mut test = Map {..Default::default() };
 	// test.value[0][3] = Slot::Used(Player::One(PlayerKind::AI));
@@ -30,3 +28,4 @@ fn main()
 	// {
 	// 	println!("{} {:?}", t.len(), t);
 	// }
+}

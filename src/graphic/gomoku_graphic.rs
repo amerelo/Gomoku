@@ -22,7 +22,7 @@ impl App
 {
 	pub fn render(&mut self, args: &RenderArgs)
 	{
-		const GREEN:[f32; 4] = [0.6, 0.4, 1.0, 1.0];
+		const GREEN:[f32; 4] = [0.6, 0.8, 0.7, 1.0];
 		const RED:	[f32; 4] = [0.4, 0.5, 0.4, 1.0];
 
 		let square = rectangle::square(0.0, 0.0, 50.0);
@@ -41,8 +41,10 @@ impl App
 										.rot_rad(rotation)
 										.trans(-25.0, -25.0);
 
-			let transform2 = c.transform.trans(10.0, 10.0)
-										.scale(0.5, 0.5);
+			let (newx, newy) = ((0) as f64, (0) as f64);
+
+			let transform2 = c.transform.trans(newx, newy)
+										.scale(1.5, 1.5);
 
 			image(dragon, transform2, gl);
 			// Draw a box rotating around the middle of the screen.
@@ -66,7 +68,7 @@ pub fn start()
 
 	// Create an Glutin window.
 	let mut window: Window = WindowSettings::new(
-			"spinning-square",
+			"Gomoku",
 			[1000, 1000]
 		)
 		.opengl(opengl)
@@ -80,7 +82,7 @@ pub fn start()
 		fps: FPSCounter::new(),
 		gl: GlGraphics::new(opengl),
 		rotation: 0.0,
-		dragon: Texture::from_path(Path::new("resources/dragon4.png"), &TextureSettings::new()).unwrap()
+		dragon: Texture::from_path(Path::new("resources/goban.png"), &TextureSettings::new()).unwrap()
 	};
 
 	let mut events = Events::new(EventSettings::new());
