@@ -11,6 +11,7 @@ use graphics::*;
 use opengl_graphics::{ GlGraphics, OpenGL, Texture, TextureSettings };
 
 use gomoku::map::{Map, Slot};
+use gomoku::player::{Player, PlayerKind};
 // use glutin_window::GlutinWindow as Window;
 
 pub struct App {
@@ -20,6 +21,7 @@ pub struct App {
 	go_w: Texture,
 	map: Map,
 	cursor_pos: [f64; 2],
+	board_pos: [usize; 2],
 	press: bool,
 }
 
@@ -38,6 +40,7 @@ impl App
 			go_w: Texture::from_path(Path::new("resources/w_1.png"), &TextureSettings::new()).unwrap(),
 			map: Map {..Default::default() },
 			cursor_pos: [0.0, 0.0],
+			board_pos: [0, 0],
 			press: false,
 		}
 	}
@@ -48,8 +51,9 @@ impl App
 		let go_w = &self.go_w;
 		let newx = self.cursor_pos[0];
 		let newy = self.cursor_pos[1];
-		let map = &self.map;
+		let map = &mut self.map;
 		let press = self.press;
+		let mut board_pos = [self.board_pos[0], self.board_pos[1]];
 
 		// println!("fps => {}", self.fps.tick());
 		self.gl.draw(args.viewport(), |c, gl|
@@ -57,17 +61,15 @@ impl App
 			clear(BACKGROUND, gl);
 
 			draw_goban(c, gl, goban);
-			draw_w(c, gl, go_w, map, [newx, newy], press);
-
-			// let transform = c.transform.trans(newx, newy)
-			// 							.scale(0.09, 0.09)
-			// 							.trans(-150.0, -150.0);
-			
-			// let test_img = Image::new_color([1.0, 1.0, 1.0, 0.6]);
-			// test_img.draw(go_w, &DrawState::new_alpha(), transform, gl);
-			// // test_img.draw(&go_w, &DrawState::new_alpha(), transform, gl);
-			// image(go_w, transform, gl);
+			draw_w(c, gl, go_w, map, [newx, newy], &mut board_pos, press);
 		});
+
+		if !press && board_pos[0] != 0 && board_pos[1] != 0
+		{
+			map.value[board_pos[1]][board_pos[0]] = Slot::Used(Player::Two(PlayerKind::Human));
+		}
+		self.board_pos[0] = board_pos[0];
+		self.board_pos[1] = board_pos[1];
 	}
 
 	fn update(&mut self, args: &UpdateArgs)
@@ -87,7 +89,7 @@ fn draw_goban(c: Context, gl: &mut GlGraphics, goban: &Texture)
 	image(goban, transform2, gl);
 }
 
-fn draw_w(c: Context, gl: &mut GlGraphics, go_w: &Texture, map: &Map, cursor_pos: [f64; 2], press: bool)
+fn draw_w(c: Context, gl: &mut GlGraphics, go_w: &Texture, map: &Map, cursor_pos: [f64; 2], board_pos: &mut [usize; 2], press: bool)
 {
 
 	let mut near_pos: [f64; 2] = [0.0, 0.0];
@@ -103,10 +105,11 @@ fn draw_w(c: Context, gl: &mut GlGraphics, go_w: &Texture, map: &Map, cursor_pos
 			// near_pos
 			let new_posx = space_x + x as f64 * space_c;
 			let new_posy = space_y + y as f64 * space_c;
-			if ((new_posx - cursor_pos[0]).abs() + (new_posy - cursor_pos[1]).abs()) < ((near_pos[0] - cursor_pos[0]).abs() + (near_pos[1] - cursor_pos[1]).abs())
+			if press && ( (new_posx - cursor_pos[0]).abs() + (new_posy - cursor_pos[1]).abs()) < ((near_pos[0] - cursor_pos[0]).abs() + (near_pos[1] - cursor_pos[1]).abs())
 			{
 				near_pos[0] = new_posx;
 				near_pos[1] = new_posy;
+				*board_pos = [x, y];
 			}
 			// println!("{}", (near_pos[0] - cursor_pos[0]).abs() + (near_pos[1] - cursor_pos[1]).abs() );
 
@@ -169,6 +172,7 @@ pub fn start()
 			if button == Button::Mouse(MouseButton::Left)
 			{
 				println!("press {:?}", button);
+				app.board_pos = [0, 0];
 				app.press = true;
 			}
 		}
