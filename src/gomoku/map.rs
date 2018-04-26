@@ -1,4 +1,5 @@
 use gomoku::player::{Player};
+use gomoku::direction::{Direction};
 
 const  SIZEMAP: usize = 19;
 
@@ -41,17 +42,22 @@ impl Default for Map
 }
 
 impl Map {
-    pub fn is_available(&self, x: usize, y: usize) -> bool
+    pub fn is_available(&self, (x, y):(i32, i32)) -> bool
     {
-        if x > 18 || y > 18
+        if x > 18 || y > 18 || x < 0 || y < 0
         {
             return false;
         }
-        match self.value[y][x]
+        match self.value[y as usize][x as usize]
         {
             Slot::Empty => true,
             _           => false
         }
+    }
+
+    pub fn move_authorize(&self, x: i32, y: i32, dir: Direction) -> bool
+    {
+        self.is_available(dir.new_coordonate(x, y))
     }
 }
 
@@ -60,6 +66,7 @@ mod tests
 {
 	use super::*;
     use gomoku::player::{Player, PlayerKind};
+    use gomoku::direction::{Direction};
 
     fn init() -> Map
     {
@@ -79,15 +86,33 @@ mod tests
 	#[test]
 	fn slot_is_available_0()
     {
-		assert_eq!(init().is_available(0, 2), true);
+		assert_eq!(init().is_available((0, 2)), true);
 	}
 
 	#[test]
-	fn slot_is_unavailable_0()
+	fn slot_is_unavailable_1()
     {
         let test = init();
 
-		assert_eq!(test.is_available(0, 3), false);
-		assert_eq!(test.is_available(19, 4), false); // overflow 
+		assert_eq!(test.is_available((0, 3)), false);
+		assert_eq!(test.is_available((19, 4)), false); // overflow 
+	}
+
+	#[test]
+	fn move_is_authorize_2()
+    {
+        let test = init();
+
+		assert_eq!(test.move_authorize(0, 3, Direction::Down), true);
+		assert_eq!(test.move_authorize(0, 3, Direction::Right), true);
+	}
+
+	#[test]
+	fn move_is_forbidden_3()
+    {
+        let test = init();
+
+		assert_eq!(test.move_authorize(0, 0, Direction::Up), false);
+		assert_eq!(test.move_authorize(0, 3, Direction::Left), false);
 	}
 }
