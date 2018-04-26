@@ -27,7 +27,7 @@ mod tests
 	#[test]
 	fn slot_is_available_0()
     {
-		assert_eq!(init().is_available((0, 2)), true);
+		assert_eq!(init().is_available((0, 2), Player::One(PlayerKind::AI)), true);
 	}
 
 	#[test]
@@ -35,8 +35,8 @@ mod tests
     {
         let test = init();
 
-		assert_eq!(test.is_available((0, 3)), false);
-		assert_eq!(test.is_available((19, 4)), false); // overflow
+		assert_eq!(test.is_available((0, 3), Player::One(PlayerKind::AI)), false);
+		assert_eq!(test.is_available((19, 4), Player::One(PlayerKind::AI)), false); // overflow
 	}
 
 	#[test]
@@ -44,8 +44,8 @@ mod tests
     {
         let test = init();
 
-		assert_eq!(test.move_authorize(0, 3, Direction::Down), true);
-		assert_eq!(test.move_authorize(0, 3, Direction::Right), true);
+		assert_eq!(test.move_authorize(0, 3, Direction::Down, Player::One(PlayerKind::AI)), true);
+		assert_eq!(test.move_authorize(0, 3, Direction::Right, Player::One(PlayerKind::AI)), true);
 	}
 
 	#[test]
@@ -53,7 +53,8 @@ mod tests
     {
         let test = init();
 
-		assert_eq!(test.move_authorize(0, 0, Direction::Up), false);
-		assert_eq!(test.move_authorize(0, 3, Direction::Left), false);
+		assert_eq!(test.move_authorize(0, 0, Direction::Up, Player::One(PlayerKind::AI)), false);
+		assert_eq!(test.move_authorize(0, 0, Direction::UpLeft, Player::One(PlayerKind::AI)), false);
+		assert_eq!(test.move_authorize(0, 3, Direction::Left, Player::One(PlayerKind::AI)), false);
 	}
 }
