@@ -13,14 +13,14 @@ mod tests
     {
         let mut test = Map {..Default::default() };
 
-        test.value[0][3] = Slot::Used(Player::One(PlayerKind::AI));
-        test.value[3][0] = Slot::Used(Player::One(PlayerKind::AI));
-        test.value[2][3] = Slot::Used(Player::One(PlayerKind::AI));
-        test.value[12][3] = Slot::Used(Player::Two(PlayerKind::Human));
-        test.value[13][4] = Slot::Used(Player::One(PlayerKind::AI));
-        test.value[2][5] = Slot::Used(Player::One(PlayerKind::AI));
-        test.value[11][3] = Slot::Used(Player::One(PlayerKind::AI));
-        test.value[11][3] = Slot::Used(Player::One(PlayerKind::AI));
+        test.value[0][3] = Slot::PlayerOne;
+        test.value[3][0] = Slot::PlayerOne;
+        test.value[2][3] = Slot::PlayerOne;
+        test.value[12][3] = Slot::PlayerOne;
+        test.value[13][4] = Slot::PlayerOne;
+        test.value[2][5] = Slot::PlayerOne;
+        test.value[11][3] = Slot::PlayerOne;
+        test.value[11][3] = Slot::PlayerOne;
         test
     }
 

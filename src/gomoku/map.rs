@@ -3,7 +3,8 @@ use gomoku::direction::{Direction};
 
 const  SIZEMAP: usize = 19;
 
-macro_rules! vecinit {
+macro_rules! mapinit
+{
     ($n:expr) => {{
         let mut map = Vec::new();
         for _y in 0..$n {
@@ -17,10 +18,11 @@ macro_rules! vecinit {
     }}
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Slot
 {
-    Used(Player),
+    PlayerOne,
+    PlayerTwo,
     Empty,
     Forbidden,
 }
@@ -36,7 +38,7 @@ impl Default for Map
     fn default() -> Map
     {
         Map {
-            value: vecinit![SIZEMAP],
+            value: mapinit![SIZEMAP],
         }
     }
 }

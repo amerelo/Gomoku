@@ -66,7 +66,7 @@ impl App
 
 		if !press && board_pos[0] != 0 && board_pos[1] != 0
 		{
-			map.value[board_pos[1]][board_pos[0]] = Slot::Used(Player::Two(PlayerKind::Human));
+			map.value[board_pos[1]][board_pos[0]] = Slot::PlayerTwo;
 		}
 		self.board_pos[0] = board_pos[0];
 		self.board_pos[1] = board_pos[1];
@@ -100,11 +100,11 @@ fn draw_w(c: Context, gl: &mut GlGraphics, go_w: &Texture, map: &Map, cursor_pos
 
 	for (y, pos_y) in map.value.iter().enumerate()
 	{
+		let new_posy = space_y + y as f64 * space_c;
 		for (x, pos_x) in pos_y.iter().enumerate()
 		{
 			// near_pos
 			let new_posx = space_x + x as f64 * space_c;
-			let new_posy = space_y + y as f64 * space_c;
 			if press && ( (new_posx - cursor_pos[0]).abs() + (new_posy - cursor_pos[1]).abs()) < ((near_pos[0] - cursor_pos[0]).abs() + (near_pos[1] - cursor_pos[1]).abs())
 			{
 				near_pos[0] = new_posx;
@@ -113,7 +113,7 @@ fn draw_w(c: Context, gl: &mut GlGraphics, go_w: &Texture, map: &Map, cursor_pos
 			}
 			// println!("{}", (near_pos[0] - cursor_pos[0]).abs() + (near_pos[1] - cursor_pos[1]).abs() );
 
-			if let &Slot::Used(ref _player) = pos_x
+			if  Slot::Empty != *pos_x
 			{
 				let transform = c.transform.trans(new_posx, new_posy)
 											.scale(0.09, 0.09);
