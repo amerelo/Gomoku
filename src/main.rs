@@ -1,20 +1,22 @@
 extern crate piston;
 extern crate graphics;
-extern crate glutin_window;
+// extern crate glutin_window;
+extern crate sdl2_window;
 extern crate opengl_graphics;
 extern crate fps_counter;
+// extern crate piston_window;
 
 mod graphic;
+mod gomoku;
+
 use graphic::gomoku_graphic::start;
 
-// mod gomoku;
 // use gomoku::map::{Map, Slot};
 // use gomoku::player::{Player, PlayerKind};
 
 fn main()
 {
 	start();
-
 	// let mut test = Map {..Default::default() };
 	// test.value[0][3] = Slot::Used(Player::One(PlayerKind::AI));
 	// test.value[3][0] = Slot::Used(Player::One(PlayerKind::AI));
