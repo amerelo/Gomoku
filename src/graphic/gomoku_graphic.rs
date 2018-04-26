@@ -10,8 +10,8 @@ use fps_counter::FPSCounter;
 use graphics::*;
 use opengl_graphics::{ GlGraphics, OpenGL, Texture, TextureSettings };
 
-use gomoku::map::{Map, Slot};
-use gomoku::player::{Player, PlayerKind};
+use goban::map::{Map, Slot};
+use goban::player::{Player, PlayerKind};
 // use glutin_window::GlutinWindow as Window;
 
 pub struct App {

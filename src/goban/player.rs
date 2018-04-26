@@ -8,8 +8,8 @@ pub enum PlayerKind
 #[derive(Debug)]
 pub enum Player
 {
-    One(PlayerKind),
-    Two(PlayerKind),
+    One,
+    Two,
 }
 
 impl PartialEq for Player
@@ -18,9 +18,9 @@ impl PartialEq for Player
     {
         match (self, other)
         {
-            (&Player::One(_) , &Player::One(_) ) => true,
-            (&Player::Two(_) , &Player::Two(_) ) => true,
-            _                                    => false,
+            (&Player::One , &Player::One ) => true,
+            (&Player::Two , &Player::Two ) => true,
+            _                              => false,
         }
     }
 }

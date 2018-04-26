@@ -7,12 +7,12 @@ extern crate fps_counter;
 // extern crate piston_window;
 
 mod graphic;
-mod gomoku;
+mod goban;
 
 use graphic::gomoku_graphic::start;
 
-// use gomoku::map::{Map, Slot};
-// use gomoku::player::{Player, PlayerKind};
+// use goban::map::{Map, Slot};
+// use goban::player::{Player, PlayerKind};
 
 fn main()
 {
