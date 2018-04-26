@@ -50,16 +50,17 @@ impl Default for Map
 
 impl Map
 {
-    pub fn is_available(&self, (x, y):(i32, i32), player: Player) -> bool
+    pub fn is_available(&self, (x, y):(i32, i32), player: Player) -> Slot
     {
         if x > 18 || y > 18 || x < 0 || y < 0
         {
-            return false;
+            return Slot::Forbidden;
         }
         match self.value[y as usize][x as usize]
         {
-            Slot::Empty => !self.is_double_three_move((x, y), player),
-            _           => false
+            Slot::Empty     => self.is_double_three_move((x, y), player),
+            Slot::PlayerOne => Slot::PlayerOne,
+            _               => Slot::PlayerTwo
         }
     }
 
@@ -74,11 +75,11 @@ impl Map
 
     pub fn move_authorize(&self, x: i32, y: i32, dir: Direction, player: Player) -> bool
     {
-        self.is_available(dir.new_coordonate(x, y), player)
+        self.is_available(dir.new_coordonate(x, y), player) == Slot::Empty
     }
 
-    fn is_double_three_move(&self, (x, y):(i32, i32), player: Player) -> bool
+    fn is_double_three_move(&self, (x, y):(i32, i32), player: Player) -> Slot
     {
-        false
+        Slot::Empty
     }
 }

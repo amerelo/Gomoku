@@ -27,7 +27,7 @@ mod tests
 	#[test]
 	fn slot_is_available_0()
     {
-		assert_eq!(init().is_available((0, 2), Player::One(PlayerKind::AI)), true);
+		assert_eq!(init().is_available((0, 2), Player::One(PlayerKind::AI)), Slot::Empty);
 	}
 
 	#[test]
@@ -35,8 +35,8 @@ mod tests
     {
         let test = init();
 
-		assert_eq!(test.is_available((0, 3), Player::One(PlayerKind::AI)), false);
-		assert_eq!(test.is_available((19, 4), Player::One(PlayerKind::AI)), false); // overflow
+		assert_eq!(test.is_available((0, 3), Player::One(PlayerKind::AI)), Slot::PlayerOne);
+		assert_eq!(test.is_available((19, 4), Player::One(PlayerKind::AI)), Slot::Forbidden); // overflow
 	}
 
 	#[test]
