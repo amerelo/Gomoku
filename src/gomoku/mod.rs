@@ -57,4 +57,14 @@ mod tests
 		assert_eq!(test.move_authorize(0, 0, Direction::UpLeft, Player::One(PlayerKind::AI)), false);
 		assert_eq!(test.move_authorize(0, 3, Direction::Left, Player::One(PlayerKind::AI)), false);
 	}
+
+	#[test]
+	fn change_players_4()
+    {
+        let mut test = init();
+
+		assert_eq!(test.current_player, Player::One(PlayerKind::Human));
+        test.change_player_turn();
+		assert_eq!(test.current_player, Player::Two(PlayerKind::AI));
+	}
 }

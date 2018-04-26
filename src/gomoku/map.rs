@@ -1,4 +1,4 @@
-use gomoku::player::{Player};
+use gomoku::player::{Player, PlayerKind};
 use gomoku::direction::{Direction};
 
 const  SIZEMAP: usize = 19;
@@ -31,14 +31,19 @@ pub enum Slot
 pub struct Map
 {
     pub value: Vec<Vec<Slot>>,
+    pub players: (Player, Player),
+    pub current_player: Player,
 }
 
 impl Default for Map
 {
     fn default() -> Map
     {
-        Map {
+        Map
+        {
             value: mapinit![SIZEMAP],
+            players: (Player::One(PlayerKind::Human), Player::Two(PlayerKind::Human)),
+            current_player: Player::One(PlayerKind::Human),
         }
     }
 }
@@ -55,6 +60,15 @@ impl Map
         {
             Slot::Empty => !self.is_double_three_move((x, y), player),
             _           => false
+        }
+    }
+
+    pub fn change_player_turn(&mut self)
+    {
+        match self.current_player
+        {
+            Player::One(_) => self.current_player = Player::Two(PlayerKind::Human),
+            _              => self.current_player = Player::One(PlayerKind::Human)
         }
     }
 
