@@ -4,17 +4,18 @@ use sdl2_window::Sdl2Window as Window;
 use piston::event_loop::*;
 use piston::input::*;
 
-use fps_counter::FPSCounter;
+// use fps_counter::FPSCounter;
 
 use graphics::*;
 use opengl_graphics::{ GlGraphics, OpenGL };
 
 use graphic::loader::{ GoElem };
+use graphic::cursor::{ Cursor };
 use goban::map::{Map, Slot};
 // use goban::player::{Player, PlayerKind};
 
 pub struct App {
-	fps: FPSCounter,
+	// fps: FPSCounter,
 	gl: GlGraphics, // OpenGL drawing backend.
 	
 	goban: GoElem,
@@ -22,9 +23,10 @@ pub struct App {
 	go_b: GoElem,
 	
 	map: Map,
-	cursor_pos: [f64; 2],
-	board_pos: [i32; 2],
-	press: bool,
+	cursor: Cursor,
+	// cursor_pos: [f64; 2],
+	// board_pos: [i32; 2],
+	// press: bool,
 }
 
 const BACKGROUND:[f32; 4] = [0.2, 0.2, 0.2, 1.0];
@@ -38,16 +40,18 @@ impl App
 	fn new(opengl: OpenGL) -> Self
 	{
 		App {
-			fps: FPSCounter::new(),
+			// fps: FPSCounter::new(),
 			gl: GlGraphics::new(opengl),
 			map: Map {..Default::default() },
+			
 			goban: GoElem::new("resources/goban.png", 1.5),
 			go_w: GoElem::new("resources/w_1.png", 0.09),
 			go_b: GoElem::new("resources/black.png", 0.09),
 			
-			cursor_pos: [0.0, 0.0],
-			board_pos: [-1, -1],
-			press: false,
+			cursor: Cursor::new(),
+			// cursor_pos: [0.0, 0.0],
+			// board_pos: [-1, -1],
+			// press: false,
 		}
 	}
 	
@@ -55,25 +59,23 @@ impl App
 	{
 		let goban = &self.goban;
 		let go_w = &self.go_w;
-		let newx = self.cursor_pos[0];
-		let newy = self.cursor_pos[1];
 		let map = &mut self.map;
-		let press = self.press;
-		let mut board_pos = [self.board_pos[0], self.board_pos[1]];
+		let mut tmp_cursor = &mut self.cursor;
 
 		// println!("fps => {}", self.fps.tick());
 		self.gl.draw(args.viewport(), |c, gl|
 		{
 			clear(BACKGROUND, gl);
 			draw_goban(c, gl, goban);
-			draw_w(c, gl, go_w, map, [newx, newy], &mut board_pos, press);
+			draw_w(c, gl, go_w, map, &mut tmp_cursor);
 		});
 
-		if !press && board_pos != [-1, -1] && map.is_available((board_pos[0], board_pos[1])) == Slot::Empty
+		if !tmp_cursor.press && tmp_cursor.place_piece &&
+			map.is_available((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32)) == Slot::Empty
 		{
-			map.value[board_pos[1] as usize][board_pos[0] as usize] = Slot::PlayerOne;
+			map.value[tmp_cursor.cursor_in_board[1]][tmp_cursor.cursor_in_board[0]] = Slot::PlayerOne;
+			tmp_cursor.place_piece = false;
 		}
-		self.board_pos = board_pos;
 	}
 
 	fn update(&mut self, _args: &UpdateArgs)
@@ -92,7 +94,7 @@ fn draw_goban(c: Context, gl: &mut GlGraphics, goban: &GoElem)
 	image(&goban.elem, transform2, gl);
 }
 
-fn draw_w(c: Context, gl: &mut GlGraphics, go_player: &GoElem, map: &Map, cursor_pos: [f64; 2], board_pos: &mut [i32; 2], press: bool)
+fn draw_w(c: Context, gl: &mut GlGraphics, go_player: &GoElem, map: &Map, cursor: &mut Cursor)
 {
 	let mut near_pos: [f64; 2] = [0.0, 0.0];
 	let board_x = GOBANPOS.0 + GOBAN_BOARD_X;
@@ -104,10 +106,12 @@ fn draw_w(c: Context, gl: &mut GlGraphics, go_player: &GoElem, map: &Map, cursor
 		{
 			// near_pos
 			let new_posx = board_x + x as f64 * GOBAN_SPACE;
-			if press && ( (new_posx - cursor_pos[0]).abs() + (new_posy - cursor_pos[1]).abs()) < ((near_pos[0] - cursor_pos[0]).abs() + (near_pos[1] - cursor_pos[1]).abs())
+			if cursor.press && 
+				((new_posx - cursor.cursor_pos[0]).abs() + (new_posy - cursor.cursor_pos[1]).abs()) < 
+				((near_pos[0] - cursor.cursor_pos[0]).abs() + (near_pos[1] - cursor.cursor_pos[1]).abs())
 			{
 				near_pos = [new_posx, new_posy];
-				*board_pos = [x as i32, y as i32];
+				cursor.cursor_in_board = [x, y];
 			}
 
 			if  Slot::Empty != *pos_x
@@ -118,7 +122,7 @@ fn draw_w(c: Context, gl: &mut GlGraphics, go_player: &GoElem, map: &Map, cursor
 		}
 	}
 	
-	if press && (near_pos[0] != 0.0 && near_pos[1] != 0.0)
+	if cursor.press && (near_pos[0] != 0.0 && near_pos[1] != 0.0)
 	{
 		let transform = c.transform.trans(near_pos[0], near_pos[1]).scale(go_player.scale, go_player.scale);
 		Image::new_color([1.0, 1.0, 1.0, 0.6]).draw(&go_player.elem, &DrawState::new_alpha(), transform, gl);
@@ -160,8 +164,8 @@ pub fn start()
 			if button == Button::Mouse(MouseButton::Left)
 			{
 				// println!("press {:?}", button);
-				app.board_pos = [-1, -1];
-				app.press = true;
+				app.cursor.place_piece = false;
+				app.cursor.press = true;
 			}
 		}
 		
@@ -170,13 +174,14 @@ pub fn start()
 			if button == Button::Mouse(MouseButton::Left)
 			{
 				// println!("release {:?}", button);
-				app.press = false;
+				app.cursor.place_piece = true;
+				app.cursor.press = false;
 			}
 		}
 
 		if let Some(pos) = e.mouse_cursor_args()
 		{
-			app.cursor_pos = pos;
+			app.cursor.cursor_pos = pos;
 			// if app.press 
 			// {
 			// 	println!("pos mouse -> {:?}", pos);
