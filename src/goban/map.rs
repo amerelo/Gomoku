@@ -73,6 +73,8 @@ impl Map
         }
     }
 
+// FAUT TOUT PROPRIFIER C'EST TROP SALE
+
     fn three_move_number(&self, (x, y):(i32, i32), slot_player: Slot) -> usize
     {
         let mut count:usize = 0;
@@ -86,45 +88,83 @@ impl Map
         {
             count += 1;
         }
-        // if self.is_free_three((x, y), &slot_player, (Direction::UpLeft, Direction::DownRight))
-        // {
-        //     count += 1;
-        // }
-        // if self.is_free_three((x, y), &slot_player, (Direction::UpRight, Direction::DownLeft))
-        // {
-        //     count += 1;
-        // }
-        // if self.is_free_three((x, y), &slot_player, (Direction::Left, Direction::Right))
-        // {
-        //     count += 1;
-        // }
-        count
+        if self.is_free_three((x, y), (&slot_player, &slot_enemy), (Direction::Left, Direction::Right))
+        {
+            count += 1;
+        }
+        if count == 2
+        {
+            return 2
+        }
+        if self.is_free_three((x, y), (&slot_player, &slot_enemy), (Direction::UpLeft, Direction::DownRight))
+        {
+            count += 1;
+        }
+        if count == 2
+        {
+            return 2
+        }
+        if self.is_free_three((x, y), (&slot_player, &slot_enemy), (Direction::UpRight, Direction::DownLeft))
+        {
+            count += 1;
+        }
+        if count == 2
+        {
+            2
+        }
+        else
+        {
+            0
+        }
     }
 
     fn is_free_three(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), (dir_add, dir_sub): (Direction, Direction)) -> bool
     {
         let mut count:usize = 0;
 
-        let slot_add_one = self.value(dir_add.new_coordonate((x, y)));
-        let slot_sub_one = self.value(dir_sub.new_coordonate((x, y)));
-        
-        let slot_add_two = self.value(dir_add.new_coordonate(dir_add.new_coordonate((x, y))));
-        let slot_sub_two = self.value(dir_sub.new_coordonate(dir_sub.new_coordonate((x, y))));
+        // println!("values {:?}", self.value[1][3]);
+        let mut add = dir_add.new_coordonate((x, y));
+        let mut sub = dir_sub.new_coordonate((x, y));
+        // println!("add {:?}{:?} sub {:?}{:?}", add, self.find_value(add), sub, self.find_value(sub));
 
+        let slot_add_one = self.find_value(add);
+        let slot_sub_one = self.find_value(sub);
+
+        add = dir_add.new_coordonate(add);
+        sub = dir_sub.new_coordonate(sub);
+        // println!("add {:?}{:?} sub {:?}{:?}", add, self.find_value(add), sub, self.find_value(sub));
         
-        if slot_cmp![&Slot::Forbidden; [slot_add_one, slot_add_two, slot_sub_one, slot_sub_two]]
-            || slot_cmp![slot_enemy; [slot_add_one, slot_add_two, slot_sub_one, slot_sub_two]]
+        let slot_add_two = self.find_value(add);
+        let slot_sub_two = self.find_value(sub);
+
+        if slot_cmp_or![&Slot::Forbidden; [slot_add_one, slot_sub_one]]
+            || slot_cmp_or![slot_enemy; [slot_add_one, slot_sub_one]]
         {
             return false;
         }
+        add = dir_add.new_coordonate(add);
+        sub = dir_sub.new_coordonate(sub);
+        // println!("add {:?}{:?} sub {:?}{:?}", add, self.find_value(add), sub, self.find_value(sub));
 
-        let slot_add_three = self.value(dir_add.new_coordonate(dir_add.new_coordonate(dir_add.new_coordonate((x, y)))));
-        let slot_sub_three = self.value(dir_sub.new_coordonate(dir_sub.new_coordonate(dir_sub.new_coordonate((x, y)))));
+        let slot_add_three = self.find_value(add);
+        let slot_sub_three = self.find_value(sub);
 
-        true
+        add = dir_add.new_coordonate(add);
+        sub = dir_sub.new_coordonate(sub);
+        // println!("add {:?}{:?} sub {:?}{:?}", add, self.find_value(add), sub, self.find_value(sub));
+
+        let slot_add_four = self.find_value(add);
+        let slot_sub_four = self.find_value(sub);
+
+        let total_add = slot_cmp![slot_player; (slot_add_one, slot_add_two, slot_add_three, slot_add_four)];
+        let total_sub = slot_cmp![slot_player; (slot_sub_one, slot_sub_two, slot_sub_three, slot_sub_four)];
+		
+        // println!("add {:?}{:?} sub {:?}{:?}", add, self.find_value(add), sub, self.find_value(sub));
+        // println!("total_add {:?} total_sub {:?}", total_add, total_sub);
+        total_add + total_sub == 2 && (total_add == 2 || total_sub == 2 || slot_cmp_or![slot_player; [slot_add_one, slot_sub_one]])
     }
 
-    fn value(&self, (x, y):(i32, i32)) -> &Slot
+    fn find_value(&self, (x, y):(i32, i32)) -> &Slot
     {
         if x > 18 || y > 18 || x < 0 || y < 0
         {

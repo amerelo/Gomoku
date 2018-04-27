@@ -66,7 +66,11 @@ impl App
 
 		if !press && board_pos[0] != 0 && board_pos[1] != 0
 		{
-			map.value[board_pos[1]][board_pos[0]] = Slot::PlayerTwo;
+			// be aware map.is_available( (X, Y) ) <- :D
+			if (map.is_available((board_pos[0] as i32, board_pos[1] as i32)) == Slot::Empty)
+			{
+				map.value[board_pos[1]][board_pos[0]] = Slot::PlayerOne;
+			}
 		}
 		self.board_pos[0] = board_pos[0];
 		self.board_pos[1] = board_pos[1];

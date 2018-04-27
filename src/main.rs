@@ -11,13 +11,19 @@ mod goban;
 
 use graphic::gomoku_graphic::start;
 
-// use goban::map::{Map, Slot};
-// use goban::player::{Player, PlayerKind};
+use goban::map::{Map, Slot};
+use goban::player::{Player, PlayerKind};
 
 fn main()
 {
 	start();
-	// let mut test = Map {..Default::default() };
+	// let mut map = Map {..Default::default() };
+
+	// map.value[3][1] = Slot::PlayerOne;
+	// map.value[5][1] = Slot::PlayerOne;
+	// map.value[4][3] = Slot::PlayerOne;
+	// map.value[4][2] = Slot::PlayerOne;
+
 	// test.value[0][3] = Slot::Used(Player::One(PlayerKind::AI));
 	// test.value[3][0] = Slot::Used(Player::One(PlayerKind::AI));
 	// test.value[2][3] = Slot::Used(Player::One(PlayerKind::AI));

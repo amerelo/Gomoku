@@ -13,17 +13,29 @@ mod tests
 
     fn init() -> Map
     {
-        let mut test = Map {..Default::default() };
+        let mut map = Map {..Default::default() };
 
-        test.value[0][3] = Slot::PlayerOne;
-        test.value[3][0] = Slot::PlayerOne;
-        test.value[2][3] = Slot::PlayerOne;
-        test.value[12][3] = Slot::PlayerOne;
-        test.value[13][4] = Slot::PlayerOne;
-        test.value[2][5] = Slot::PlayerOne;
-        test.value[11][3] = Slot::PlayerOne;
-        test.value[11][3] = Slot::PlayerOne;
-        test
+        map.value[0][3] = Slot::PlayerOne;
+        map.value[3][0] = Slot::PlayerOne;
+        map.value[2][3] = Slot::PlayerOne;
+        map.value[12][3] = Slot::PlayerOne;
+        map.value[13][4] = Slot::PlayerOne;
+        map.value[2][5] = Slot::PlayerOne;
+        map.value[11][3] = Slot::PlayerOne;
+        map.value[11][3] = Slot::PlayerOne;
+        map
+    }
+
+    fn init_with_free_three() -> Map
+    {
+        let mut map = Map {..Default::default() };
+
+        map.value[3][1] = Slot::PlayerOne;
+        map.value[5][1] = Slot::PlayerOne;
+        map.value[4][3] = Slot::PlayerOne;
+	    map.value[4][2] = Slot::PlayerOne;
+
+        map
     }
 
 	#[test]
@@ -35,38 +47,47 @@ mod tests
 	#[test]
 	fn slot_is_unavailable_1()
     {
-        let test = init();
+        let map = init();
 
-		assert_eq!(test.is_available((0, 3)), Slot::PlayerOne);
-		assert_eq!(test.is_available((19, 4)), Slot::Forbidden); // overflow
+		assert_eq!(map.is_available((0, 3)), Slot::PlayerOne);
+		assert_eq!(map.is_available((19, 4)), Slot::Forbidden); // overflow
 	}
 
 	#[test]
 	fn move_is_authorize_2()
     {
-        let test = init();
+        let map = init();
 
-		assert_eq!(test.move_authorize(0, 3, Direction::Down), true);
-		assert_eq!(test.move_authorize(0, 3, Direction::Right), true);
+		assert_eq!(map.move_authorize(0, 3, Direction::Down), true);
+		assert_eq!(map.move_authorize(0, 3, Direction::Right), true);
 	}
 
 	#[test]
 	fn move_is_forbidden_3()
     {
-        let test = init();
+        let map = init();
 
-		assert_eq!(test.move_authorize(0, 0, Direction::Up), false);
-		assert_eq!(test.move_authorize(0, 0, Direction::UpLeft), false);
-		assert_eq!(test.move_authorize(0, 3, Direction::Left), false);
+		assert_eq!(map.move_authorize(0, 0, Direction::Up), false);
+		assert_eq!(map.move_authorize(0, 0, Direction::UpLeft), false);
+		assert_eq!(map.move_authorize(0, 3, Direction::Left), false);
 	}
 
 	#[test]
 	fn change_players_4()
     {
-        let mut test = init();
+        let mut map = init();
 
-		assert_eq!(test.current_player, Player::One);
-        test.change_player_turn();
-		assert_eq!(test.current_player, Player::Two);
+		assert_eq!(map.current_player, Player::One);
+        map.change_player_turn();
+		assert_eq!(map.current_player, Player::Two);
+	}
+
+    #[test]
+	fn two_free_three_move_5()
+    {
+        let mut map = init_with_free_three();
+
+        // x == 1 && y == 4
+		assert_eq!(map.is_available((1, 4)), Slot::Forbidden);
 	}
 }
