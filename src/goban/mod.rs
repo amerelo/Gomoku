@@ -1,7 +1,7 @@
-pub mod player;
-pub mod direction;
 #[macro_use]
 pub mod macros;
+pub mod player;
+pub mod direction;
 pub mod map;
 
 #[cfg(test)]

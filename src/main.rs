@@ -1,3 +1,4 @@
+
 extern crate piston;
 extern crate graphics;
 // extern crate glutin_window;
@@ -6,9 +7,9 @@ extern crate opengl_graphics;
 extern crate fps_counter;
 // extern crate piston_window;
 
-mod graphic;
+#[macro_use]
 mod goban;
-
+mod graphic;
 use graphic::gomoku_graphic::start;
 
 

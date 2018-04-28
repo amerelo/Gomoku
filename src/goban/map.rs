@@ -1,6 +1,6 @@
 use goban::player::{Player, PlayerKind};
 use goban::direction::{Direction};
-use std::ops::Add;
+// use std::ops::Add;
 
 const  SIZEMAP: usize = 19;
 
@@ -62,14 +62,14 @@ impl Map
         }
     }
 
-	pub fn get_palyer_slot(&mut self) -> Slot
-	{
-		match self.current_player
-		{
-			Player::One => Slot::PlayerOne,
-			_			=> Slot::PlayerTwo
-		}
-	}
+	// pub fn get_palyer_slot(&mut self) -> Slot
+	// {
+	// 	match self.current_player
+	// 	{
+	// 		Player::One => Slot::PlayerOne,
+	// 		_			=> Slot::PlayerTwo
+	// 	}
+	// }
 
     pub fn change_player_turn(&mut self)
     {

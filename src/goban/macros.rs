@@ -1,3 +1,4 @@
+#[macro_export]
 macro_rules! mapinit
 {
     ($n:expr) =>
@@ -16,6 +17,7 @@ macro_rules! mapinit
     }}
 }
 
+#[macro_export]
 macro_rules! find_slot_player
 {
     ($n:expr) =>
@@ -28,6 +30,7 @@ macro_rules! find_slot_player
     }
 }
 
+#[macro_export]
 macro_rules! find_slot_enemy
 {
     ($n:expr) =>
@@ -40,6 +43,7 @@ macro_rules! find_slot_enemy
     }
 }
 
+#[macro_export]
 macro_rules! slot_cmp_or
 {
     ($slot:expr; [ $( $value:expr ),* ]) =>
@@ -48,6 +52,7 @@ macro_rules! slot_cmp_or
     }
 }
 
+#[macro_export]
 macro_rules! slot_cmp
 {
     ($player:expr; $value:expr) =>
