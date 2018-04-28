@@ -28,6 +28,18 @@ macro_rules! find_slot_player
     }
 }
 
+macro_rules! find_slot_enemy
+{
+    ($n:expr) =>
+    {
+        match $n
+        {
+            Player::One => Slot::PlayerTwo,
+            _           => Slot::PlayerOne
+        };
+    }
+}
+
 macro_rules! slot_cmp_or
 {
     ($slot:expr; [ $( $value:expr ),* ]) =>
