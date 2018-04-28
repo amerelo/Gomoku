@@ -50,6 +50,15 @@ impl Map
         }
     }
 
+	pub fn get_palyer_slot(&mut self) -> Slot
+	{
+		match self.current_player
+		{
+			Player::One => Slot::PlayerOne,
+			_			=> Slot::PlayerTwo
+		}
+	}
+
     pub fn change_player_turn(&mut self)
     {
         match self.current_player
