@@ -18,7 +18,9 @@ pub struct Map
 {
     pub value: Vec<Vec<Slot>>,
     pub players_kind: (PlayerKind, PlayerKind), // easier way for handling players number and players kind
+    pub players_score: (usize, usize),
     pub current_player: Player,
+    pub is_finish: bool,
 }
 
 impl Default for Map
@@ -29,13 +31,23 @@ impl Default for Map
         {
             value: mapinit![SIZEMAP],
             players_kind: (PlayerKind::Human, PlayerKind::Human),
+            players_score: (0, 0),
             current_player: Player::One,
+            is_finish: false,
         }
     }
 }
 
 impl Map
 {
+    pub fn reset(&mut self) -> ()
+    {
+        self.value = mapinit![SIZEMAP];
+        self.players_score = (0, 0);
+        self.current_player = Player::One;
+        self.is_finish = false;
+    }
+
     pub fn is_available(&self, (x, y):(i32, i32)) -> Slot
     {
         if x > 18 || y > 18 || x < 0 || y < 0
@@ -97,6 +109,17 @@ impl Map
             if with_delete
             {
                 dir.capture((x, y), self);
+                match slot_player
+                {
+                    &Slot::PlayerOne => self.players_score.0 += 2,
+                    _                => self.players_score.1 += 2
+                }
+                println!("Score: {:?}", self.players_score);
+                if self.players_score.0 >= 10 || self.players_score.1 >= 10
+                {
+                    self.is_finish = true;
+                    println!("Finish");
+                }
             }
             2
         }
