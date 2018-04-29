@@ -91,8 +91,8 @@ impl Map
     pub fn number_captured(&mut self, (x, y):(i32, i32), with_delete: bool) -> usize
     {
         let mut count:usize = 0;
-        let slot_player = &find_slot_player![self.current_player];
-        let slot_enemy = &find_slot_enemy![self.current_player];
+        let slot_player = &find_slot_player![self.current_player, Slot::PlayerOne, Slot::PlayerTwo];
+        let slot_enemy = &find_slot_enemy![self.current_player, Slot::PlayerOne, Slot::PlayerTwo];
 
         for dir in Direction::iterator()
         {
@@ -130,7 +130,7 @@ impl Map
 
     fn is_double_three_move(&self, (x, y):(i32, i32)) -> Slot
     {
-        match self.three_move_number((x, y), find_slot_player![self.current_player])
+        match self.three_move_number((x, y), find_slot_player![self.current_player, Slot::PlayerOne, Slot::PlayerTwo])
         {
             2 => Slot::Forbidden,
             _ => Slot::Empty,
@@ -140,7 +140,7 @@ impl Map
     fn three_move_number(&self, (x, y):(i32, i32), slot_player: Slot) -> usize
     {
         let mut count:usize = 0;
-        let slot_enemy = find_slot_enemy![self.current_player];
+        let slot_enemy = find_slot_enemy![self.current_player, Slot::PlayerOne, Slot::PlayerTwo];
 
         for axe in Direction::axes_iterator()
         {
@@ -210,7 +210,7 @@ impl Map
         {
             if self.is_five_align((x, y), find_slots_players!(self.current_player), axe)
             {
-                println!("FIVE ALIGN FOR PLAYER {:?} !!!", find_slot_player!(self.current_player));
+                println!("FIVE ALIGN FOR PLAYER {:?} !!!", find_slot_player!(self.current_player, Slot::PlayerOne, Slot::PlayerTwo));
                 return true;
             }
         }
@@ -250,5 +250,26 @@ impl Map
 		
         // println!("dir {:?} : =>  total add {} total sub {}", (dir_add, dir_sub), total_add, total_sub);
         total_add + total_sub >= 4 // 4 because the current slot isn't taking in consideration in slot_winning! macro
+    }
+
+
+    pub fn update_hint_map(&mut self, (x, y):(i32, i32)) -> ()
+    {
+        for dir in Direction::iterator()
+        {
+            let mut coord = dir.new_coordonate((x, y));
+            if self.find_value(coord) == &Slot::Empty
+                && self.number_captured(coord, false) > 0
+            {
+                self.hint_map[y as usize][x as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
+                continue ;
+            }
+            coord = dir.new_coordonate(coord);
+            if self.find_value(coord) == &Slot::Empty
+                && self.number_captured(coord, false) > 0
+            {
+                self.hint_map[y as usize][x as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
+            }
+        }
     }
 }

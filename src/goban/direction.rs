@@ -1,4 +1,4 @@
-use goban::map::{Map, Slot};
+use goban::map::{Map, Slot, HintSlot};
 use std::slice::Iter;
 
 #[derive(Debug)]
@@ -47,6 +47,8 @@ impl Direction
 
         map.value[one.1 as usize][one.0 as usize] = Slot::Empty;
         map.value[two.1 as usize][two.0 as usize] = Slot::Empty;
+        map.hint_map[one.1 as usize][one.0 as usize] = HintSlot::Empty;
+        map.hint_map[two.1 as usize][two.0 as usize] = HintSlot::Empty;
     }
 
     pub fn iterator() -> Iter<'static, Direction>

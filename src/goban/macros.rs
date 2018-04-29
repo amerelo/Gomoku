@@ -20,12 +20,12 @@ macro_rules! mapinit
 #[macro_export]
 macro_rules! find_slot_player
 {
-    ($n:expr) =>
+    ($n:expr, $one:expr, $two:expr) =>
     {
         match $n
         {
-            Player::One => Slot::PlayerOne,
-            _           => Slot::PlayerTwo
+            Player::One => $one,
+            _           => $two
         };
     }
 }
@@ -33,12 +33,12 @@ macro_rules! find_slot_player
 #[macro_export]
 macro_rules! find_slot_enemy
 {
-    ($n:expr) =>
+    ($n:expr, $one:expr, $two:expr) =>
     {
         match $n
         {
-            Player::One => Slot::PlayerTwo,
-            _           => Slot::PlayerOne
+            Player::One => $two,
+            _           => $one
         };
     }
 }
