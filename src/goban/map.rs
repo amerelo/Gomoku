@@ -158,8 +158,6 @@ impl Map
 
     fn is_free_three(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
     {
-        let mut count:usize = 0;
-
         let mut add = dir_add.new_coordonate((x, y));
         let mut sub = dir_sub.new_coordonate((x, y));
 
@@ -217,10 +215,8 @@ impl Map
         false
     }
 
-    fn is_five_align(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
+    fn is_five_align(&self, (x, y):(i32, i32), (slot_player, _slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
     {
-        let mut count:usize = 0;
-
         let mut add = dir_add.new_coordonate((x, y));
         let mut sub = dir_sub.new_coordonate((x, y));
 
