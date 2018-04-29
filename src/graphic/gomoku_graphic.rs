@@ -2,9 +2,11 @@ use piston::window::WindowSettings;
 
 // use sdl2_window::Sdl2Window as Window;
 use piston_window::*;
-use piston_window::PistonWindow as Window;
-use piston::event_loop::*;
-use piston::input::*;
+use sdl2_window::Sdl2Window;
+// use piston_window::PistonWindow as Window;
+
+// use piston::event_loop::*;
+// use piston::input::*;
 use opengl_graphics::{ GlGraphics, OpenGL };
 
 // use fps_counter::FPSCounter;
@@ -14,6 +16,8 @@ use graphics::*;
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
 use graphic::draw::{ draw_goban, draw_player };
+
+use find_folder::Search;
 
 const BACKGROUND:[f32; 4] = [0.2, 0.2, 0.2, 1.0];
 
@@ -55,18 +59,6 @@ impl App
 			clear(BACKGROUND, gl);
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, map, &mut tmp_cursor, players);
-			
-			// let ref font = assets.join("FiraSans-Regular.ttf");
-    		// let factory = window.factory.clone();
-	
-    		// let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
-		// 	let transform = c.transform.trans(10.0, 100.0);
-		// 	Text::new_color([0.0, 1.0, 0.0, 1.0], 32).draw(
-        //         "Hello world!",
-        //         &mut glyphs,
-        //         &c.draw_state,
-        //         transform, gl
-        //     ).unwrap();
 		});
 
 		if !tmp_cursor.press && tmp_cursor.place_piece &&
@@ -94,12 +86,12 @@ pub fn start()
 {
 	let opengl = OpenGL::V3_2;
 
-	let mut window: Window = WindowSettings::new(
+	let mut window: PistonWindow<Sdl2Window>= WindowSettings::new(
 			"Gomoku",
 			[800, 700]
 		)
-		.resizable(false)
 		.opengl(opengl)
+		.resizable(false)
 		.exit_on_esc(true)
 		.build()
 		.unwrap();
@@ -107,6 +99,13 @@ pub fn start()
 	let mut app = App::new(opengl);
 	let mut events = Events::new(EventSettings::new());
 
+
+	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
+	let ref font = assets.join("DejaVuSerif.ttf");
+	let factory = window.factory.clone();
+	let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
+
+	window.set_lazy(true);
 	while let Some(e) = events.next(&mut window)
 	{
 		if let Some(r) = e.render_args()
@@ -147,5 +146,16 @@ pub fn start()
 			// 	println!("pos mouse -> {:?}", pos);
 			// }
 		}
+
+		window.draw_2d(&e, |c, gl| {
+			let transform = c.transform.trans(10.0, 100.0);
+
+			let _ = text::Text::new_color([0.4, 0.4, 0.4, 1.0], 32).draw(
+				"Hola Alexis",
+				&mut glyphs,
+				&c.draw_state,
+				transform, gl
+			);
+		});
 	}
 }

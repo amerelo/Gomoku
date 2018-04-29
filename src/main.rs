@@ -2,11 +2,12 @@
 extern crate piston;
 extern crate graphics;
 // extern crate glutin_window;
-// extern crate sdl2_window;
+extern crate sdl2_window;
 extern crate piston_window;
 extern crate opengl_graphics;
+extern crate find_folder;
+
 extern crate fps_counter;
-// extern crate piston_window;
 
 #[macro_use]
 mod goban;
