@@ -248,8 +248,7 @@ impl Map
         total_add + total_sub >= 4 // 4 because the current slot isn't taking in consideration in slot_winning! macro
     }
 
-
-    pub fn update_hint_map(&mut self, (x, y):(i32, i32)) -> ()
+    pub fn update_hint_map(&mut self, (x, y):(i32, i32), deaph: usize) -> ()
     {
         for dir in Direction::iterator()
         {
@@ -258,6 +257,17 @@ impl Map
                 && self.number_captured(coord, false) > 0
             {
                 self.hint_map[y as usize][x as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
+                continue ;
+            }
+            coord = dir.new_coordonate(coord);
+            if self.find_value(coord) == &Slot::Empty
+                && self.number_captured(coord, false) > 0
+            {
+                self.hint_map[y as usize][x as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
+                continue ;
+            }
+            if deaph < 3
+            {
                 continue ;
             }
             coord = dir.new_coordonate(coord);

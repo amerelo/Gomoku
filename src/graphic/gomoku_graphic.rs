@@ -69,8 +69,9 @@ impl App
 			map.number_captured((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32), true);
 			map.value[tmp_cursor.cursor_in_board[1]][tmp_cursor.cursor_in_board[0]] = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);//map.get_palyer_slot();
 			map.hint_map[tmp_cursor.cursor_in_board[1]][tmp_cursor.cursor_in_board[0]] = HintSlot::Used;
+			map.update_hint_map((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32), 3);
 			map.change_player_turn();
-			map.update_hint_map((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32));
+			map.update_hint_map((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32), 2);
 			tmp_cursor.place_piece = false;
 		}
 	}
