@@ -13,10 +13,20 @@ pub enum Slot
     Forbidden,
 }
 
+#[derive(Debug, PartialEq)]
+pub enum HintSlot
+{
+    Used,
+    Empty,
+    CapturePlayerOne,
+    CapturePlayerTwo,
+}
+
 #[derive(Debug)]
 pub struct Map
 {
     pub value: Vec<Vec<Slot>>,
+    pub hint_map: Vec<Vec<HintSlot>>,
     pub players_kind: (PlayerKind, PlayerKind), // easier way for handling players number and players kind
     pub players_score: (usize, usize),
     pub current_player: Player,
@@ -29,7 +39,8 @@ impl Default for Map
     {
         Map
         {
-            value: mapinit![SIZEMAP],
+            value: mapinit![SIZEMAP, Slot::Empty],
+            hint_map: mapinit![SIZEMAP, HintSlot::Empty],
             players_kind: (PlayerKind::Human, PlayerKind::Human),
             players_score: (0, 0),
             current_player: Player::One,
@@ -42,7 +53,8 @@ impl Map
 {
     pub fn reset(&mut self) -> ()
     {
-        self.value = mapinit![SIZEMAP];
+        self.value = mapinit![SIZEMAP, Slot::Empty];
+        self.hint_map = mapinit![SIZEMAP, HintSlot::Empty];
         self.players_score = (0, 0);
         self.current_player = Player::One;
         self.is_finish = false;
@@ -61,15 +73,6 @@ impl Map
             _               => Slot::PlayerTwo
         }
     }
-
-	// pub fn get_palyer_slot(&mut self) -> Slot
-	// {
-	// 	match self.current_player
-	// 	{
-	// 		Player::One => Slot::PlayerOne,
-	// 		_			=> Slot::PlayerTwo
-	// 	}
-	// }
 
     pub fn change_player_turn(&mut self)
     {
@@ -91,18 +94,14 @@ impl Map
         let slot_player = &find_slot_player![self.current_player];
         let slot_enemy = &find_slot_enemy![self.current_player];
 
-        count += self.is_capture(Direction::Up, (x, y), (slot_player, slot_enemy), with_delete);
-        count += self.is_capture(Direction::UpLeft, (x, y), (slot_player, slot_enemy), with_delete);
-        count += self.is_capture(Direction::UpRight, (x, y), (slot_player, slot_enemy), with_delete);
-        count += self.is_capture(Direction::Down, (x, y), (slot_player, slot_enemy), with_delete);
-        count += self.is_capture(Direction::DownLeft, (x, y), (slot_player, slot_enemy), with_delete);
-        count += self.is_capture(Direction::DownRight, (x, y), (slot_player, slot_enemy), with_delete);
-        count += self.is_capture(Direction::Left, (x, y), (slot_player, slot_enemy), with_delete);
-        count += self.is_capture(Direction::Right, (x, y), (slot_player, slot_enemy), with_delete);
+        for dir in Direction::iterator()
+        {
+            count += self.is_capture(dir, (x, y), (slot_player, slot_enemy), with_delete);
+        }
         count
     }
 
-    fn is_capture(&mut self, dir: Direction, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), with_delete: bool) -> usize
+    fn is_capture(&mut self, dir: &Direction, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), with_delete: bool) -> usize
     {
         if dir.next_three((x, y), self) == (slot_enemy, slot_enemy, slot_player)
         {
@@ -138,48 +137,26 @@ impl Map
         }
     }
 
-// FAUT TOUT PROPRIFIER C'EST TROP SALE
-
     fn three_move_number(&self, (x, y):(i32, i32), slot_player: Slot) -> usize
     {
         let mut count:usize = 0;
         let slot_enemy = find_slot_enemy![self.current_player];
 
-        if self.is_free_three((x, y), (&slot_player, &slot_enemy), (Direction::Up, Direction::Down))
+        for axe in Direction::axes_iterator()
         {
-            count += 1;
+            if self.is_free_three((x, y), (&slot_player, &slot_enemy), axe)
+            {
+                count += 1;
+                if count == 2
+                {
+                    return 2
+                }
+            }
         }
-        if self.is_free_three((x, y), (&slot_player, &slot_enemy), (Direction::Left, Direction::Right))
-        {
-            count += 1;
-        }
-        if count == 2
-        {
-            return 2
-        }
-        if self.is_free_three((x, y), (&slot_player, &slot_enemy), (Direction::UpLeft, Direction::DownRight))
-        {
-            count += 1;
-        }
-        if count == 2
-        {
-            return 2
-        }
-        if self.is_free_three((x, y), (&slot_player, &slot_enemy), (Direction::UpRight, Direction::DownLeft))
-        {
-            count += 1;
-        }
-        if count == 2
-        {
-            2
-        }
-        else
-        {
-            0
-        }
+        count
     }
 
-    fn is_free_three(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), (dir_add, dir_sub): (Direction, Direction)) -> bool
+    fn is_free_three(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
     {
         let mut count:usize = 0;
 

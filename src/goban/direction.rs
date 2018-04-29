@@ -1,4 +1,5 @@
 use goban::map::{Map, Slot};
+use std::slice::Iter;
 
 pub enum Direction
 {
@@ -45,5 +46,17 @@ impl Direction
 
         map.value[one.1 as usize][one.0 as usize] = Slot::Empty;
         map.value[two.1 as usize][two.0 as usize] = Slot::Empty;
+    }
+
+    pub fn iterator() -> Iter<'static, Direction>
+    {
+        static DIRECTIONS: [Direction;  8] = [Direction::Up, Direction::UpLeft, Direction::UpRight, Direction::Down, Direction::DownLeft, Direction::DownRight, Direction::Left, Direction::Right];
+        DIRECTIONS.into_iter()
+    }
+
+    pub fn axes_iterator() -> Iter<'static, (Direction, Direction)>
+    {
+        static DIRECTIONS: [(Direction, Direction);  4] = [(Direction::Up, Direction::Down), (Direction::UpLeft, Direction::DownRight), (Direction::UpRight, Direction::DownRight), (Direction::Left, Direction::Right)];
+        DIRECTIONS.into_iter()
     }
 }

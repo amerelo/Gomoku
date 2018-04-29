@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! mapinit
 {
-    ($n:expr) =>
+    ($n:expr, $val:expr) =>
     {{
         let mut map = Vec::new();
         for _y in 0..$n
@@ -9,7 +9,7 @@ macro_rules! mapinit
             let mut vec = Vec::new();
             for _x in 0..$n
             {
-                vec.push(Slot::Empty);
+                vec.push($val);
             }
             map.push(vec)
         }
