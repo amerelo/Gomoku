@@ -6,7 +6,7 @@ extern crate graphics;
 extern crate opengl_graphics;
 extern crate find_folder;
 
-// extern crate fps_counter;
+extern crate fps_counter;
 
 #[macro_use]
 mod goban;

@@ -3,7 +3,7 @@ use graphics::*;
 use opengl_graphics::{ GlGraphics };
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
-use goban::map::{Map, Slot};
+use goban::map::{Map, Slot, HintSlot};
 use goban::player::{Player};
 
 const GOBANPOS: (f64, f64) = (70.0, 40.0);
@@ -44,12 +44,18 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 	let board_y = GOBANPOS.1 + GOBAN_BOARD_Y;
 	let slot =  find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
 
+	// println!("----------------------> draw");
 	for (y, pos_y) in map.value.iter().enumerate()
 	{
 		let new_posy = board_y + y as f64 * GOBAN_SPACE;
 		for (x, pos_x) in pos_y.iter().enumerate()
 		{
 			let new_posx = board_x + x as f64 * GOBAN_SPACE;
+
+			if map.hint_map[y][x] == HintSlot::CapturePlayerOne || map.hint_map[y][x] == HintSlot::CapturePlayerTwo
+			{
+				draw_shadow(c, gl, cursor, players, [new_posx as f64, new_posy as f64 ], Slot::PlayerOne);
+			}
 
 			if cursor.press && 
 				((new_posx - cursor.cursor_pos[0]).abs() + (new_posy - cursor.cursor_pos[1]).abs()) < 
@@ -61,6 +67,7 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 
 			if  Slot::Empty != *pos_x
 			{
+
 				match *pos_x
 				{
 					Slot::PlayerOne => {

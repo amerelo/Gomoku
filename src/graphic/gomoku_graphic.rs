@@ -78,6 +78,7 @@ impl App
 
 	fn update(&mut self, _args: &UpdateArgs)
 	{
+		// println!("fps => {}", self.fps.tick());
 		// println!("time => {}", args.dt);
 		// Rotate 2 radians per second.
 		// self.rotation += 2.0 * args.dt;
@@ -96,7 +97,7 @@ fn draw_text(e: Event, window: &mut PistonWindow<Sdl2Window>)
 		let transform = c.transform.trans(5.0, 20.0);
 
 		let _ = Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
-			"Score : 3",
+			"Score : 42",
 			&mut glyphs,
 			&c.draw_state,
 			transform, gl
