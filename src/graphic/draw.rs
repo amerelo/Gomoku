@@ -19,21 +19,18 @@ pub fn draw_goban(c: Context, gl: &mut GlGraphics, goban: &GoElem)
 	image(&goban.elem, transform2, gl);
 }
 
-fn draw_shadow(c: Context, gl: &mut GlGraphics, cursor: &mut Cursor, players: (&GoElem, &GoElem), near_pos: [f64; 2], slot: Slot)
+fn draw_shadow(c: Context, gl: &mut GlGraphics, players: (&GoElem, &GoElem), near_pos: [f64; 2], slot: Slot)
 {
-	if cursor.press && (near_pos[0] != 0.0 && near_pos[1] != 0.0)
+	match slot
 	{
-		match slot
-		{
-			Slot::PlayerOne => {
-				let transform = c.transform.trans(near_pos[0], near_pos[1]).scale(players.0.scale, players.0.scale);
-				Image::new_color([1.0, 1.0, 1.0, 0.6]).draw(&players.0.elem, &DrawState::new_alpha(), transform, gl);
-			},
-			_ 				=> {
-				let transform = c.transform.trans(near_pos[0], near_pos[1]).scale(players.1.scale, players.1.scale);
-				Image::new_color([1.0, 1.0, 1.0, 0.6]).draw(&players.1.elem, &DrawState::new_alpha(), transform, gl);
-			},
-		}
+		Slot::PlayerOne => {
+			let transform = c.transform.trans(near_pos[0], near_pos[1]).scale(players.0.scale, players.0.scale);
+			Image::new_color([1.0, 1.0, 1.0, 0.6]).draw(&players.0.elem, &DrawState::new_alpha(), transform, gl);
+		},
+		_ 				=> {
+			let transform = c.transform.trans(near_pos[0], near_pos[1]).scale(players.1.scale, players.1.scale);
+			Image::new_color([1.0, 1.0, 1.0, 0.6]).draw(&players.1.elem, &DrawState::new_alpha(), transform, gl);
+		},
 	}
 }
 
@@ -55,7 +52,7 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 			if map.hint_map[y][x] == HintSlot::CapturePlayerOne || map.hint_map[y][x] == HintSlot::CapturePlayerTwo
 			{
 				println!("y {} x {} val {:?}", y, x, map.hint_map[y][x]);
-				draw_shadow(c, gl, cursor, players, [new_posx as f64, new_posy as f64 ], Slot::PlayerOne);
+				draw_shadow(c, gl, players, [new_posx as f64, new_posy as f64 ], Slot::PlayerOne);
 			}
 
 			if cursor.press && 
@@ -83,5 +80,8 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 			}
 		}
 	}
-	draw_shadow(c, gl, cursor, players, near_pos, slot);
+	if cursor.press
+	{
+		draw_shadow(c, gl, players, near_pos, slot);
+	}
 }
