@@ -1,4 +1,4 @@
-use goban::map::{Map, Slot, HintSlot};
+use goban::map::{Map, slot::{Slot, HintSlot}};
 use std::slice::Iter;
 
 #[derive(Debug)]
@@ -38,6 +38,14 @@ impl Direction
         let three = self.new_coordonate(two);
 
         (map.find_value(one), map.find_value(two), map.find_value(three))
+    }
+
+    pub fn next_two<'a>(&self, (x, y): (i32, i32), map: &'a Map) -> (&'a Slot, &'a Slot)
+    {
+        let one = self.new_coordonate((x, y));
+        let two = self.new_coordonate(one);
+
+        (map.find_value(one), map.find_value(two))
     }
 
     pub fn capture(&self, (x, y): (i32, i32), map: &mut Map) -> ()

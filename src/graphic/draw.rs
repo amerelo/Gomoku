@@ -3,7 +3,7 @@ use graphics::*;
 use opengl_graphics::{ GlGraphics };
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
-use goban::map::{Map, Slot, HintSlot};
+use goban::map::{Map, slot::{Slot, HintSlot}};
 use goban::player::{Player};
 
 const GOBANPOS: (f64, f64) = (70.0, 40.0);

@@ -1,26 +1,10 @@
+pub mod slot;
+
 use goban::player::{Player, PlayerKind};
 use goban::direction::{Direction};
-// use std::ops::Add;
+use goban::map::slot::{Slot, HintSlot};
 
 const  SIZEMAP: usize = 19;
-
-#[derive(Debug, PartialEq)]
-pub enum Slot
-{
-    PlayerOne,
-    PlayerTwo,
-    Empty,
-    Forbidden,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum HintSlot
-{
-    Used,
-    Empty,
-    CapturePlayerOne,
-    CapturePlayerTwo,
-}
 
 #[derive(Debug)]
 pub struct Map
@@ -215,7 +199,7 @@ impl Map
         false
     }
 
-    fn is_five_align(&self, (x, y):(i32, i32), (slot_player, _slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
+    fn is_five_align(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
     {
         let mut add = dir_add.new_coordonate((x, y));
         let mut sub = dir_sub.new_coordonate((x, y));
@@ -243,9 +227,16 @@ impl Map
 
         let total_add = slot_winning![&slot_player; [slot_add_one, slot_add_two, slot_add_three, slot_add_four]];
         let total_sub = slot_winning![&slot_player; [slot_sub_one, slot_sub_two, slot_sub_three, slot_sub_four]];
-		
+
         // println!("dir {:?} : =>  total add {} total sub {}", (dir_add, dir_sub), total_add, total_sub);
-        total_add + total_sub >= 4 // 4 because the current slot isn't taking in consideration in slot_winning! macro
+        // 4 because the current slot isn't taking in consideration in slot_winning! macro
+        total_add + total_sub >= 4 && self.is_uncapturable((x, y), (slot_player, slot_enemy), (dir_add, dir_sub))
+    }
+
+    fn is_uncapturable(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), (dir_add, dir_sub): (&Direction, &Direction)) -> bool
+    {
+        
+        true
     }
 
     pub fn update_hint_map(&mut self, (x, y):(i32, i32), deaph: usize) -> ()

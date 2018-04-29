@@ -11,7 +11,8 @@ use opengl_graphics::{ GlGraphics, OpenGL };
 
 // use fps_counter::FPSCounter;
 use goban::player::{Player};
-use goban::map::{Map, Slot, HintSlot};
+use goban::map::{Map, slot::{Slot, HintSlot}};
+
 // use graphics::*;
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
