@@ -44,6 +44,19 @@ macro_rules! find_slot_enemy
 }
 
 #[macro_export]
+macro_rules! find_slots_players
+{
+    ($n:expr) =>
+    {
+        match $n
+        {
+            Player::One => (&Slot::PlayerOne, &Slot::PlayerTwo),
+            _           => (&Slot::PlayerTwo, &Slot::PlayerOne)
+        };
+    }
+}
+
+#[macro_export]
 macro_rules! slot_cmp_or
 {
     ($slot:expr; [ $( $value:expr ),* ]) =>
@@ -78,5 +91,24 @@ macro_rules! slot_cmp
         {
             0
         }
+    }}
+}
+
+#[macro_export]
+macro_rules! slot_winning
+{
+    ($player:expr; $value:expr) =>
+    {{
+        let mut count:usize = 0;
+    
+        for slot in $value.iter()
+        {
+            if slot != $player
+            {
+                break
+            }
+            count += 1;
+        }
+        count
     }}
 }

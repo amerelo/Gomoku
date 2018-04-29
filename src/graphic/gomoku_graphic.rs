@@ -57,6 +57,7 @@ impl App
 		if !tmp_cursor.press && tmp_cursor.place_piece &&
 			map.is_available((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32)) == Slot::Empty
 		{
+			map.is_winning_move((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32));
 			map.number_captured((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32), true);
 			map.value[tmp_cursor.cursor_in_board[1]][tmp_cursor.cursor_in_board[0]] = find_slot_player!(map.current_player);//map.get_palyer_slot();
 			map.change_player_turn();

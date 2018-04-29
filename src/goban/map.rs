@@ -202,5 +202,53 @@ impl Map
             return &Slot::Forbidden;
         }
         &self.value[y as usize][x as usize]
-    }    
+    }
+
+    pub fn is_winning_move(&self, (x, y):(i32, i32)) -> bool
+    {
+        for axe in Direction::axes_iterator()
+        {
+            if self.is_five_align((x, y), find_slots_players!(self.current_player), axe)
+            {
+                println!("FIVE ALIGN FOR PLAYER {:?} !!!", find_slot_player!(self.current_player));
+                return true;
+            }
+        }
+        false
+    }
+
+    fn is_five_align(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
+    {
+        let mut count:usize = 0;
+
+        let mut add = dir_add.new_coordonate((x, y));
+        let mut sub = dir_sub.new_coordonate((x, y));
+
+        let slot_add_one = self.find_value(add);
+        let slot_sub_one = self.find_value(sub);
+
+        add = dir_add.new_coordonate(add);
+        sub = dir_sub.new_coordonate(sub);
+        
+        let slot_add_two = self.find_value(add);
+        let slot_sub_two = self.find_value(sub);
+
+        add = dir_add.new_coordonate(add);
+        sub = dir_sub.new_coordonate(sub);
+
+        let slot_add_three = self.find_value(add);
+        let slot_sub_three = self.find_value(sub);
+
+        add = dir_add.new_coordonate(add);
+        sub = dir_sub.new_coordonate(sub);
+
+        let slot_add_four = self.find_value(add);
+        let slot_sub_four = self.find_value(sub);
+
+        let total_add = slot_winning![&slot_player; [slot_add_one, slot_add_two, slot_add_three, slot_add_four]];
+        let total_sub = slot_winning![&slot_player; [slot_sub_one, slot_sub_two, slot_sub_three, slot_sub_four]];
+		
+        // println!("dir {:?} : =>  total add {} total sub {}", (dir_add, dir_sub), total_add, total_sub);
+        total_add + total_sub >= 4 // 4 because the current slot isn't taking in consideration in slot_winning! macro
+    }
 }
