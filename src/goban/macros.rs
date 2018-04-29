@@ -44,6 +44,19 @@ macro_rules! find_slot_enemy
 }
 
 #[macro_export]
+macro_rules! find_player
+{
+    ($n:expr) =>
+    {
+        match $n
+        {
+            HintSlot::CapturePlayerOne => Player::One,
+            _                          => Player::Two
+        };
+    }
+}
+
+#[macro_export]
 macro_rules! find_slots_players
 {
     ($n:expr) =>

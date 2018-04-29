@@ -51,8 +51,7 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 
 			if map.hint_map[y][x] == HintSlot::CapturePlayerOne || map.hint_map[y][x] == HintSlot::CapturePlayerTwo
 			{
-				println!("y {} x {} val {:?}", y, x, map.hint_map[y][x]);
-				draw_shadow(c, gl, players, [new_posx as f64, new_posy as f64 ], Slot::PlayerOne);
+				draw_shadow(c, gl, players, [new_posx as f64, new_posy as f64 ], find_slot_player![find_player![map.hint_map[y][x]], Slot::PlayerOne, Slot::PlayerTwo]);
 			}
 
 			if cursor.press && 
