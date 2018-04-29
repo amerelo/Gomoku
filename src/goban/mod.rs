@@ -38,6 +38,18 @@ mod tests
         map
     }
 
+    fn init_with_five_slot() -> Map
+    {
+        let mut map = Map {..Default::default() };
+
+        map.value[4][5] = Slot::PlayerOne;
+        map.value[4][3] = Slot::PlayerOne;
+	    map.value[4][2] = Slot::PlayerOne;
+        map.value[4][1] = Slot::PlayerOne;
+
+        map
+    }
+
 	#[test]
 	fn slot_is_available_0()
     {
@@ -89,5 +101,14 @@ mod tests
 
         // x == 1 && y == 4
 		assert_eq!(map.is_available((1, 4)), Slot::Forbidden);
+	}
+
+    #[test]
+	fn winning_five_6()
+    {
+        let mut map = init_with_five_slot();
+
+		assert_eq!(map.is_winning_move((4, 4)), true);
+		assert_eq!(map.is_winning_move((5, 3)), false);
 	}
 }
