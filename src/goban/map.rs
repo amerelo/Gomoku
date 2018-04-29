@@ -256,14 +256,14 @@ impl Map
             if self.find_value(coord) == &Slot::Empty
                 && self.number_captured(coord, false) > 0
             {
-                self.hint_map[y as usize][x as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
+                self.hint_map[coord.1 as usize][coord.0 as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
                 continue ;
             }
             coord = dir.new_coordonate(coord);
             if self.find_value(coord) == &Slot::Empty
                 && self.number_captured(coord, false) > 0
             {
-                self.hint_map[y as usize][x as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
+                self.hint_map[coord.1 as usize][coord.0 as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
                 continue ;
             }
             if deaph < 3
@@ -274,7 +274,7 @@ impl Map
             if self.find_value(coord) == &Slot::Empty
                 && self.number_captured(coord, false) > 0
             {
-                self.hint_map[y as usize][x as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
+                self.hint_map[coord.1 as usize][coord.0 as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
             }
         }
     }
