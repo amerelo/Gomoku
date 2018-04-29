@@ -2,7 +2,8 @@
 extern crate piston;
 extern crate graphics;
 // extern crate glutin_window;
-extern crate sdl2_window;
+// extern crate sdl2_window;
+extern crate piston_window;
 extern crate opengl_graphics;
 extern crate fps_counter;
 // extern crate piston_window;
@@ -39,3 +40,7 @@ fn main()
 	// 	println!("{} {:?}", t.len(), t);
 	// }
 }
+
+
+// [dependencies.pistoncore-sdl2_window]
+// git = "https://github.com/PistonDevelopers/sdl2_window"

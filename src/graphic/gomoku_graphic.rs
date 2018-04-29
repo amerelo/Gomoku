@@ -1,5 +1,8 @@
 use piston::window::WindowSettings;
-use sdl2_window::Sdl2Window as Window;
+
+// use sdl2_window::Sdl2Window as Window;
+use piston_window::*;
+use piston_window::PistonWindow as Window;
 use piston::event_loop::*;
 use piston::input::*;
 use opengl_graphics::{ GlGraphics, OpenGL };
@@ -51,7 +54,19 @@ impl App
 		{
 			clear(BACKGROUND, gl);
 			draw_goban(c, gl, goban);
-			draw_player(c, gl, map, &mut tmp_cursor, players)
+			draw_player(c, gl, map, &mut tmp_cursor, players);
+			
+			// let ref font = assets.join("FiraSans-Regular.ttf");
+    		// let factory = window.factory.clone();
+	
+    		// let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
+		// 	let transform = c.transform.trans(10.0, 100.0);
+		// 	Text::new_color([0.0, 1.0, 0.0, 1.0], 32).draw(
+        //         "Hello world!",
+        //         &mut glyphs,
+        //         &c.draw_state,
+        //         transform, gl
+        //     ).unwrap();
 		});
 
 		if !tmp_cursor.press && tmp_cursor.place_piece &&
@@ -77,7 +92,6 @@ pub fn start()
 {
 	let opengl = OpenGL::V3_2;
 
-	// Create an Glutin window.
 	let mut window: Window = WindowSettings::new(
 			"Gomoku",
 			[800, 700]
