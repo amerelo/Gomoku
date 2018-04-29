@@ -6,7 +6,7 @@ use graphic::cursor::{ Cursor };
 use goban::map::{Map, Slot};
 use goban::player::{Player};
 
-const GOBANPOS: (f64, f64) = (70.0, 0.0);
+const GOBANPOS: (f64, f64) = (70.0, 40.0);
 const GOBAN_BOARD_X: f64 = 8.0;
 const GOBAN_BOARD_Y: f64 = 10.0;
 const GOBAN_SPACE: f64 = 34.5;
@@ -41,15 +41,16 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 {
 	let mut near_pos: [f64; 2] = [0.0, 0.0];
 	let board_x = GOBANPOS.0 + GOBAN_BOARD_X;
+	let board_y = GOBANPOS.1 + GOBAN_BOARD_Y;
 	let slot =  find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
 
 	for (y, pos_y) in map.value.iter().enumerate()
 	{
-		let new_posy = GOBAN_BOARD_Y + y as f64 * GOBAN_SPACE;
+		let new_posy = board_y + y as f64 * GOBAN_SPACE;
 		for (x, pos_x) in pos_y.iter().enumerate()
 		{
-			// near_pos
 			let new_posx = board_x + x as f64 * GOBAN_SPACE;
+
 			if cursor.press && 
 				((new_posx - cursor.cursor_pos[0]).abs() + (new_posy - cursor.cursor_pos[1]).abs()) < 
 				((near_pos[0] - cursor.cursor_pos[0]).abs() + (near_pos[1] - cursor.cursor_pos[1]).abs())

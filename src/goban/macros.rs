@@ -20,7 +20,7 @@ macro_rules! mapinit
 #[macro_export]
 macro_rules! find_slot_player
 {
-    ($n:expr, $one:expr, $two:expr) =>
+    ($n:expr , $one:expr, $two:expr) =>
     {
         match $n
         {

@@ -12,14 +12,15 @@ use opengl_graphics::{ GlGraphics, OpenGL };
 // use fps_counter::FPSCounter;
 use goban::player::{Player};
 use goban::map::{Map, Slot, HintSlot};
-use graphics::*;
+// use graphics::*;
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
 use graphic::draw::{ draw_goban, draw_player };
 
 use find_folder::Search;
 
-const BACKGROUND:[f32; 4] = [0.2, 0.2, 0.2, 1.0];
+const BACKGROUND:[f32; 4] = [0.65, 0.55, 0.45, 1.0];
+// 0.95, 0.69, 0.50
 
 pub struct App {
 	// fps: FPSCounter,
@@ -82,11 +83,31 @@ impl App
 	}
 }
 
+
+fn draw_text(e: Event, window: &mut PistonWindow<Sdl2Window>)
+{
+	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
+	let ref font = assets.join("DejaVuSerif.ttf");
+	let factory = window.factory.clone();
+	let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
+
+	window.draw_2d(&e, |c, gl| {
+		let transform = c.transform.trans(5.0, 20.0);
+
+		let _ = Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
+			"Score : 3",
+			&mut glyphs,
+			&c.draw_state,
+			transform, gl
+		);
+	});
+}
+
 pub fn start()
 {
 	let opengl = OpenGL::V3_2;
 
-	let mut window: PistonWindow<Sdl2Window>= WindowSettings::new(
+	let mut window: PistonWindow<Sdl2Window> = WindowSettings::new(
 			"Gomoku",
 			[800, 700]
 		)
@@ -98,12 +119,6 @@ pub fn start()
 
 	let mut app = App::new(opengl);
 	let mut events = Events::new(EventSettings::new());
-
-
-	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
-	let ref font = assets.join("DejaVuSerif.ttf");
-	let factory = window.factory.clone();
-	let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
 
 	window.set_lazy(true);
 	while let Some(e) = events.next(&mut window)
@@ -146,16 +161,6 @@ pub fn start()
 			// 	println!("pos mouse -> {:?}", pos);
 			// }
 		}
-
-		window.draw_2d(&e, |c, gl| {
-			let transform = c.transform.trans(10.0, 100.0);
-
-			let _ = text::Text::new_color([0.4, 0.4, 0.4, 1.0], 32).draw(
-				"Hola Alexis",
-				&mut glyphs,
-				&c.draw_state,
-				transform, gl
-			);
-		});
+		draw_text(e, &mut window);
 	}
 }
