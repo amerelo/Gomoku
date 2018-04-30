@@ -108,15 +108,15 @@ macro_rules! slot_cmp
 }
 
 #[macro_export]
-macro_rules! slot_winning
+macro_rules! slots_winning
 {
-    ($player:expr; $value:expr) =>
+    ($player:expr; $enemy:expr; $map:expr; $value:expr) =>
     {{
         let mut count:usize = 0;
     
         for slot in $value.iter()
         {
-            if slot != $player
+            if *slot.1 != *$player || $map.is_capturable(slot.0, ($player, $enemy))
             {
                 break
             }

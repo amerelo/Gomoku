@@ -201,42 +201,64 @@ impl Map
 
     fn is_five_align(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
     {
-        let mut add = dir_add.new_coordonate((x, y));
-        let mut sub = dir_sub.new_coordonate((x, y));
+        if self.is_capturable((x, y), (slot_player, slot_enemy))
+        {
+            return false;
+        }
 
-        let slot_add_one = self.find_value(add);
-        let slot_sub_one = self.find_value(sub);
+        let coord_add_one = dir_add.new_coordonate((x, y));
+        let coord_sub_one = dir_sub.new_coordonate((x, y));
 
-        add = dir_add.new_coordonate(add);
-        sub = dir_sub.new_coordonate(sub);
-        
-        let slot_add_two = self.find_value(add);
-        let slot_sub_two = self.find_value(sub);
+        let slot_add_one = self.find_value(coord_add_one);
+        let slot_sub_one = self.find_value(coord_sub_one);
 
-        add = dir_add.new_coordonate(add);
-        sub = dir_sub.new_coordonate(sub);
+        let coord_add_two = dir_add.new_coordonate(coord_add_one);
+        let coord_sub_two = dir_sub.new_coordonate(coord_sub_one);
 
-        let slot_add_three = self.find_value(add);
-        let slot_sub_three = self.find_value(sub);
+        let slot_add_two = self.find_value(coord_add_two);
+        let slot_sub_two = self.find_value(coord_sub_two);
 
-        add = dir_add.new_coordonate(add);
-        sub = dir_sub.new_coordonate(sub);
+        let coord_add_three = dir_add.new_coordonate(coord_add_two);
+        let coord_sub_three = dir_sub.new_coordonate(coord_sub_two);
 
-        let slot_add_four = self.find_value(add);
-        let slot_sub_four = self.find_value(sub);
+        let slot_add_three = self.find_value(coord_add_three);
+        let slot_sub_three = self.find_value(coord_sub_three);
 
-        let total_add = slot_winning![&slot_player; [slot_add_one, slot_add_two, slot_add_three, slot_add_four]];
-        let total_sub = slot_winning![&slot_player; [slot_sub_one, slot_sub_two, slot_sub_three, slot_sub_four]];
+        let coord_add_four = dir_add.new_coordonate(coord_add_three);
+        let coord_sub_four = dir_sub.new_coordonate(coord_sub_three);
+
+        let slot_add_four = self.find_value(coord_add_four);
+        let slot_sub_four = self.find_value(coord_sub_four);
+
+        let total_add = slots_winning![slot_player; &slot_enemy; self; [(coord_add_one, slot_add_one), (coord_add_two, slot_add_two), (coord_add_three, slot_add_three), (coord_add_four, slot_add_four)]];
+        let total_sub = slots_winning![slot_player; &slot_enemy; self; [(coord_sub_one, slot_sub_one), (coord_sub_two, slot_sub_two), (coord_sub_three, slot_sub_three), (coord_sub_four, slot_sub_four)]];
 
         // println!("dir {:?} : =>  total add {} total sub {}", (dir_add, dir_sub), total_add, total_sub);
         // 4 because the current slot isn't taking in consideration in slot_winning! macro
-        total_add + total_sub >= 4 && self.is_uncapturable((x, y), (slot_player, slot_enemy), (dir_add, dir_sub))
+        total_add + total_sub >= 4
     }
 
-    fn is_uncapturable(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), (dir_add, dir_sub): (&Direction, &Direction)) -> bool
+    fn is_capturable(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot)) -> bool
     {
-        
-        true
+        for &(ref dir_add, ref dir_sub) in Direction::axes_iterator()
+        {
+            let (slot_add_one, slot_add_two) = dir_add.next_two((x, y), self);
+            let (slot_sub_one, slot_sub_two) = dir_sub.next_two((x, y), self);
+
+            let is_capturable = match (slot_add_two, slot_add_one, slot_sub_one, slot_sub_two)
+            {
+                (a, b, c, _) if (a, b, c) == (&Slot::Empty, slot_player, slot_enemy) => true,
+                (a, b, c, _) if (a, b, c) == (slot_enemy, slot_player, &Slot::Empty) => true,
+                (_, b, c, d) if (b, c, d) == (&Slot::Empty, slot_player, slot_enemy) => true,
+                (_, b, c, d) if (b, c, d) == (slot_enemy, slot_player, &Slot::Empty) => true,
+                _                                                                    => false
+            };
+            if is_capturable
+            {
+                return true;
+            }
+        }
+        false
     }
 
     pub fn update_hint_map(&mut self, (x, y):(i32, i32), deaph: usize) -> ()
