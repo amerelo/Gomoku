@@ -7,11 +7,11 @@ pub enum Slot
     Forbidden,
 }
 
-#[derive(Debug, PartialEq)]
-pub enum HintSlot
-{
-    Used,
-    Empty,
-    CapturePlayerOne,
-    CapturePlayerTwo,
-}
+// #[derive(Debug, PartialEq)]
+// pub enum HintSlot
+// {
+//     Used,
+//     Empty,
+//     CapturePlayerOne,
+//     CapturePlayerTwo,
+// }

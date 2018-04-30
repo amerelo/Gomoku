@@ -2,7 +2,7 @@ pub mod slot;
 
 use goban::player::{Player, PlayerKind};
 use goban::direction::{Direction};
-use goban::map::slot::{Slot, HintSlot};
+use goban::map::slot::{Slot};
 
 const  SIZEMAP: usize = 19;
 
@@ -10,7 +10,6 @@ const  SIZEMAP: usize = 19;
 pub struct Map
 {
     pub value: Vec<Vec<Slot>>,
-    pub hint_map: Vec<Vec<HintSlot>>,
     pub players_kind: (PlayerKind, PlayerKind), // easier way for handling players number and players kind
     pub players_score: (usize, usize),
     pub current_player: Player,
@@ -24,7 +23,6 @@ impl Default for Map
         Map
         {
             value: mapinit![SIZEMAP, Slot::Empty],
-            hint_map: mapinit![SIZEMAP, HintSlot::Empty],
             players_kind: (PlayerKind::Human, PlayerKind::Human),
             players_score: (0, 0),
             current_player: Player::One,
@@ -38,7 +36,6 @@ impl Map
     pub fn reset(&mut self) -> ()
     {
         self.value = mapinit![SIZEMAP, Slot::Empty];
-        self.hint_map = mapinit![SIZEMAP, HintSlot::Empty];
         self.players_score = (0, 0);
         self.current_player = Player::One;
         self.is_finish = false;
@@ -233,12 +230,11 @@ impl Map
         let total_add = slots_winning![slot_player; &slot_enemy; self; [(coord_add_one, slot_add_one), (coord_add_two, slot_add_two), (coord_add_three, slot_add_three), (coord_add_four, slot_add_four)]];
         let total_sub = slots_winning![slot_player; &slot_enemy; self; [(coord_sub_one, slot_sub_one), (coord_sub_two, slot_sub_two), (coord_sub_three, slot_sub_three), (coord_sub_four, slot_sub_four)]];
 
-        // println!("dir {:?} : =>  total add {} total sub {}", (dir_add, dir_sub), total_add, total_sub);
         // 4 because the current slot isn't taking in consideration in slot_winning! macro
         total_add + total_sub >= 4
     }
 
-    fn is_capturable(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot)) -> bool
+    pub fn is_capturable(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot)) -> bool
     {
         for &(ref dir_add, ref dir_sub) in Direction::axes_iterator()
         {
@@ -259,36 +255,5 @@ impl Map
             }
         }
         false
-    }
-
-    pub fn update_hint_map(&mut self, (x, y):(i32, i32), deaph: usize) -> ()
-    {
-        for dir in Direction::iterator()
-        {
-            let mut coord = dir.new_coordonate((x, y));
-            if self.find_value(coord) == &Slot::Empty
-                && self.number_captured(coord, false) > 0
-            {
-                self.hint_map[coord.1 as usize][coord.0 as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
-                continue ;
-            }
-            coord = dir.new_coordonate(coord);
-            if self.find_value(coord) == &Slot::Empty
-                && self.number_captured(coord, false) > 0
-            {
-                self.hint_map[coord.1 as usize][coord.0 as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
-                continue ;
-            }
-            if deaph < 3
-            {
-                continue ;
-            }
-            coord = dir.new_coordonate(coord);
-            if self.find_value(coord) == &Slot::Empty
-                && self.number_captured(coord, false) > 0
-            {
-                self.hint_map[coord.1 as usize][coord.0 as usize] = find_slot_player![self.current_player, HintSlot::CapturePlayerOne, HintSlot::CapturePlayerTwo];
-            }
-        }
     }
 }
