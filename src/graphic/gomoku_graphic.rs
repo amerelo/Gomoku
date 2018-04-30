@@ -117,14 +117,9 @@ pub fn start()
 		.unwrap();
 
 	let mut app = App::new(opengl);
-	let mut events = Events::new(EventSettings::new()).max_fps(200);
+	let mut events = Events::new(EventSettings::new());
+	// .max_fps(200)
 	// .lazy(true)
-
-
-	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
-	let ref font = assets.join("DejaVuSerif.ttf");
-	let factory = window.factory.clone();
-	let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
 
 	window.set_lazy(true);
 	while let Some(e) = events.next(&mut window)
