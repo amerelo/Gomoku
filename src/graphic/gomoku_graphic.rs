@@ -12,7 +12,6 @@ use opengl_graphics::{ GlGraphics, OpenGL };
 use fps_counter::FPSCounter;
 use goban::player::{Player};
 use goban::map::{Map, slot::{Slot}};
-
 // use graphics::*;
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
@@ -42,8 +41,8 @@ impl App
 			gl: GlGraphics::new(opengl),
 			map: Map {..Default::default() },
 			goban: GoElem::new("resources/goban.png", 1.5),
-			go_w: GoElem::new("resources/w_1.png", 0.09),
-			go_b: GoElem::new("resources/black.png", 0.10),
+			go_b: GoElem::new("resources/w_1.png", 0.09),
+			go_w: GoElem::new("resources/black.png", 0.10),
 			cursor: Cursor::new(),
 		}
 	}
@@ -121,6 +120,13 @@ pub fn start()
 	let mut events = Events::new(EventSettings::new()).max_fps(200);
 	// .lazy(true)
 
+
+	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
+	let ref font = assets.join("DejaVuSerif.ttf");
+	let factory = window.factory.clone();
+	let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
+
+	window.set_lazy(true);
 	while let Some(e) = events.next(&mut window)
 	{
 		if let Some(button) = e.press_args()

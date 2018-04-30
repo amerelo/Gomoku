@@ -11,6 +11,17 @@ const GOBAN_BOARD_X: f64 = 8.0;
 const GOBAN_BOARD_Y: f64 = 10.0;
 const GOBAN_SPACE: f64 = 34.5;
 
+const COLOR_WS: [f32; 4] = [1.0, 1.0, 1.0, 0.6];
+const COLOR_W: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+const COLOR_R: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+
+enum Colors
+{
+	SHADOW,
+	NORMAL,
+	RED,
+}
+
 pub fn draw_goban(c: Context, gl: &mut GlGraphics, goban: &GoElem)
 {
 	let (newx, newy) = (GOBANPOS.0, GOBANPOS.1);
@@ -19,17 +30,27 @@ pub fn draw_goban(c: Context, gl: &mut GlGraphics, goban: &GoElem)
 	image(&goban.elem, transform2, gl);
 }
 
+fn draw_img(gl: &mut GlGraphics, player: &GoElem, transform: [[f64; 3]; 2], cl: Colors)
+{
+	match cl 
+	{
+		Colors::SHADOW => Image::new_color(COLOR_WS).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
+		Colors::NORMAL => Image::new_color(COLOR_W).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
+		Colors::RED => Image::new_color(COLOR_R).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
+	}
+}
+
 fn draw_shadow(c: Context, gl: &mut GlGraphics, players: (&GoElem, &GoElem), near_pos: [f64; 2], slot: Slot)
 {
 	match slot
 	{
 		Slot::PlayerOne => {
 			let transform = c.transform.trans(near_pos[0], near_pos[1]).scale(players.0.scale, players.0.scale);
-			Image::new_color([1.0, 1.0, 1.0, 0.6]).draw(&players.0.elem, &DrawState::new_alpha(), transform, gl);
+			draw_img(gl, players.0, transform, Colors::SHADOW);
 		},
 		_ 				=> {
 			let transform = c.transform.trans(near_pos[0], near_pos[1]).scale(players.1.scale, players.1.scale);
-			Image::new_color([1.0, 1.0, 1.0, 0.6]).draw(&players.1.elem, &DrawState::new_alpha(), transform, gl);
+			draw_img(gl, &players.1, transform, Colors::SHADOW);
 		},
 	}
 }
@@ -41,7 +62,6 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 	let board_y = GOBANPOS.1 + GOBAN_BOARD_Y;
 	let slot =  find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
 
-	// println!("----------------------> draw");
 	for (y, pos_y) in map.value.iter().enumerate()
 	{
 		let new_posy = board_y + y as f64 * GOBAN_SPACE;
@@ -64,16 +84,17 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 				{
 					Slot::PlayerOne => {
 						let transform = c.transform.trans(new_posx, new_posy).scale(players.0.scale, players.0.scale);
-						image(&players.0.elem, transform, gl);
+						draw_img(gl, &players.0, transform, Colors::NORMAL);
 					},
 					_ 				=> {
 						let transform = c.transform.trans(new_posx, new_posy).scale(players.1.scale, players.1.scale);
-						image(&players.1.elem, transform, gl);
+						draw_img(gl, &players.1, transform, Colors::NORMAL);
 					},
 				}
 			}
 		}
 	}
+
 	if cursor.press
 	{
 		draw_shadow(c, gl, players, near_pos, slot);
