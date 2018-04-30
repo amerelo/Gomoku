@@ -9,7 +9,7 @@ use sdl2_window::Sdl2Window;
 // use piston::input::*;
 use opengl_graphics::{ GlGraphics, OpenGL };
 
-// use fps_counter::FPSCounter;
+use fps_counter::FPSCounter;
 use goban::player::{Player};
 use goban::map::{Map, Slot, HintSlot};
 // use graphics::*;
@@ -23,7 +23,7 @@ const BACKGROUND:[f32; 4] = [0.65, 0.55, 0.45, 1.0];
 // 0.95, 0.69, 0.50
 
 pub struct App {
-	// fps: FPSCounter,
+	fps: FPSCounter,
 	gl: GlGraphics, // OpenGL drawing backend.
 	goban: GoElem,
 	go_w: GoElem,
@@ -37,7 +37,7 @@ impl App
 	fn new(opengl: OpenGL) -> Self
 	{
 		App {
-			// fps: FPSCounter::new(),
+			fps: FPSCounter::new(),
 			gl: GlGraphics::new(opengl),
 			map: Map {..Default::default() },
 			goban: GoElem::new("resources/goban.png", 1.5),
@@ -47,14 +47,13 @@ impl App
 		}
 	}
 	
-	fn render(&mut self, args: &RenderArgs)
+	fn render(&mut self, args: &RenderArgs) //RenderArgs
 	{
 		let goban = &self.goban;
 		let map = &mut self.map;
 		let players = (&self.go_w, &self.go_b);
 		let mut tmp_cursor = &mut self.cursor;
 
-		// println!("fps => {}", self.fps.tick());
 		self.gl.draw(args.viewport(), |c, gl|
 		{
 			clear(BACKGROUND, gl);
@@ -76,17 +75,17 @@ impl App
 		}
 	}
 
-	fn update(&mut self, _args: &UpdateArgs)
-	{
+	// fn update(&mut self, _args: &UpdateArgs)
+	// {
 		// println!("fps => {}", self.fps.tick());
 		// println!("time => {}", args.dt);
 		// Rotate 2 radians per second.
 		// self.rotation += 2.0 * args.dt;
-	}
+	// }
 }
 
 
-fn draw_text(e: Event, window: &mut PistonWindow<Sdl2Window>)
+fn draw_text(e: Event, window: &mut PistonWindow<Sdl2Window>, app: &mut App)
 {
 	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
 	let ref font = assets.join("DejaVuSerif.ttf");
@@ -96,8 +95,9 @@ fn draw_text(e: Event, window: &mut PistonWindow<Sdl2Window>)
 	window.draw_2d(&e, |c, gl| {
 		let transform = c.transform.trans(5.0, 20.0);
 
+		// println!("{}",  );
 		let _ = Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
-			"Score : 42",
+			&format!("fps: {}", app.fps.tick()),
 			&mut glyphs,
 			&c.draw_state,
 			transform, gl
@@ -120,21 +120,11 @@ pub fn start()
 		.unwrap();
 
 	let mut app = App::new(opengl);
-	let mut events = Events::new(EventSettings::new());
+	let mut events = Events::new(EventSettings::new()).max_fps(200);
+	// .lazy(true)
 
-	window.set_lazy(true);
 	while let Some(e) = events.next(&mut window)
 	{
-		if let Some(r) = e.render_args()
-		{
-			app.render(&r);
-		}
-
-		if let Some(u) = e.update_args()
-		{
-			app.update(&u);
-		}
-
 		if let Some(button) = e.press_args()
 		{
 			if button == Button::Mouse(MouseButton::Left)
@@ -163,6 +153,19 @@ pub fn start()
 			// 	println!("pos mouse -> {:?}", pos);
 			// }
 		}
-		draw_text(e, &mut window);
+
+		if let Some(r) = e.render_args()
+		{
+			// println!("fps => {}", app.fps.tick());
+			app.render(&r);
+		}
+
+		// if let Some(u) = e.update_args()
+		// {
+		// 	println!("--------- {:?}", u);
+		// 	app.update(&u);
+		// }
+
+		draw_text(e, &mut window, &mut app);
 	}
 }

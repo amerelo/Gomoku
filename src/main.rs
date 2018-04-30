@@ -13,7 +13,6 @@ mod goban;
 mod graphic;
 use graphic::gomoku_graphic::start;
 
-
 // use goban::map::{Map, Slot};
 // use goban::player::{Player, PlayerKind};
 
