@@ -14,15 +14,18 @@ mod goban;
 mod graphic;
 use graphic::gomoku_graphic::start;
 
-// use goban::map::{Map, Slot};
+mod heuristic;
+use goban::map::{Map, slot::Slot};
 // use goban::player::{Player, PlayerKind};
 
 fn main()
 {
-	start();
-	// let mut map = Map {..Default::default() };
-
-	// map.value[3][1] = Slot::PlayerOne;
+	// start();
+	let mut map = Map {..Default::default() };
+	println!("{}", heuristic::current_value(&mut map, (3, 2), (&Slot::PlayerOne, &Slot::PlayerTwo)));
+	map.value[1][3] = Slot::PlayerOne;
+	map.value[3][3] = Slot::PlayerOne;
+	println!("{}", heuristic::current_value(&mut map, (3, 2), (&Slot::PlayerOne, &Slot::PlayerTwo)));
 	// map.value[5][1] = Slot::PlayerOne;
 	// map.value[4][3] = Slot::PlayerOne;
 	// map.value[4][2] = Slot::PlayerOne;

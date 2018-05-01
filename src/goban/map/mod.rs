@@ -69,11 +69,9 @@ impl Map
         self.is_available(dir.new_coordonate((x, y))) == Slot::Empty
     }
 
-    pub fn number_captured(&mut self, (x, y):(i32, i32), with_delete: bool) -> usize
+    pub fn number_captured(&mut self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), with_delete: bool) -> usize
     {
         let mut count:usize = 0;
-        let slot_player = &find_slot_player![self.current_player, Slot::PlayerOne, Slot::PlayerTwo];
-        let slot_enemy = &find_slot_enemy![self.current_player, Slot::PlayerOne, Slot::PlayerTwo];
 
         for dir in Direction::iterator()
         {
@@ -106,6 +104,58 @@ impl Map
         else
         {
             0
+        }
+    }
+
+    pub fn number_aligned(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot)) -> usize
+    {
+        let mut count:usize = 0;
+
+        for dir in Direction::iterator()
+        {
+            count += self.is_align(dir, (x, y), (slot_player, slot_enemy));
+        }
+        count
+    }
+
+    fn is_align(&self, dir: &Direction, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot)) -> usize
+    {
+        match dir.next_three((x, y), self)
+        {
+            (a, b, c) if (a, b, c) == (slot_player, slot_player, slot_player)  => 4,
+            (a, b, c) if (a, b, c) == (slot_player, slot_player, &Slot::Empty) => 3,
+            (a, b, c) if (a, b, c) == (&Slot::Empty, slot_player, slot_player) => 3,
+            (a, b, c) if (a, b, c) == (slot_player, &Slot::Empty, slot_player) => 3,
+            (a, b, _) if (a, b) == (slot_player, slot_player)                  => 2,
+            (a, b, _) if (a, b) == (slot_player, &Slot::Empty)                 => 1,
+            (a, b, _) if (a, b) == (&Slot::Empty, slot_player)                 => 1,
+            _                                                                  => 0
+        }
+    }
+
+    pub fn number_cut(&self, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot)) -> usize
+    {
+        let mut count:usize = 0;
+
+        for dir in Direction::iterator()
+        {
+            count += self.is_cut(dir, (x, y), (slot_player, slot_enemy));
+        }
+        count
+    }
+
+    fn is_cut(&self, dir: &Direction, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot)) -> usize
+    {
+        match dir.next_three((x, y), self)
+        {
+            (a, b, c) if (a, b, c) == (slot_enemy, slot_enemy, slot_enemy)   => 4,
+            (a, b, c) if (a, b, c) == (slot_enemy, slot_enemy, &Slot::Empty) => 3,
+            (a, b, c) if (a, b, c) == (&Slot::Empty, slot_enemy, slot_enemy) => 3,
+            (a, b, c) if (a, b, c) == (slot_enemy, &Slot::Empty, slot_enemy) => 3,
+            (a, b, _) if (a, b) == (slot_enemy, slot_enemy)                  => 2,
+            (a, b, _) if (a, b) == (slot_enemy, &Slot::Empty)                => 1,
+            (a, b, _) if (a, b) == (&Slot::Empty, slot_enemy)                => 1,
+            _                                                                => 0
         }
     }
 
