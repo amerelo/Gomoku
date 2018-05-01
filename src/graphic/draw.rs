@@ -13,7 +13,7 @@ const GOBAN_SPACE: f64 = 34.5;
 
 const COLOR_WS: [f32; 4] = [1.0, 1.0, 1.0, 0.6];
 const COLOR_W: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
-const COLOR_R: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+const COLOR_R: [f32; 4] = [1.0, 0.0, 0.0, 0.6];
 
 enum Colors
 {
