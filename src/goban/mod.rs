@@ -7,9 +7,9 @@ pub mod map;
 #[cfg(test)]
 mod tests
 {
-    use goban::player::{Player, PlayerKind};
+    use goban::player::{Player};
     use goban::direction::{Direction};
-    use goban::map::{Map, Slot};
+    use goban::map::{Map, slot::Slot};
 
     fn init() -> Map
     {
@@ -109,6 +109,9 @@ mod tests
         let mut map = init_with_five_slot();
 
 		assert_eq!(map.is_winning_move((4, 4)), true);
+        map.value[5][4] = Slot::PlayerTwo;
+        map.value[3][4] = Slot::PlayerOne;
+		assert_eq!(map.is_winning_move((4, 4)), false);
 		assert_eq!(map.is_winning_move((5, 3)), false);
 	}
 }
