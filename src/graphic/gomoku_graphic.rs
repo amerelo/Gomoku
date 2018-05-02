@@ -70,6 +70,7 @@ impl App
 			let action = start_min_max(&map);
 
 			map.value[action.x_y.1][action.x_y.0] = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
+			map.number_captured((action.x_y.0 as i32, action.x_y.1 as i32), (&Slot::PlayerTwo, &Slot::PlayerOne), true);
 			map.change_player_turn();
 		} 
 		else if !tmp_cursor.press && tmp_cursor.place_piece &&
@@ -84,7 +85,7 @@ impl App
 			map.value[tmp_cursor.cursor_in_board[1]][tmp_cursor.cursor_in_board[0]] = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);//map.get_palyer_slot();
 			map.change_player_turn();
 
-			// println!("player one {}\nplayer two {}\n", heuristic::map_value(map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
+			println!("player one {}\nplayer two {}\n", heuristic::map_value(map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
 			
 			tmp_cursor.place_piece = false;
 		}
@@ -116,6 +117,14 @@ fn draw_text(e: Event, window: &mut PistonWindow<Sdl2Window>, app: &mut App)
 			&c.draw_state,
 			transform, gl
 		);
+		let transform = c.transform.trans(5.0, 40.0);
+		let _ = Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
+			&format!("Turn: {}", app.map.turn),
+			&mut glyphs,
+			&c.draw_state,
+			transform, gl
+		);
+
 	});
 }
 
@@ -182,6 +191,50 @@ pub fn start()
 		// 	app.update(&u);
 		// }
 
+		draw_hint(&e, &mut window, &mut app);
 		draw_text(e, &mut window, &mut app);
+	}
+
+	fn draw_hint(e: &Event, window: &mut PistonWindow<Sdl2Window>, app: &mut App)
+	{
+		let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
+		let ref font = assets.join("DejaVuSerif.ttf");
+		let factory = window.factory.clone();
+		let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
+
+		const GOBAN_SPACE: f64 = 34.5;
+		const GOBANPOS: (f64, f64) = (70.0, 40.0);
+		const GOBAN_BOARD_X: f64 = 8.0;
+		const GOBAN_BOARD_Y: f64 = 10.0;
+		let board_x = GOBANPOS.0 + GOBAN_BOARD_X;
+		let board_y = GOBANPOS.1 + GOBAN_BOARD_Y;
+		let mut map = &mut app.map.clone();
+		let mut map2 = app.map.clone();
+		let slot_player = find_slot_player![map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
+
+		for (y, pos_y) in map.value.iter().enumerate()
+		{
+			let new_posy = board_y + y as f64 * GOBAN_SPACE;
+			for (x, pos_x) in pos_y.iter().enumerate()
+			{
+				let new_posx = board_x + x as f64 * GOBAN_SPACE;
+
+				if  Slot::Empty == *pos_x
+				{
+					map2.value[y][x] = slot_player;
+					window.draw_2d(e, |c, gl| {
+						let transform = c.transform.trans(new_posx, new_posy);
+						let _ = Text::new_color([0.0, 0.0, 0.0, 1.0], 10).draw(
+							&format!("{}", heuristic::map_value(&map2, find_slots_players![map.current_player])),
+							&mut glyphs,
+							&c.draw_state,
+							transform, gl
+						);
+					});
+					map2.value[y][x] = Slot::Empty;
+				}
+			}
+		}
+
 	}
 }
