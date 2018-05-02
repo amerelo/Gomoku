@@ -11,6 +11,7 @@ extern crate fps_counter;
 
 #[macro_use]
 mod goban;
+mod minmax;
 mod graphic;
 use graphic::gomoku_graphic::start;
 
