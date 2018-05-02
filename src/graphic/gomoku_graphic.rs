@@ -8,6 +8,7 @@ use sdl2_window::Sdl2Window;
 // use piston::event_loop::*;
 // use piston::input::*;
 use opengl_graphics::{ GlGraphics, OpenGL };
+use find_folder::Search;
 
 use fps_counter::FPSCounter;
 use goban::player::{Player};
@@ -16,8 +17,8 @@ use goban::map::{Map, slot::{Slot}};
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
 use graphic::draw::{ draw_goban, draw_player };
-
-use find_folder::Search;
+use minmax::recursive::{ start_min_max };
+use minmax::action::{ Action };
 use heuristic;
 
 const BACKGROUND:[f32; 4] = [0.65, 0.55, 0.45, 1.0];
@@ -62,18 +63,29 @@ impl App
 			draw_player(c, gl, map, &mut tmp_cursor, players);
 		});
 
-		if !tmp_cursor.press && tmp_cursor.place_piece &&
+
+		// let player_turn = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
+		if map.current_player == Player::Two
+		{
+			let action = start_min_max(&map);
+
+			map.value[action.x_y.1][action.x_y.0] = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
+			map.change_player_turn();
+		} 
+		else if !tmp_cursor.press && tmp_cursor.place_piece &&
 			map.is_available((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32)) == Slot::Empty
 		{
 			let slot_player = &find_slot_player![map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
-	        let slot_enemy = &find_slot_enemy![map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
+			let slot_enemy = &find_slot_enemy![map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
 
 			map.is_winning_move((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32));
 			
 			map.number_captured((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32), (slot_player, slot_enemy), true);
 			map.value[tmp_cursor.cursor_in_board[1]][tmp_cursor.cursor_in_board[0]] = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);//map.get_palyer_slot();
 			map.change_player_turn();
-			println!("player one {}\nplayer two {}\n", heuristic::map_value(map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
+
+			// println!("player one {}\nplayer two {}\n", heuristic::map_value(map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
+			
 			tmp_cursor.place_piece = false;
 		}
 	}
@@ -86,7 +98,6 @@ impl App
 		// self.rotation += 2.0 * args.dt;
 	// }
 }
-
 
 fn draw_text(e: Event, window: &mut PistonWindow<Sdl2Window>, app: &mut App)
 {

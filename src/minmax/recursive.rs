@@ -1,14 +1,106 @@
+use minmax::action::{ Action };
+use goban::map::{ Map, slot::{Slot} };
+use goban::player::{Player};
+use heuristic;
 
-use minmax::node::{ Node };
-use goban::map::{ Map };
-
-fn solver()
+enum Turn
 {
-
+	MIN,
+	MAX
 }
 
-pub fn start_min_max(map: &mut Map)
+fn try_place(map: Map, x: usize, y: usize) -> Action
 {
+	let mut action = Action::new(map, (x, y));
 
-	solver();
+	let slot_player = &find_slot_player![action.map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
+	let slot_enemy = &find_slot_enemy![action.map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
+
+	// action.map.is_winning_move(x, y);
+	action.number_captured = action.map.number_captured((x as i32, y as i32), (slot_player, slot_enemy), true);
+	action.map.value[y as usize ][x as usize] = find_slot_player!(action.map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
+	action.map.change_player_turn();
+
+	action
+}
+
+
+fn best_action(turn: Turn, tmp_vec: Vec<Action>) -> Action
+{
+	if tmp_vec.is_empty()
+	{
+		println!("empty vec ----------------------------- :(");
+	}
+
+	let mut action = Action::new(tmp_vec[0].map.clone() , tmp_vec[0].x_y);
+
+	match turn 
+	{
+		Turn::MAX  => {
+			for elem in tmp_vec.iter()
+			{
+				if elem.value > action.value
+				{
+					action = elem.clone();
+				}
+			}
+		}
+		_		=> {
+			for elem in tmp_vec.iter()
+			{
+				if elem.value < action.value
+				{
+					action = elem.clone();
+				}
+			}
+		}
+	}
+
+	action
+}
+
+fn solver(depth: i32, map: &mut Map, turn: Turn) -> Action
+{
+	if depth == 0
+	{
+		let mut last_action: Action = Action::new(map.clone(), (0, 0));
+
+		last_action.value =	heuristic::map_value(map, (&Slot::PlayerOne, &Slot::PlayerTwo));
+
+		return last_action;
+	}
+	let mut tmp_vec: Vec<Action> = vec![];
+
+	for (y, elem_y) in map.value.iter().enumerate()
+	{
+		for (x, _elem_x) in elem_y.iter().enumerate()
+		{
+			let mut new_map = map.clone();
+			if new_map.is_available((x as i32, y as i32)) == Slot::Empty
+			{
+				let mut new_trun: Turn;
+				match turn {
+					Turn::MAX => new_trun = Turn::MIN,
+					Turn::MIN => new_trun = Turn::MAX
+				}
+				let mut new_action = try_place(new_map, x, y);
+				new_action.value = solver(depth - 1, &mut new_action.map, new_trun).value;
+				// println!("x_y {:?}", new_action.x_y);
+				tmp_vec.push(new_action);
+			}
+		}
+	}
+
+	// println!(">>>>>>>>>>>>>>.. ===== {:?}", tmp_vec);
+
+	return best_action(turn, tmp_vec);
+}
+
+pub fn start_min_max(map: &Map) -> Action
+{
+	let depth: i32 = 2;
+
+	let action = solver(depth, &mut map.clone(), Turn::MAX);
+	println!("x = {}, y = {}", action.x_y.0, action.x_y.1);
+	return action;
 }

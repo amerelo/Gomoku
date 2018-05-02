@@ -6,7 +6,7 @@ use goban::map::slot::{Slot};
 
 const  SIZEMAP: usize = 19;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Map
 {
     pub value: Vec<Vec<Slot>>,

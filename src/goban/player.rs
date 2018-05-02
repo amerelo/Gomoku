@@ -1,11 +1,11 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum PlayerKind
 {
     Human,
     AI,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Player
 {
     One,

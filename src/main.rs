@@ -13,9 +13,9 @@ extern crate fps_counter;
 mod goban;
 mod minmax;
 mod graphic;
-use graphic::gomoku_graphic::start;
-
 mod heuristic;
+
+use graphic::gomoku_graphic::start;
 use goban::map::{Map, slot::Slot};
 // use goban::player::{Player, PlayerKind};
 
@@ -23,28 +23,12 @@ fn main()
 {
 	start();
 	// let mut map = Map {..Default::default() };
+	// start_min_max(&mut map);
+
+	// println!("{}", heuristic::current_value(&mut map, (3, 2), (&Slot::PlayerOne, &Slot::PlayerTwo)));
 	// map.value[1][3] = Slot::PlayerOne;
 	// map.value[3][3] = Slot::PlayerOne;
-	// // println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
-	// map.value[1][2] = Slot::PlayerTwo;
-	// // println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
-	// map.value[2][2] = Slot::PlayerTwo;
-	// // println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
-	// map.value[3][2] = Slot::PlayerTwo;
-	// // println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
-	// // map.value[4][2] = Slot::PlayerTwo;
-	// // println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
-	// map.value[5][2] = Slot::PlayerTwo;
-	// // println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
-
-
-    //     map.value[4][5] = Slot::PlayerOne;
-    //     map.value[4][3] = Slot::PlayerOne;
-	//     map.value[4][2] = Slot::PlayerOne;
-    //     map.value[4][1] = Slot::PlayerOne;
-    //     map.value[4][4] = Slot::PlayerTwo;
-	// println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
-	// map.print_map();
+	// println!("{}", heuristic::current_value(&mut map, (3, 2), (&Slot::PlayerOne, &Slot::PlayerTwo)));
 	// map.value[5][1] = Slot::PlayerOne;
 	// map.value[4][3] = Slot::PlayerOne;
 	// map.value[4][2] = Slot::PlayerOne;

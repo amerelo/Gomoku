@@ -60,7 +60,7 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 	let mut near_pos: [f64; 2] = [0.0, 0.0];
 	let board_x = GOBANPOS.0 + GOBAN_BOARD_X;
 	let board_y = GOBANPOS.1 + GOBAN_BOARD_Y;
-	let slot =  find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
+	let slot = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
 
 	for (y, pos_y) in map.value.iter().enumerate()
 	{
@@ -79,7 +79,6 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 
 			if  Slot::Empty != *pos_x
 			{
-
 				match *pos_x
 				{
 					Slot::PlayerOne => {
