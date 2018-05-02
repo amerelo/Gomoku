@@ -179,20 +179,23 @@ pub fn map_value(map: & Map, (slot_player, slot_enemy): (& Slot, & Slot)) -> i32
     let mut value: i32 = 0;
 
 
-    value += crossbeam::scope(|scope|
-    {
-            let a = scope.spawn(|| -> i32 {
-                map_value_diagonal(map, (slot_player, slot_enemy))
-            });
-            let b = scope.spawn(|| -> i32 {
-                map_value_vertical(map, (slot_player, slot_enemy))
-            });
-            let c = scope.spawn(|| -> i32 {
-                map_value_horizontal(map, (slot_player, slot_enemy))
-            });
-            a.join() + b.join() + c.join()
-    });
+    // value += crossbeam::scope(|scope|
+    // {
+    //         let a = scope.spawn(|| -> i32 {
+    //             map_value_diagonal(map, (slot_player, slot_enemy))
+    //         });
+    //         let b = scope.spawn(|| -> i32 {
+    //             map_value_vertical(map, (slot_player, slot_enemy))
+    //         });
+    //         let c = scope.spawn(|| -> i32 {
+    //             map_value_horizontal(map, (slot_player, slot_enemy))
+    //         });
+    //         a.join() + b.join() + c.join()
+    // });
 
+    value += map_value_diagonal(map, (slot_player, slot_enemy));
+    value += map_value_vertical(map, (slot_player, slot_enemy));
+    value += map_value_horizontal(map, (slot_player, slot_enemy));
     value += find_score![slot_player, map.players_score] * U_SCORE;
     value
 }
