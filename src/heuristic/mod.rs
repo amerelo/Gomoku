@@ -1,6 +1,9 @@
 use goban::direction::{Direction};
 use goban::map::{Map, slot::Slot};
 
+use std::thread;
+extern crate crossbeam;
+
 const  WIN: i32 = 100;
 const  IS_CAPTURED: i32 = -5;
 const  U_SCORE: i32 = 10;
@@ -34,7 +37,7 @@ pub fn current_value(map: &mut Map, (x, y):(i32, i32), (slot_player, slot_enemy)
     value
 }
 
-fn map_value_vertical(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) -> i32
+fn map_value_vertical(map: &Map, (slot_player, slot_enemy): (&Slot, &Slot)) -> i32
 {
     let mut value: i32 = 0;
     let mut x: i32 = 0;
@@ -60,7 +63,7 @@ fn map_value_vertical(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) 
     value
 }
 
-fn map_value_horizontal(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) -> i32
+fn map_value_horizontal(map: &Map, (slot_player, slot_enemy): (&Slot, &Slot)) -> i32
 {
     let mut value: i32 = 0;
     let mut x: i32;
@@ -86,7 +89,7 @@ fn map_value_horizontal(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)
     value
 }
 
-fn map_value_diagonal(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) -> i32
+fn map_value_diagonal(map: &Map, (slot_player, slot_enemy): (&Slot, &Slot)) -> i32
 {
     let mut value: i32 = 0;
     let mut x: i32;
@@ -168,20 +171,28 @@ fn map_value_diagonal(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) 
         }
         x -= 1;
     }
-
     value
 }
 
-pub fn map_value(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) -> i32
+pub fn map_value(map: & Map, (slot_player, slot_enemy): (& Slot, & Slot)) -> i32
 {
     let mut value: i32 = 0;
 
-    value += map_value_vertical(map, (slot_player, slot_enemy));
-    println!("{}", value);
-    value += map_value_horizontal(map, (slot_player, slot_enemy));
-    println!("{}", value);
-    value += map_value_diagonal(map, (slot_player, slot_enemy));
-    println!("{}", value);
+
+    value += crossbeam::scope(|scope|
+    {
+            let a = scope.spawn(|| -> i32 {
+                map_value_diagonal(map, (slot_player, slot_enemy))
+            });
+            let b = scope.spawn(|| -> i32 {
+                map_value_vertical(map, (slot_player, slot_enemy))
+            });
+            let c = scope.spawn(|| -> i32 {
+                map_value_horizontal(map, (slot_player, slot_enemy))
+            });
+            a.join() + b.join() + c.join()
+    });
+
     value += find_score![slot_player, map.players_score] * U_SCORE;
     value
 }
