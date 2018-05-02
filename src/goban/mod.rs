@@ -10,6 +10,7 @@ mod tests
     use goban::player::{Player};
     use goban::direction::{Direction};
     use goban::map::{Map, slot::Slot};
+    use heuristic;
 
     fn init() -> Map
     {

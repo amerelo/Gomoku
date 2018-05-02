@@ -49,8 +49,8 @@ fn map_value_vertical(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) 
             match &map.value[y as usize][x as usize]
             {
                 slot if slot == &Slot::Empty => { y += 1; empty_before = true; },
-                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::Down, (x, y), slot, empty_before); y += tuple.1; value += tuple.0; }
-                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::Down, (x, y), slot, empty_before); y += tuple.1; value -= tuple.0; }
+                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::Down, (x, y), (slot, slot_enemy), empty_before); y += tuple.1; value += tuple.0; }
+                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::Down, (x, y), (slot, slot_player), empty_before); y += tuple.1; value -= tuple.0; }
                 _                            => { y += 1 }
             }
         }
@@ -75,8 +75,8 @@ fn map_value_horizontal(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)
             match &map.value[y as usize][x as usize]
             {
                 slot if slot == &Slot::Empty => { x += 1; empty_before = true; },
-                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::Right, (x, y), slot, empty_before); x += tuple.1; value += tuple.0; }
-                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::Right, (x, y), slot, empty_before); x += tuple.1; value -= tuple.0; }
+                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::Right, (x, y), (slot, slot_enemy), empty_before); x += tuple.1; value += tuple.0; }
+                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::Right, (x, y), (slot, slot_player), empty_before); x += tuple.1; value -= tuple.0; }
                 _                            => { x += 1 }
             }
         }
@@ -103,8 +103,8 @@ fn map_value_diagonal(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) 
             match &map.value[c_bis as usize][x as usize]
             {
                 slot if slot == &Slot::Empty => { x += 1; c_bis += 1; empty_before = true; },
-                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::DownRight, (x, c_bis), slot, empty_before); x += tuple.1; c_bis += tuple.1; value += tuple.0; }
-                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::DownRight, (x, c_bis), slot, empty_before); x += tuple.1; c_bis += tuple.1; value -= tuple.0; }
+                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::DownRight, (x, c_bis), (slot, slot_enemy), empty_before); x += tuple.1; c_bis += tuple.1; value += tuple.0; }
+                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::DownRight, (x, c_bis), (slot, slot_player), empty_before); x += tuple.1; c_bis += tuple.1; value -= tuple.0; }
                 _                            => { x += 1; c_bis += 1 }
             }
         }
@@ -122,8 +122,8 @@ fn map_value_diagonal(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) 
             match &map.value[y as usize][c_bis as usize]
             {
                 slot if slot == &Slot::Empty => { y += 1; c_bis += 1; empty_before = true; },
-                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::DownRight, (c_bis, y), slot, empty_before); y += tuple.1; c_bis += tuple.1; value += tuple.0; }
-                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::DownRight, (c_bis, y), slot, empty_before); y += tuple.1; c_bis += tuple.1; value -= tuple.0; }
+                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::DownRight, (c_bis, y), (slot, slot_enemy), empty_before); y += tuple.1; c_bis += tuple.1; value += tuple.0; }
+                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::DownRight, (c_bis, y), (slot, slot_player), empty_before); y += tuple.1; c_bis += tuple.1; value -= tuple.0; }
                 _                            => { y += 1; c_bis += 1 }
             }
         }
@@ -141,8 +141,8 @@ fn map_value_diagonal(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) 
             match &map.value[c_bis as usize][x as usize]
             {
                 slot if slot == &Slot::Empty => { x -= 1; c_bis -= 1; empty_before = true; },
-                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::DownLeft, (x, c_bis), slot, empty_before); x -= tuple.1; c_bis -= tuple.1; value += tuple.0; }
-                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::DownLeft, (x, c_bis), slot, empty_before); x -= tuple.1; c_bis -= tuple.1; value -= tuple.0; }
+                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::DownLeft, (x, c_bis), (slot, slot_enemy), empty_before); x -= tuple.1; c_bis -= tuple.1; value += tuple.0; }
+                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::DownLeft, (x, c_bis), (slot, slot_player), empty_before); x -= tuple.1; c_bis -= tuple.1; value -= tuple.0; }
                 _                            => { x -= 1; c_bis -= 1 }
             }
         }
@@ -160,8 +160,8 @@ fn map_value_diagonal(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) 
             match &map.value[y as usize][c_bis as usize]
             {
                 slot if slot == &Slot::Empty => { y -= 1; c_bis -= 1; empty_before = true; },
-                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::DownLeft, (c_bis, y), slot, empty_before); y -= tuple.1; c_bis -= tuple.1; value += tuple.0; }
-                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::DownLeft, (c_bis, y), slot, empty_before); y -= tuple.1; c_bis -= tuple.1; value -= tuple.0; }
+                slot if slot == slot_player  => { let tuple = map.align_value(&Direction::DownLeft, (c_bis, y), (slot, slot_enemy), empty_before); y -= tuple.1; c_bis -= tuple.1; value += tuple.0; }
+                slot if slot == slot_enemy   => { let tuple = map.align_value(&Direction::DownLeft, (c_bis, y), (slot, slot_player), empty_before); y -= tuple.1; c_bis -= tuple.1; value -= tuple.0; }
                 _                            => { y -= 1; c_bis -= 1 }
             }
         }
@@ -176,7 +176,10 @@ pub fn map_value(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) -> i3
     let mut value: i32 = 0;
 
     value += map_value_vertical(map, (slot_player, slot_enemy));
+    println!("{}", value);
     value += map_value_horizontal(map, (slot_player, slot_enemy));
+    println!("{}", value);
     value += map_value_diagonal(map, (slot_player, slot_enemy));
+    println!("{}", value);
     value
 }

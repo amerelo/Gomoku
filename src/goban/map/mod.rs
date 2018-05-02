@@ -307,24 +307,45 @@ impl Map
         false
     }
 
-    pub fn align_value(&self, dir: &Direction, (x, y):(i32, i32), slot: &Slot, empty_before: bool) -> (i32, i32)
+    pub fn align_value(&self, dir: &Direction, (x, y):(i32, i32), (slot_player, slot_enemy): (&Slot, &Slot), empty_before: bool) -> (i32, i32)
     {
+        // add check is_wining move for 4 or 5 slot
         match dir.next_four((x, y), self)
         {
-            (a, b, c, d) if (a, b, c, d) == (slot, slot, slot, slot)                         => (100, 5),
-            (a, b, c, d) if (a, b, c, d) == (slot, slot, slot, &Slot::Empty) && empty_before => (6, 4),
-            (a, b, c, d) if (a, b, c, d) == (slot, slot, slot, &Slot::Empty)                 => (5, 4),
-            (a, b, c, d) if (a, b, c, d) == (&Slot::Empty, slot, slot, slot)                 => (5, 5),
-            (a, b, c, _) if (a, b, c) == (slot, slot, &Slot::Empty)                          => (4, 3),
-            (a, b, c, _) if (a, b, c) == (slot, &Slot::Empty, slot)                          => (4, 4),
-            (a, b, c, _) if (a, b, c) == (&Slot::Empty, slot, slot) && empty_before          => (4, 4),
-            (a, b, c, d) if (a, b, c, d) == (&Slot::Empty, slot, slot, slot)                 => (4, 5),
+            (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, slot_player)                  => (100, 5),
+            (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, &Slot::Empty) && empty_before => (20, 4),
+            (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, &Slot::Empty, slot_player)                 => (20, 4),
+            (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, &Slot::Empty)                 => (20, 4),
+            (a, b, c, d) if (a, b, c, d) == (&Slot::Empty, slot_player, slot_player, slot_player)                 => (5, 5),
+            (a, b, c, _) if (a, b, c) == (slot_player, slot_player, &Slot::Empty)                                 => (4, 3),
+            (a, b, c, _) if (a, b, c) == (slot_player, &Slot::Empty, slot_player)                                 => (4, 4),
+            (a, b, c, _) if (a, b, c) == (&Slot::Empty, slot_player, slot_player) && empty_before                 => (4, 4),
+            (a, b, c, _) if (a, b, c) == (slot_enemy, slot_enemy, &Slot::Empty)                                   => (8, 3),
+            (a, b, _, _) if (a, b) == (slot_player, slot_enemy) && empty_before                                   => (-8, 3),
+            (a, b, c, d) if (a, b, c, d) == (&Slot::Empty, slot_player, slot_player, slot_player)                 => (4, 5),
 
-            (a, b, c, d) if (a, b, c, d) == (slot, &Slot::Empty, slot, &Slot::Empty)         => (3, 4),
-            (a, b, c, d) if (a, b, c, d) == (slot, slot, &Slot::Empty, &Slot::Empty)         => (3, 4),
-            (a, b, c, _) if (a, b, c) == (slot, &Slot::Empty, &Slot::Empty) && empty_before  => (2, 3),
-            (a, b, _, _) if (a, b) == (&Slot::Empty, slot)                                   => (2, 3),
-            _                                                                                => (0, 1)
+            (a, b, c, d) if (a, b, c, d) == (slot_player, &Slot::Empty, slot_player, &Slot::Empty)                => (3, 4),
+            (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, &Slot::Empty, &Slot::Empty)                => (3, 4),
+            (a, b, c, _) if (a, b, c) == (slot_player, &Slot::Empty, &Slot::Empty) && empty_before                => (2, 3),
+            (a, b, _, _) if (a, b) == (&Slot::Empty, slot_player)                                                 => (2, 3),
+            _                                                                                                     => (0, 1)
+        }
+    }
+
+    pub fn print_map(&self) -> ()
+    {
+        for y in &self.value
+        {
+            for x in y
+            {
+                match x
+                {
+                    _ if x == &Slot::Empty     => print!("- "),
+                    _ if x == &Slot::PlayerOne => print!("1 "),
+                    _                         => print!("2 ")
+                }
+            }
+            print!("\n");
         }
     }
 }
