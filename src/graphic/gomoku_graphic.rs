@@ -18,6 +18,7 @@ use graphic::cursor::{ Cursor };
 use graphic::draw::{ draw_goban, draw_player };
 
 use find_folder::Search;
+use heuristic;
 
 const BACKGROUND:[f32; 4] = [0.65, 0.55, 0.45, 1.0];
 // 0.95, 0.69, 0.50
@@ -68,9 +69,11 @@ impl App
 	        let slot_enemy = &find_slot_enemy![map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
 
 			map.is_winning_move((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32));
+			
 			map.number_captured((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32), (slot_player, slot_enemy), true);
 			map.value[tmp_cursor.cursor_in_board[1]][tmp_cursor.cursor_in_board[0]] = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);//map.get_palyer_slot();
 			map.change_player_turn();
+			println!("player one {}\nplayer two {}\n", heuristic::map_value(map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
 			tmp_cursor.place_piece = false;
 		}
 	}

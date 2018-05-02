@@ -313,7 +313,9 @@ impl Map
         match dir.next_four((x, y), self)
         {
             (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, slot_player)                  => (100, 5),
-            (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, &Slot::Empty) && empty_before => (20, 4),
+            (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, &Slot::Empty) && empty_before => (80, 4),
+            (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, &Slot::Empty)                 => (20, 4),
+            (a, b, c, d) if (a, b, c) == (slot_player, slot_player, slot_player) && empty_before                  => (20, 4),
             (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, &Slot::Empty, slot_player)                 => (20, 4),
             (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, &Slot::Empty)                 => (20, 4),
             (a, b, c, d) if (a, b, c, d) == (&Slot::Empty, slot_player, slot_player, slot_player)                 => (5, 5),

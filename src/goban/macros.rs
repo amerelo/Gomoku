@@ -44,6 +44,19 @@ macro_rules! find_slot_enemy
 }
 
 #[macro_export]
+macro_rules! find_score
+{
+    ($n:expr, $scores:expr) =>
+    {
+        match $n
+        {
+            &Slot::PlayerOne => $scores.0 as i32,
+            _                => $scores.1 as i32
+        };
+    }
+}
+
+#[macro_export]
 macro_rules! find_slots_players
 {
     ($n:expr) =>

@@ -3,6 +3,7 @@ use goban::map::{Map, slot::Slot};
 
 const  WIN: i32 = 100;
 const  IS_CAPTURED: i32 = -5;
+const  U_SCORE: i32 = 10;
 const  U_CAPTURE: i32 = 5;
 const  U_ALIGN: i32 = 2;
 const  U_CUT: i32 = 2;
@@ -181,5 +182,6 @@ pub fn map_value(map: &mut Map, (slot_player, slot_enemy): (&Slot, &Slot)) -> i3
     println!("{}", value);
     value += map_value_diagonal(map, (slot_player, slot_enemy));
     println!("{}", value);
+    value += find_score![slot_player, map.players_score] * U_SCORE;
     value
 }
