@@ -16,7 +16,7 @@ mod graphic;
 mod heuristic;
 
 use graphic::gomoku_graphic::start;
-use goban::map::{Map, slot::Slot};
+// use goban::map::{Map, slot::Slot};
 // use goban::player::{Player, PlayerKind};
 
 fn main()

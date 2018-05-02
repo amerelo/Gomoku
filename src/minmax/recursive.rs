@@ -10,6 +10,7 @@ enum Turn
 	MAX
 }
 
+
 fn try_place(map: Map, x: usize, y: usize) -> Action
 {
 	let mut action = Action::new(map, (x, y));
@@ -57,7 +58,6 @@ fn best_action(turn: Turn, tmp_vec: Vec<Action>) -> Action
 			}
 		}
 	}
-
 	action
 }
 
@@ -66,7 +66,6 @@ fn solver(depth: i32, map: &mut Map, turn: Turn) -> Action
 	if depth == 0
 	{
 		let mut last_action: Action = Action::new(map.clone(), (0, 0));
-
 													  // first slot is for the player we want the score
 		last_action.value =	heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne));
 

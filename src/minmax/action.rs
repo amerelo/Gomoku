@@ -1,5 +1,7 @@
-use goban::map::{Map};
+use std::cmp::Ordering;
 use std::i32::{MIN, MAX};
+
+use goban::map::{Map};
 
 #[derive(Debug, Clone)]
 pub struct Action
