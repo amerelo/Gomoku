@@ -306,4 +306,25 @@ impl Map
         }
         false
     }
+
+    pub fn align_value(&self, dir: &Direction, (x, y):(i32, i32), slot: &Slot, empty_before: bool) -> (i32, i32)
+    {
+        match dir.next_four((x, y), self)
+        {
+            (a, b, c, d) if (a, b, c, d) == (slot, slot, slot, slot)                         => (100, 5),
+            (a, b, c, d) if (a, b, c, d) == (slot, slot, slot, &Slot::Empty) && empty_before => (6, 4),
+            (a, b, c, d) if (a, b, c, d) == (slot, slot, slot, &Slot::Empty)                 => (5, 4),
+            (a, b, c, d) if (a, b, c, d) == (&Slot::Empty, slot, slot, slot)                 => (5, 5),
+            (a, b, c, _) if (a, b, c) == (slot, slot, &Slot::Empty)                          => (4, 3),
+            (a, b, c, _) if (a, b, c) == (slot, &Slot::Empty, slot)                          => (4, 4),
+            (a, b, c, _) if (a, b, c) == (&Slot::Empty, slot, slot) && empty_before          => (4, 4),
+            (a, b, c, d) if (a, b, c, d) == (&Slot::Empty, slot, slot, slot)                 => (4, 5),
+
+            (a, b, c, d) if (a, b, c, d) == (slot, &Slot::Empty, slot, &Slot::Empty)         => (3, 4),
+            (a, b, c, d) if (a, b, c, d) == (slot, slot, &Slot::Empty, &Slot::Empty)         => (3, 4),
+            (a, b, c, _) if (a, b, c) == (slot, &Slot::Empty, &Slot::Empty) && empty_before  => (2, 3),
+            (a, b, _, _) if (a, b) == (&Slot::Empty, slot)                                   => (2, 3),
+            _                                                                                => (0, 1)
+        }
+    }
 }

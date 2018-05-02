@@ -31,6 +31,16 @@ impl Direction
         }
     }
 
+    pub fn next_four<'a>(&self, (x, y): (i32, i32), map: &'a Map) -> (&'a Slot, &'a Slot, &'a Slot, &'a Slot)
+    {
+        let one = self.new_coordonate((x, y));
+        let two = self.new_coordonate(one);
+        let three = self.new_coordonate(two);
+        let four = self.new_coordonate(three);
+
+        (map.find_value(one), map.find_value(two), map.find_value(three), map.find_value(four))
+    }
+
     pub fn next_three<'a>(&self, (x, y): (i32, i32), map: &'a Map) -> (&'a Slot, &'a Slot, &'a Slot)
     {
         let one = self.new_coordonate((x, y));

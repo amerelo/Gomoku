@@ -22,10 +22,20 @@ fn main()
 {
 	// start();
 	let mut map = Map {..Default::default() };
-	println!("{}", heuristic::current_value(&mut map, (3, 2), (&Slot::PlayerOne, &Slot::PlayerTwo)));
+	// println!("{}", heuristic::current_value(&mut map, (3, 2), (&Slot::PlayerOne, &Slot::PlayerTwo)));
 	map.value[1][3] = Slot::PlayerOne;
 	map.value[3][3] = Slot::PlayerOne;
-	println!("{}", heuristic::current_value(&mut map, (3, 2), (&Slot::PlayerOne, &Slot::PlayerTwo)));
+	println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
+	map.value[1][2] = Slot::PlayerTwo;
+	println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
+	map.value[2][2] = Slot::PlayerTwo;
+	println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
+	map.value[3][2] = Slot::PlayerTwo;
+	println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
+	map.value[4][2] = Slot::PlayerTwo;
+	println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
+	map.value[5][2] = Slot::PlayerTwo;
+	println!("player one {}\nplayer two {}", heuristic::map_value(&mut map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(&mut map, (&Slot::PlayerTwo, &Slot::PlayerOne)));
 	// map.value[5][1] = Slot::PlayerOne;
 	// map.value[4][3] = Slot::PlayerOne;
 	// map.value[4][2] = Slot::PlayerOne;
