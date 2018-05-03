@@ -1,4 +1,5 @@
 use piston::window::WindowSettings;
+use std::path::PathBuf;
 
 // use sdl2_window::Sdl2Window as Window;
 use piston_window::*;
@@ -7,7 +8,7 @@ use sdl2_window::Sdl2Window;
 
 // use piston::event_loop::*;
 // use piston::input::*;
-use opengl_graphics::{ GlGraphics, OpenGL };
+use opengl_graphics::{ GlGraphics, OpenGL, GlyphCache };
 use find_folder::Search;
 
 use fps_counter::FPSCounter;
@@ -16,7 +17,7 @@ use goban::map::{Map};
 // use graphics::*;
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
-use graphic::draw::{ draw_goban, draw_player };
+use graphic::draw::{ draw_goban, draw_player, draw_text };
 use minmax::recursive::{ start_min_max };
 use minmax::action::{ Action };
 use heuristic;
@@ -48,17 +49,21 @@ impl App
 			cursor: Cursor::new(),
 		}
 	}
-	
-	fn render(&mut self, args: &RenderArgs) //RenderArgs
+
+	fn render(&mut self, args: &RenderArgs, mut glyph_cache: &mut GlyphCache) //RenderArgs
 	{
 		let goban = &self.goban;
 		let map = &mut self.map;
 		let players = (&self.go_w, &self.go_b);
 		let mut tmp_cursor = &mut self.cursor;
 
+		let fps = &format!("fps: {}", self.fps.tick());
+
 		self.gl.draw(args.viewport(), |c, gl|
 		{
 			clear(BACKGROUND, gl);
+
+			draw_text(c, gl, &mut glyph_cache, fps);
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, map, &mut tmp_cursor, players);
 		});
@@ -101,33 +106,10 @@ impl App
 	// }
 }
 
-fn draw_text(e: Event, window: &mut PistonWindow<Sdl2Window>, app: &mut App)
-{
-	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
-	let ref font = assets.join("DejaVuSerif.ttf");
-	let factory = window.factory.clone();
-	let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
+// fn draw_text(e: &Event, window: &mut PistonWindow<Sdl2Window>, app: &mut App, glyphs: &Glyphs)
+// {
 
-	window.draw_2d(&e, |c, gl| {
-		let transform = c.transform.trans(5.0, 20.0);
-
-		// println!("{}",  );
-		let _ = Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
-			&format!("fps: {}", app.fps.tick()),
-			&mut glyphs,
-			&c.draw_state,
-			transform, gl
-		);
-		let transform = c.transform.trans(5.0, 40.0);
-		let _ = Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
-			&format!("Turn: {}", app.map.turn),
-			&mut glyphs,
-			&c.draw_state,
-			transform, gl
-		);
-
-	});
-}
+// }
 
 pub fn start()
 {
@@ -147,6 +129,19 @@ pub fn start()
 	let mut events = Events::new(EventSettings::new());
 	// .max_fps(200)
 	// .lazy(true)
+
+	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
+	let ref font = assets.join("DejaVuSerif.ttf");
+	// let factory = window.factory.clone();
+	// let mut glyphs = Glyphs::new(font, factory.clone(), TextureSettings::new()).unwrap();
+
+	let mut glyph_cache = GlyphCache::new(
+	font,
+	(),
+	TextureSettings::new(),
+	).unwrap();
+
+	// let text = Text::new(20);
 
 	window.set_lazy(true);
 	while let Some(e) = events.next(&mut window)
@@ -183,7 +178,9 @@ pub fn start()
 		if let Some(r) = e.render_args()
 		{
 			// println!("fps => {}", app.fps.tick());
-			app.render(&r);
+			app.render(&r, &mut glyph_cache);
+			// draw_text(&e, &mut window, &mut app, &glyphs);
+			// draw_hint(&e, &mut window, &mut app);
 		}
 
 		// if let Some(u) = e.update_args()
@@ -191,11 +188,8 @@ pub fn start()
 		// 	println!("--------- {:?}", u);
 		// 	app.update(&u);
 		// }
-
-		// draw_hint(&e, &mut window, &mut app);
-		draw_text(e, &mut window, &mut app);
 	}
-
+	
 	// fn draw_hint(e: &Event, window: &mut PistonWindow<Sdl2Window>, app: &mut App)
 	// {
 	// 	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
@@ -236,6 +230,5 @@ pub fn start()
 	// 			}
 	// 		}
 	// 	}
-
 	// }
 }

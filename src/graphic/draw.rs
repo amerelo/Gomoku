@@ -1,6 +1,6 @@
 use graphics::*;
 
-use opengl_graphics::{ GlGraphics };
+use opengl_graphics::{ GlGraphics, GlyphCache };
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
 use goban::map::{Map};
@@ -20,6 +20,21 @@ enum Colors
 	SHADOW,
 	NORMAL,
 	RED,
+}
+
+
+pub fn draw_text(c: Context, gl: &mut GlGraphics, glyph_cache: &mut GlyphCache, my_text: &str)
+{
+	text(
+		[0.0, 0.0, 0.0, 1.0],
+		20,
+		my_text,
+		glyph_cache,
+		c.transform.trans(5.0, 20.0),
+		gl,
+	).unwrap();
+
+
 }
 
 pub fn draw_goban(c: Context, gl: &mut GlGraphics, goban: &GoElem)
