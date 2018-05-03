@@ -6,12 +6,7 @@ macro_rules! mapinit
         let mut map = Vec::new();
         for _y in 0..$n
         {
-            let mut vec = Vec::new();
-            for _x in 0..$n
-            {
-                vec.push($val);
-            }
-            map.push(vec)
+            map.push($val);
         }
         map
     }}
@@ -20,12 +15,12 @@ macro_rules! mapinit
 #[macro_export]
 macro_rules! find_slot_player
 {
-    ($n:expr , $one:expr, $two:expr) =>
+    ($n:expr) =>
     {
         match $n
         {
-            Player::One => $one,
-            _           => $two
+            Player::One => 1,
+            _           => 2
         };
     }
 }
@@ -33,12 +28,12 @@ macro_rules! find_slot_player
 #[macro_export]
 macro_rules! find_slot_enemy
 {
-    ($n:expr, $one:expr, $two:expr) =>
+    ($n:expr) =>
     {
         match $n
         {
-            Player::One => $two,
-            _           => $one
+            Player::One => 2,
+            _           => 1
         };
     }
 }
@@ -63,8 +58,8 @@ macro_rules! find_slots_players
     {
         match $n
         {
-            Player::One => (&Slot::PlayerOne, &Slot::PlayerTwo),
-            _           => (&Slot::PlayerTwo, &Slot::PlayerOne)
+            Player::One => (1, 2),
+            _           => (2, 1)
         };
     }
 }

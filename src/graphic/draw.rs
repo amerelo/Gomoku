@@ -3,7 +3,7 @@ use graphics::*;
 use opengl_graphics::{ GlGraphics };
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
-use goban::map::{Map, slot::{Slot}};
+use goban::map::{Map};
 use goban::player::{Player};
 
 const GOBANPOS: (f64, f64) = (70.0, 40.0);
@@ -40,15 +40,15 @@ fn draw_img(gl: &mut GlGraphics, player: &GoElem, transform: [[f64; 3]; 2], cl: 
 	}
 }
 
-fn draw_shadow(c: Context, gl: &mut GlGraphics, players: (&GoElem, &GoElem), near_pos: [f64; 2], slot: Slot)
+fn draw_shadow(c: Context, gl: &mut GlGraphics, players: (&GoElem, &GoElem), near_pos: [f64; 2], slot: i64)
 {
 	match slot
 	{
-		Slot::PlayerOne => {
+		1 => {
 			let transform = c.transform.trans(near_pos[0], near_pos[1]).scale(players.0.scale, players.0.scale);
 			draw_img(gl, players.0, transform, Colors::SHADOW);
 		},
-		_ 				=> {
+		_ => {
 			let transform = c.transform.trans(near_pos[0], near_pos[1]).scale(players.1.scale, players.1.scale);
 			draw_img(gl, &players.1, transform, Colors::SHADOW);
 		},
@@ -60,13 +60,14 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 	let mut near_pos: [f64; 2] = [0.0, 0.0];
 	let board_x = GOBANPOS.0 + GOBAN_BOARD_X;
 	let board_y = GOBANPOS.1 + GOBAN_BOARD_Y;
-	let slot = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
+	let slot = find_slot_player!(map.current_player);
 
 	for (y, pos_y) in map.value.iter().enumerate()
 	{
 		let new_posy = board_y + y as f64 * GOBAN_SPACE;
-		for (x, pos_x) in pos_y.iter().enumerate()
+		for x in 0..19
 		{
+
 			let new_posx = board_x + x as f64 * GOBAN_SPACE;
 
 			if cursor.press && 
@@ -77,19 +78,17 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 				cursor.cursor_in_board = [x, y];
 			}
 
-			if  Slot::Empty != *pos_x
+			match (pos_y & (0o3 << (3 * (18 - x)))) >> 3 * (18 - x)
 			{
-				match *pos_x
-				{
-					Slot::PlayerOne => {
+				1 => {
 						let transform = c.transform.trans(new_posx, new_posy).scale(players.0.scale, players.0.scale);
 						draw_img(gl, &players.0, transform, Colors::NORMAL);
 					},
-					_ 				=> {
+				2 => {
 						let transform = c.transform.trans(new_posx, new_posy).scale(players.1.scale, players.1.scale);
 						draw_img(gl, &players.1, transform, Colors::NORMAL);
 					},
-				}
+				_ => {}
 			}
 		}
 	}

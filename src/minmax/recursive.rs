@@ -1,5 +1,5 @@
 use minmax::action::{ Action };
-use goban::map::{ Map, slot::{Slot} };
+use goban::map::{ Map };
 use goban::player::{Player};
 use heuristic;
 
@@ -20,8 +20,8 @@ fn try_place(map: Map, x: usize, y: usize) -> Action
 
 	// action.map.is_winning_move(x, y);
 
-	action.map.value[y as usize ][x as usize] = find_slot_player!(action.map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
-	action.map.number_captured((x as i32, y as i32), find_slots_players![action.map.current_player], true);
+	action.map.set_value((x as i64, y as i64), find_slot_player!(action.map.current_player));
+	// action.map.number_captured((x as i32, y as i32), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 
 	action
@@ -67,17 +67,18 @@ fn solver(depth: i32, map: &mut Map, turn: Turn) -> Action
 	{
 		let mut last_action: Action = Action::new(map.clone(), (0, 0));
 													  // first slot is for the player we want the score
-		last_action.value =	heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne));
+		// last_action.value =	heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne));
+		last_action.value =	0;
 
 		return last_action;
 	}
 	let mut tmp_vec: Vec<Action> = vec![];
 
-	for (y, elem_y) in map.value.iter().enumerate()
+	for (y, _elem_y) in map.value.iter().enumerate()
 	{
-		for (x, _elem_x) in elem_y.iter().enumerate()
+		for x in 0..19
 		{
-			if map.is_available((x as i32, y as i32)) == Slot::Empty
+			if map.is_available((x as i64, y as i64)) == 0
 			{
 				let mut new_map = map.clone();
 				let mut new_trun: Turn;

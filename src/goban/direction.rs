@@ -1,4 +1,4 @@
-use goban::map::{Map, slot::{Slot}};
+use goban::map::{Map};
 use std::slice::Iter;
 
 #[derive(Debug)]
@@ -16,7 +16,7 @@ pub enum Direction
 
 impl Direction
 {
-    pub fn new_coordonate(&self, (x, y): (i32, i32)) -> (i32, i32)
+    pub fn new_coordonate(&self, (x, y): (i64, i64)) -> (i64, i64)
     {
         match self
         {
@@ -31,7 +31,7 @@ impl Direction
         }
     }
 
-    pub fn next_four<'a>(&self, (x, y): (i32, i32), map: &'a Map) -> (&'a Slot, &'a Slot, &'a Slot, &'a Slot)
+    pub fn next_four(&self, (x, y): (i64, i64), map: & Map) -> (i64, i64, i64, i64)
     {
         let one = self.new_coordonate((x, y));
         let two = self.new_coordonate(one);
@@ -41,7 +41,7 @@ impl Direction
         (map.find_value(one), map.find_value(two), map.find_value(three), map.find_value(four))
     }
 
-    pub fn next_three<'a>(&self, (x, y): (i32, i32), map: &'a Map) -> (&'a Slot, &'a Slot, &'a Slot)
+    pub fn next_three(&self, (x, y): (i64, i64), map: & Map) -> (i64, i64, i64)
     {
         let one = self.new_coordonate((x, y));
         let two = self.new_coordonate(one);
@@ -50,7 +50,7 @@ impl Direction
         (map.find_value(one), map.find_value(two), map.find_value(three))
     }
 
-    pub fn next_two<'a>(&self, (x, y): (i32, i32), map: &'a Map) -> (&'a Slot, &'a Slot)
+    pub fn next_two(&self, (x, y): (i64, i64), map: & Map) -> (i64, i64)
     {
         let one = self.new_coordonate((x, y));
         let two = self.new_coordonate(one);
@@ -58,13 +58,13 @@ impl Direction
         (map.find_value(one), map.find_value(two))
     }
 
-    pub fn capture(&self, (x, y): (i32, i32), map: &mut Map) -> ()
+    pub fn capture(&self, (x, y): (i64, i64), map: &mut Map) -> ()
     {
         let one = self.new_coordonate((x, y));
         let two = self.new_coordonate(one);
 
-        map.value[one.1 as usize][one.0 as usize] = Slot::Empty;
-        map.value[two.1 as usize][two.0 as usize] = Slot::Empty;
+        map.value[one.1 as usize] &= 0o0 << (one.0 * 3);
+        map.value[two.1 as usize] &= 0o0 << (two.0 * 3);
     }
 
     pub fn iterator() -> Iter<'static, Direction>
