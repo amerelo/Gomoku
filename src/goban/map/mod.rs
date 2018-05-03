@@ -77,15 +77,15 @@ impl Map
 			{
 				for x in 0..19
 				{
-					if (elem_y >> ((size_map - x) * 3) & 0x3 ) != 0
+					if ((elem_y >> ((size_map - x) * 3)) & 0x3 ) != 0
 					{
-						area.push(((y - 1) as i64, x as i64));
-						area.push(((y + 1) as i64, x as i64));
-						area.push(((y - 1) as i64, (x - 1) as i64));
-						area.push(((y + 1) as i64, (x - 1) as i64));
-						area.push(((y - 1) as i64, (x + 1) as i64));
+                        area.push(((y as i64 - 1), x as i64));
+                        area.push(((y as i64 - 1), (x as i64 - 1)));
+                        area.push(((y as i64 - 1), (x + 1) as i64));
+						area.push(((y + 1) as i64, (x as i64 - 1)));
 						area.push(((y + 1) as i64, (x + 1) as i64));
-						area.push((y as i64, (x - 1) as i64));
+						area.push(((y + 1) as i64, x as i64));
+						area.push((y as i64, (x as i64 - 1)));
 						area.push((y as i64, (x + 1) as i64));
 					}
 				}	
