@@ -1,5 +1,3 @@
-pub mod slot;
-
 use goban::player::{Player, PlayerKind};
 use goban::direction::{Direction};
 use std::i128;

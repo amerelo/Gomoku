@@ -101,7 +101,7 @@ fn solver(depth: i32, map: &mut Map, turn: Turn) -> Action
 
 pub fn start_min_max(map: &Map) -> Action
 {
-	let depth: i32 = 1;
+	let depth: i32 = 3;
 
 	let action = solver(depth, &mut map.clone(), Turn::MAX);
 	println!("x = {}, y = {}", action.x_y.0, action.x_y.1);
