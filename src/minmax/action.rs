@@ -16,12 +16,12 @@ pub struct Action
 
 impl Action
 {
-	pub fn new(map: Map, x_y: (usize, usize)) -> Self
+	pub fn new(map: Map, x_y: (usize, usize), alpha_beta: (i32, i32)) -> Self
 	{
 		Action {
 			value: 0,
-			alpha: MIN,
-			beta: MAX,
+			alpha: alpha_beta.0,
+			beta: alpha_beta.1,
 			map: map,
 			x_y: x_y,
 			number_captured: 0,

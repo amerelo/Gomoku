@@ -58,25 +58,30 @@ impl App
 		let mut tmp_cursor = &mut self.cursor;
 
 		let fps = &format!("fps: {}", self.fps.tick());
+		// let turn = ;
 
 		self.gl.draw(args.viewport(), |c, gl|
 		{
 			clear(BACKGROUND, gl);
 
-			draw_text(c, gl, &mut glyph_cache, fps);
+			draw_text(c, gl, &mut glyph_cache, fps, c.transform.trans(5.0, 20.0));
+			draw_text(c, gl, &mut glyph_cache, &format!("fps: {}", &format!("Turn: {}", map.turn)), c.transform.trans(5.0, 40.0));
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, map, &mut tmp_cursor, players);
 		});
 
-
 		// let player_turn = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
 		if map.current_player == Player::Two
 		{
-			let action = start_min_max(&map);
-
-			map.set_value((action.x_y.0 as i64, action.x_y.1 as i64), find_slot_player!(map.current_player));
-			// map.number_captured((action.x_y.0 as i32, action.x_y.1 as i32), (&Slot::PlayerTwo, &Slot::PlayerOne), true);
-			map.change_player_turn();
+			match start_min_max(&map)
+			{
+				Some(action) => {
+					map.set_value((action.x_y.0 as i64, action.x_y.1 as i64), find_slot_player!(map.current_player));
+					// map.number_captured((action.x_y.0 as i32, action.x_y.1 as i32), (&Slot::PlayerTwo, &Slot::PlayerOne), true);
+					map.change_player_turn();
+				},
+				None => (),
+			}
 		} 
 		else if !tmp_cursor.press && tmp_cursor.place_piece &&
 			map.is_available((tmp_cursor.cursor_in_board[0] as i64, tmp_cursor.cursor_in_board[1] as i64)) == 0
@@ -108,7 +113,13 @@ impl App
 
 // fn draw_text(e: &Event, window: &mut PistonWindow<Sdl2Window>, app: &mut App, glyphs: &Glyphs)
 // {
-
+// 			let transform = c.transform.trans(5.0, 40.0);
+// 			let _ = Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
+// 			&format!("Turn: {}", app.map.turn),
+// 			&mut glyphs,
+// 			&c.draw_state,
+// 			transform, gl
+// );
 // }
 
 pub fn start()
