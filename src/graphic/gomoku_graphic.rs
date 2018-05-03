@@ -1,5 +1,4 @@
 use piston::window::WindowSettings;
-use std::path::PathBuf;
 
 // use sdl2_window::Sdl2Window as Window;
 use piston_window::*;
@@ -19,7 +18,6 @@ use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
 use graphic::draw::{ draw_goban, draw_player, draw_text };
 use minmax::recursive::{ start_min_max };
-use minmax::action::{ Action };
 use heuristic;
 
 const BACKGROUND:[f32; 4] = [0.65, 0.55, 0.45, 1.0];
@@ -65,7 +63,7 @@ impl App
 			clear(BACKGROUND, gl);
 
 			draw_text(c, gl, &mut glyph_cache, fps, c.transform.trans(5.0, 20.0));
-			draw_text(c, gl, &mut glyph_cache, &format!("fps: {}", &format!("Turn: {}", map.turn)), c.transform.trans(5.0, 40.0));
+			draw_text(c, gl, &mut glyph_cache, &format!("Turn: {}", map.turn), c.transform.trans(5.0, 40.0));
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, map, &mut tmp_cursor, players);
 		});
@@ -111,17 +109,6 @@ impl App
 	// }
 }
 
-// fn draw_text(e: &Event, window: &mut PistonWindow<Sdl2Window>, app: &mut App, glyphs: &Glyphs)
-// {
-// 			let transform = c.transform.trans(5.0, 40.0);
-// 			let _ = Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
-// 			&format!("Turn: {}", app.map.turn),
-// 			&mut glyphs,
-// 			&c.draw_state,
-// 			transform, gl
-// );
-// }
-
 pub fn start()
 {
 	let opengl = OpenGL::V3_2;
@@ -143,8 +130,6 @@ pub fn start()
 
 	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
 	let ref font = assets.join("DejaVuSerif.ttf");
-	// let factory = window.factory.clone();
-	// let mut glyphs = Glyphs::new(font, factory.clone(), TextureSettings::new()).unwrap();
 
 	let mut glyph_cache = GlyphCache::new(
 	font,

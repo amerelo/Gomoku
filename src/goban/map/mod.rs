@@ -65,6 +65,35 @@ impl Map
         self.value_diagonale_rotate[conv.0 as usize] ^= (value as i128) << 3 * ((RSIZEMAP as i128) * 2 - conv.1);
     }
 
+	pub fn area_of_interest(&self) -> Vec<(i64, i64)>
+	{
+		let mut area: Vec<(i64, i64)> = vec![];
+		// let mask:i64 = 0o3333_333333_333333_333;
+		let size_map: i64 = 18;
+
+		for (y, elem_y) in self.value.iter().enumerate()
+		{
+			if *elem_y != 0
+			{
+				for x in 0..19
+				{
+					if (elem_y >> ((size_map - x) * 3) & 0x3 ) != 0
+					{
+						area.push(((y - 1) as i64, x as i64));
+						area.push(((y + 1) as i64, x as i64));
+						area.push(((y - 1) as i64, (x - 1) as i64));
+						area.push(((y + 1) as i64, (x - 1) as i64));
+						area.push(((y - 1) as i64, (x + 1) as i64));
+						area.push(((y + 1) as i64, (x + 1) as i64));
+						area.push((y as i64, (x - 1) as i64));
+						area.push((y as i64, (x + 1) as i64));
+					}
+				}	
+			}
+		}
+		area
+	}
+
     pub fn is_available(&self, (x, y):(i64, i64)) -> i64
     {
         if x > 18 || y > 18 || x < 0 || y < 0

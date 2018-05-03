@@ -74,28 +74,27 @@ fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Opti
 	let mut tmp: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
 	let new_trun: Turn = change_turn(&turn);
 	
-	'root: for (y, _elem_y) in map.value.iter().enumerate()
+	let area = map.area_of_interest();
+
+	'root: for y_x in area.iter()
 	{
-		for x in 0..19
+		if map.is_available((y_x.1 , y_x.0)) == 0
 		{
-			if map.is_available((x as i64, y as i64)) == 0
+			let mut new_map = map.clone();
+			let mut new_action = place(new_map, y_x.1 as usize , y_x.0 as usize, (tmp.alpha, tmp.beta));
+
+			match solver(depth - 1, &mut new_action.map, new_trun.clone(), (new_action.alpha, new_action.beta))
 			{
-				let mut new_map = map.clone();
-				let mut new_action = place(new_map, x, y, (tmp.alpha, tmp.beta));
+				Some(action) => {
+					new_action.value = action.value;
+					best_action(&turn, new_action, &mut tmp, &mut action_set)
+				},
+				None => (),
+			}
 
-				match solver(depth - 1, &mut new_action.map, new_trun.clone(), (new_action.alpha, new_action.beta))
-				{
-					Some(action) => {
-						new_action.value = action.value;
-						best_action(&turn, new_action, &mut tmp, &mut action_set)
-					},
-					None => (),
-				}
-
-				if tmp.alpha >= tmp.beta
-				{
-					break 'root;
-				}
+			if tmp.alpha >= tmp.beta
+			{
+				break 'root;
 			}
 		}
 	}
@@ -109,7 +108,7 @@ fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Opti
 
 pub fn start_min_max(map: &Map) -> Option<Action>
 {
-	let depth: i32 = 2;
+	let depth: i32 = 3;
 
 	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
 	// println!("action = {:?}", action );
