@@ -1,5 +1,6 @@
 use piston::window::WindowSettings;
 
+use std::time::{Instant, Duration};
 // use sdl2_window::Sdl2Window as Window;
 use piston_window::*;
 use sdl2_window::Sdl2Window;
@@ -31,6 +32,7 @@ pub struct App {
 	go_b: GoElem,
 	map: Map,
 	cursor: Cursor,
+	// my_time = 
 }
 
 impl App
@@ -71,15 +73,23 @@ impl App
 		// let player_turn = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
 		if map.current_player == Player::Two
 		{
+			let now = Instant::now();
 			match start_min_max(&map)
 			{
 				Some(action) => {
 					map.set_value((action.x_y.0 as i64, action.x_y.1 as i64), find_slot_player!(map.current_player));
 					// map.number_captured((action.x_y.0 as i32, action.x_y.1 as i32), (&Slot::PlayerTwo, &Slot::PlayerOne), true);
-					map.change_player_turn();
+					// map.change_player_turn();
 				},
 				None => (),
 			}
+			map.change_player_turn();
+			
+			// println!("Time {:?}", (now.elapsed().as_secs() as f64) + f64::from(now.elapsed().subsec_nanos()) / 1000_000_000.0);
+			let elapsed = now.elapsed();
+			let sec = (elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1000_000_000.0);
+			println!("move solved in {:.7} seconds", sec);
+
 		} 
 		else if !tmp_cursor.press && tmp_cursor.place_piece &&
 			map.is_available((tmp_cursor.cursor_in_board[0] as i64, tmp_cursor.cursor_in_board[1] as i64)) == 0
