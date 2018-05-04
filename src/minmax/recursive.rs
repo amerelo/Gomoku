@@ -78,13 +78,17 @@ fn select_best_aciton(action_1: &mut Action, action_2: Action, turn: &Turn)
 {
 	match *turn {
 		Turn::MIN => {
-			if action_1.value > action_2.value{
+			if action_2.value < action_1.beta
+			{
 				*action_1 = action_2;
+				action_1.beta = action_1.value;
 			}
 		},
 		Turn::MAX => {
-			if action_1.value < action_2.value{
+			if action_2.value > action_1.alpha
+			{
 				*action_1 = action_2;
+				action_1.alpha = action_1.value;
 			}
 		},
 	}
@@ -100,8 +104,6 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 	let mut new_action: Option<Action> = None;
 	
 	let mut dep;
-	let alpha = alpha_beta.0;
-	let beta = alpha_beta.1;
 	let mut new_trun: Turn = Turn::MAX;
 
 	'start_of_loop: loop 
@@ -116,14 +118,20 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 				Some(mut compare_action) => {
 					if compare_action.evaluate == false
 					{
-						compare_action.action_done.push(current_elem);
-						current_elem = compare_action; 
-						new_trun = change_turn(&new_trun);
+						if current_elem.alpha >= current_elem.beta
+						{
+							compare_action.action_done.push(current_elem);
+							current_elem = compare_action; 
+							new_trun = change_turn(&new_trun);
+						}
 					} 
 					else if current_elem.depth != compare_action.depth
 					{
 						//check if current_elem.depth < compare_action.depth
-						// alpha beta 
+						match new_trun {
+							Turn::MIN => compare_action.beta = current_elem.value,
+							Turn::MAX => compare_action.alpha = current_elem.value,
+						};
 						compare_action.value = current_elem.value;
 						if compare_action.depth != depth
 						{
@@ -133,23 +141,25 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 					}
 					else
 					{
-						select_best_aciton(&mut current_elem, compare_action, &turn);
+						if current_elem.alpha < current_elem.beta
+						{
+							select_best_aciton(&mut current_elem, compare_action, &turn);
+						}
 					}
 				} 
 				_ => break 'start_of_loop,
 			};
-
 		}
 		else if current_elem.evaluate == false
 		{
 			let area = map.area_of_interest();
 			current_elem.evaluate = true;
 			let new_map = current_elem.map.clone();
-			let a = alpha;
-			let b = beta;
+			let a = current_elem.alpha;
+			let b = current_elem.beta;
 			dep = current_elem.depth -1; // test if not move
 
-			go_stack.push(current_elem.clone());
+			go_stack.push(current_elem);
 			'root: for y_x in area.iter()
 			{
 				if map.is_available((y_x.1 , y_x.0)) == 0
@@ -162,16 +172,9 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 					
 				}
 			}
-
 			match new_action {
 				Some(tmp_a)		=> { current_elem = tmp_a },
-				_				=> {
-					match go_stack.pop()
-					{
-						Some(action) => current_elem = action,
-						_ 			=> break 'start_of_loop,
-					}
-				},
+				_				=> current_elem = go_stack.pop().unwrap(), // need to replace for None
 			};
 
 			new_action = None;
@@ -183,7 +186,10 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 			{
 				while let Some(tmp_action) = current_elem.action_done.pop()
 				{
-					select_best_aciton(&mut current_elem, tmp_action, &turn);
+					if current_elem.alpha < current_elem.beta
+					{
+						select_best_aciton(&mut current_elem, tmp_action, &turn);
+					}
 				}
 			}
 
@@ -192,14 +198,20 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 				Some(mut compare_action) => {
 					if compare_action.evaluate == false
 					{
-						compare_action.action_done.push(current_elem);
-						current_elem = compare_action; 
-						new_trun = change_turn(&new_trun);
+						if current_elem.alpha >= current_elem.beta
+						{
+							compare_action.action_done.push(current_elem);
+							current_elem = compare_action; 
+							new_trun = change_turn(&new_trun);
+						}
 					} 
 					else if current_elem.depth != compare_action.depth
 					{
 						//check if current_elem.depth < compare_action.depth
-						// alpha beta 
+						match new_trun {
+							Turn::MIN => compare_action.beta = current_elem.value,
+							Turn::MAX => compare_action.alpha = current_elem.value,
+						};
 						compare_action.value = current_elem.value;
 						if compare_action.depth != depth
 						{
@@ -209,31 +221,14 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 					}
 					else
 					{
-						select_best_aciton(&mut current_elem, compare_action, &turn);
+						if current_elem.alpha < current_elem.beta
+						{
+							select_best_aciton(&mut current_elem, compare_action, &turn);
+						}
 					}
 				} 
 				_ => break 'start_of_loop,
 			};
-
-			// let mut compare_action = go_stack.pop().unwrap();
-			// 											// first slot is for the player we want the score
-			// last_action.value =	heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne));
-			// current_elem.value = 0;
-			// current_elem.evaluate = true;
-
-			// match
-			// {
-				// Some(action) => {
-				// new_action.value = action.value;
-				// best_action(&turn, new_action, &mut tmp, &mut action_set);
-				// },
-				// None => (),
-			// }
-
-			// if tmp.alpha >= tmp.beta
-			// {
-			// 	break 'root;
-			// }
 		}
 	}
 
@@ -291,7 +286,7 @@ fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Opti
 
 pub fn start_min_max(map: &Map) -> Option<Action>
 {
-	let depth: i32 = 2;
+	let depth: i32 = 3;
 
 	// let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
 	let action = solver_iterative(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
