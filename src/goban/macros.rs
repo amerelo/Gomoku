@@ -26,6 +26,19 @@ macro_rules! find_slot_player
 }
 
 #[macro_export]
+macro_rules! insert_without_double
+{
+    ($n:expr, $vec:expr) =>
+    {
+        match $vec.binary_search(&$n)
+        {
+            Ok(pos) => {},
+            Err(pos) => $vec.insert(pos, $n),
+        };
+    }
+}
+
+#[macro_export]
 macro_rules! find_slot_enemy
 {
     ($n:expr) =>

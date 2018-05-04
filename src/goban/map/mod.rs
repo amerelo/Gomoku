@@ -135,14 +135,14 @@ impl Map
 				{
 					if ((elem_y >> ((size_map - x) * 3)) & 0x3 ) != 0
 					{
-                        area.push(((y as i128 - 1), x as i128));
-                        area.push(((y as i128 - 1), (x as i128 - 1)));
-                        area.push(((y as i128 - 1), (x + 1) as i128));
-						area.push(((y + 1) as i128, (x as i128 - 1)));
-						area.push(((y + 1) as i128, (x + 1) as i128));
-						area.push(((y + 1) as i128, x as i128));
-						area.push((y as i128, (x as i128 - 1)));
-						area.push((y as i128, (x + 1) as i128));
+                        insert_without_double![((y as i128 - 1), x as i128), area];
+                        insert_without_double![((y as i128 - 1), (x as i128 - 1)), area];
+                        insert_without_double![((y as i128 - 1), (x + 1) as i128), area];
+						insert_without_double![((y + 1) as i128, (x as i128 - 1)), area];
+						insert_without_double![((y + 1) as i128, (x + 1) as i128), area];
+						insert_without_double![((y + 1) as i128, x as i128), area];
+						insert_without_double![(y as i128, (x as i128 - 1)), area];
+						insert_without_double![(y as i128, (x + 1) as i128), area];
 					}
 				}	
 			}

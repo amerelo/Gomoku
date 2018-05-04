@@ -108,7 +108,7 @@ fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Opti
 
 pub fn start_min_max(map: &Map) -> Option<Action>
 {
-	let depth: i32 = 2;
+	let depth: i32 = 3;
 
 	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
 	// let action = None;
