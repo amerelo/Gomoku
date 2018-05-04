@@ -36,6 +36,31 @@ const THREE_MOVE_P2: [(i128, i128, i128); 9] = [
                                              (0o333333, 0o002020, 12)
                                             ];
 
+const DTHREE_MOVE_P1: [(i128, i128, i128); 9] = [
+                                             (0o3333333333, 0o001010000, 6),
+                                             (0o3333333333, 0o001000100, 12),
+                                             (0o3333333333, 0o000010100, 18),
+                                             (0o33333333333, 0o00100010000, 6),
+                                             (0o33333333333, 0o00100000100, 12),
+                                             (0o33333333333, 0o00000010100, 24),
+                                             (0o33333333333, 0o00101000000, 6),
+                                             (0o33333333333, 0o00100000100, 18),
+                                             (0o33333333333, 0o00001000100, 24)
+                                            ];
+
+const DTHREE_MOVE_P2: [(i128, i128, i128); 9] = [
+                                             (0o3333333333, 0o002020000, 6),
+                                             (0o3333333333, 0o002000200, 12),
+                                             (0o3333333333, 0o000020200, 18),
+                                             (0o33333333333, 0o00200020000, 6),
+                                             (0o33333333333, 0o00200000200, 12),
+                                             (0o33333333333, 0o00000020200, 24),
+                                             (0o33333333333, 0o00202000000, 6),
+                                             (0o33333333333, 0o00200000200, 18),
+                                             (0o33333333333, 0o00002000200, 24)
+                                            ];
+
+
 #[derive(Debug, Clone)]
 pub struct Map
 {
@@ -140,7 +165,7 @@ impl Map
 
     fn is_double_three_move(&self, (x, y):(i128, i128)) -> i128
     {
-        match self.three_move_number((x, y), find_tm_player![self.current_player, THREE_MOVE_P1, THREE_MOVE_P2])
+        match self.three_move_number((x, y), find_tm_player![self.current_player, (THREE_MOVE_P1, DTHREE_MOVE_P1), (THREE_MOVE_P2, DTHREE_MOVE_P2)])
         {
             1 => 0,
             0 => 0,
@@ -148,88 +173,61 @@ impl Map
         }
     }
 
-    fn three_move_number(&self, (x, y):(i128, i128), slot_player: [(i128, i128, i128); 9]) -> usize
+    fn three_move_number(&self, (x, y):(i128, i128), (slot_hv, slot_d): ([(i128, i128, i128); 9], [(i128, i128, i128); 9])) -> usize
     {
         let mut count:usize = 0;
+
+        if x == 0 || y == 0
+        {
+            return count;
+        }
 
         count += match x
         {
             18 => 0,
-            17 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_player; [0, 3, 6]] as usize,
-            16 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_player; [0, 1, 3, 4]] as usize,
-            15 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_player; [0, 1, 2, 3, 4, 7]] as usize,
-            _  => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_player; [0, 1, 2, 3, 4, 5, 7, 8]] as usize
+            17 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_hv; [0, 3, 6]] as usize,
+            16 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_hv; [0, 1, 3, 4]] as usize,
+            15 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_hv; [0, 1, 2, 3, 4, 7]] as usize,
+            _  => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_hv; [0, 1, 2, 3, 4, 5, 7, 8]] as usize
         };
 
         count += match y
         {
             0 => 0,
-            1 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_player; [0, 3, 6]] as usize,
-            2 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_player; [0, 1, 3, 4]] as usize,
-            3 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_player; [0, 1, 2, 3, 4, 7]] as usize,
-            _ => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_player; [0, 1, 2, 3, 4, 5, 7, 8]] as usize
+            1 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_hv; [0, 3, 6]] as usize,
+            2 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_hv; [0, 1, 3, 4]] as usize,
+            3 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_hv; [0, 1, 2, 3, 4, 7]] as usize,
+            _ => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_hv; [0, 1, 2, 3, 4, 5, 7, 8]] as usize
         };
 
+       let conv:(i128, i128) = match x >= y
+        {
+            true => (18 + (x - y) as i128, (x + y)as i128), 
+            _    => (18 - (y - x) as i128, (x + y)as i128)
+        };
 
-        // count += match y
-        // {
-        //     0 => 0,
-        //     1 => slot_cmp![self.value_rotate[x as usize], y * 3 ; THREE_MOVE_P1; [0]] as usize,
-        //     2 => slot_cmp![self.value_rotate[x as usize], y * 3 ; THREE_MOVE_P1; [0, 1]] as usize,
-        //     _  => slot_cmp![self.value_rotate[x as usize], y * 3 ; THREE_MOVE_P1; [0, 1, 2]] as usize
-        // };
+        if conv.1 < 3 || conv.1 > 33 || conv.0 < 3 || conv.0 > 33
+        {
+            return count;
+        }
 
-        // count += slot_cmp![self.value_rotate[x as usize], y + 1; THREE_MOVE_P1; [0, 1, 2]] as usize;
-        // let conv:(i128, i128) = match x >= y
-        // {
-        //     true => (18 + (x - y) as i128, (x + y)as i128), 
-        //     _    => (18 - (y - x) as i128, (x + y)as i128)
-        // };
+        count += match conv.0
+        {
+            3 ... 5 => slot_cmp![self.value_diagonale[conv.1 as usize], conv.0 * 3 ; slot_d; [0, 3, 6]] as usize,
+            6 | 7 => slot_cmp![self.value_diagonale[conv.1 as usize], conv.0 * 3 ; slot_d; [0, 1, 2, 3, 4, 6, 7]] as usize,
+            _ => slot_cmp![self.value_diagonale[conv.1 as usize], conv.0 * 3 ; slot_d; [0, 1, 2, 3, 4, 5, 7, 8]] as usize
+        };
 
-        // count += slot_cmp![self.value[y as usize], 0; THREE_MOVE_P1; [0, 1, 2]] as usize;
-        // println!("value {:o}", self.value[y as usize]);
-        // println!("count {}", count);
-        // println!("rotat {:o}", self.value_rotate[x as usize]);
-        // println!("count {} {} {} {:o} {:o} {}", count, x, y, self.value[y as usize], ((self.value[y as usize] & (THREE_MOVE_P1[0].0 << ((RSIZEMAP - x) * 3 ))) >> ((RSIZEMAP - x) * 3 )), ((self.value[y as usize] & (THREE_MOVE_P1[0].0 << ((RSIZEMAP - x - 1) * 3 ))) >> ((RSIZEMAP - x - 1) * 3 )) == THREE_MOVE_P1[0].1 );
+        count += match (RSIZEMAP as i128) * 2 - conv.1
+        {
+            3 ... 5 => slot_cmp![self.value_diagonale_rotate[conv.0 as usize], ((RSIZEMAP as i128) * 2 - conv.1) * 3 ; slot_d; [0, 3, 6]] as usize,
+            6 | 7 => slot_cmp![self.value_diagonale_rotate[conv.0 as usize], ((RSIZEMAP as i128) * 2 - conv.1) * 3 ; slot_d; [0, 1, 2, 3, 4, 6, 7]] as usize,
+            _ => slot_cmp![self.value_diagonale_rotate[conv.0 as usize], ((RSIZEMAP as i128) * 2 - conv.1) * 3 ; slot_d; [0, 1, 2, 3, 4, 5, 7, 8]] as usize
+        };
+
+        // println!("rotat {:o}", count);
         count
     }
-
-    // fn is_free_three(&self, (x, y):(i128, i128), (slot_player, slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
-    // {
-    //     let mut add = dir_add.new_coordonate((x, y));
-    //     let mut sub = dir_sub.new_coordonate((x, y));
-
-    //     let slot_add_one = self.find_value(add);
-    //     let slot_sub_one = self.find_value(sub);
-
-    //     add = dir_add.new_coordonate(add);
-    //     sub = dir_sub.new_coordonate(sub);
-        
-    //     let slot_add_two = self.find_value(add);
-    //     let slot_sub_two = self.find_value(sub);
-
-    //     if slot_cmp_or![&Slot::Forbidden; [slot_add_one, slot_sub_one]]
-    //         || slot_cmp_or![slot_enemy; [slot_add_one, slot_sub_one]]
-    //     {
-    //         return false;
-    //     }
-    //     add = dir_add.new_coordonate(add);
-    //     sub = dir_sub.new_coordonate(sub);
-
-    //     let slot_add_three = self.find_value(add);
-    //     let slot_sub_three = self.find_value(sub);
-
-    //     add = dir_add.new_coordonate(add);
-    //     sub = dir_sub.new_coordonate(sub);
-
-    //     let slot_add_four = self.find_value(add);
-    //     let slot_sub_four = self.find_value(sub);
-
-    //     let total_add = slot_cmp![slot_player; (slot_add_one, slot_add_two, slot_add_three, slot_add_four)];
-    //     let total_sub = slot_cmp![slot_player; (slot_sub_one, slot_sub_two, slot_sub_three, slot_sub_four)];
-		
-    //     total_add + total_sub == 2 && (total_add == 2 || total_sub == 2 || slot_cmp_or![slot_player; [slot_add_one, slot_sub_one]])
-    // }
 
     pub fn change_player_turn(&mut self)
     {
