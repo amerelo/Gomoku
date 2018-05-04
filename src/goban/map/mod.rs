@@ -144,7 +144,7 @@ impl Map
 						insert_without_double![(y as i128, (x as i128 - 1)), area];
 						insert_without_double![(y as i128, (x + 1) as i128), area];
 					}
-				}	
+				}
 			}
 		}
 		area
@@ -177,14 +177,13 @@ impl Map
     {
         let mut count:usize = 0;
 
-        if x == 0 || y == 0
+        if x == 0 || y == 0 || x == RSIZEMAP || y == RSIZEMAP
         {
             return count;
         }
 
         count += match x
         {
-            18 => 0,
             17 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_hv; [0, 3, 6]] as usize,
             16 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_hv; [0, 1, 3, 4]] as usize,
             15 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_hv; [0, 1, 2, 3, 4, 7]] as usize,
@@ -193,7 +192,6 @@ impl Map
 
         count += match y
         {
-            0 => 0,
             1 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_hv; [0, 3, 6]] as usize,
             2 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_hv; [0, 1, 3, 4]] as usize,
             3 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_hv; [0, 1, 2, 3, 4, 7]] as usize,
@@ -202,8 +200,8 @@ impl Map
 
        let conv:(i128, i128) = match x >= y
         {
-            true => (18 + (x - y) as i128, (x + y)as i128), 
-            _    => (18 - (y - x) as i128, (x + y)as i128)
+            true => (RSIZEMAP + (x - y) as i128, (x + y)as i128),
+            _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
         };
 
         if conv.1 < 3 || conv.1 > 33 || conv.0 < 3 || conv.0 > 33
@@ -244,96 +242,6 @@ impl Map
         self.is_available(dir.new_coordonate((x, y))) == 0
     }
 
-    // pub fn number_captured(&mut self, (x, y):(i128, i128), (slot_player, slot_enemy): (&Slot, &Slot), with_delete: bool) -> usize
-    // {
-    //     let mut count:usize = 0;
-
-    //     for dir in Direction::iterator()
-    //     {
-    //         count += self.is_capture(dir, (x, y), (slot_player, slot_enemy), with_delete);
-    //     }
-    //     count
-    // }
-
-    // fn is_capture(&mut self, dir: &Direction, (x, y):(i128, i128), (slot_player, slot_enemy): (&Slot, &Slot), with_delete: bool) -> usize
-    // {
-    //     if dir.next_three((x, y), self) == (slot_enemy, slot_enemy, slot_player)
-    //     {
-    //         if with_delete
-    //         {
-    //             dir.capture((x, y), self);
-    //             match slot_player
-    //             {
-    //                 &Slot::PlayerOne => self.players_score.0 += 2,
-    //                 _                => self.players_score.1 += 2
-    //             }
-    //             println!("Score: {:?}", self.players_score);
-    //             if self.players_score.0 >= 10 || self.players_score.1 >= 10
-    //             {
-    //                 self.is_finish = true;
-    //                 println!("Finish");
-    //             }
-    //         }
-    //         2
-    //     }
-    //     else
-    //     {
-    //         0
-    //     }
-    // }
-
-    // pub fn number_aligned(&self, (x, y):(i128, i128), (slot_player, slot_enemy): (&Slot, &Slot)) -> usize
-    // {
-    //     let mut count:usize = 0;
-
-    //     for dir in Direction::iterator()
-    //     {
-    //         count += self.is_align(dir, (x, y), (slot_player, slot_enemy));
-    //     }
-    //     count
-    // }
-
-    // fn is_align(&self, dir: &Direction, (x, y):(i128, i128), (slot_player, slot_enemy): (&Slot, &Slot)) -> usize
-    // {
-    //     match dir.next_three((x, y), self)
-    //     {
-    //         (a, b, c) if (a, b, c) == (slot_player, slot_player, slot_player)  => 4,
-    //         (a, b, c) if (a, b, c) == (slot_player, slot_player, &Slot::Empty) => 3,
-    //         (a, b, c) if (a, b, c) == (&Slot::Empty, slot_player, slot_player) => 3,
-    //         (a, b, c) if (a, b, c) == (slot_player, &Slot::Empty, slot_player) => 3,
-    //         (a, b, _) if (a, b) == (slot_player, slot_player)                  => 2,
-    //         (a, b, _) if (a, b) == (slot_player, &Slot::Empty)                 => 1,
-    //         (a, b, _) if (a, b) == (&Slot::Empty, slot_player)                 => 1,
-    //         _                                                                  => 0
-    //     }
-    // }
-
-    // pub fn number_cut(&self, (x, y):(i128, i128), (slot_player, slot_enemy): (&Slot, &Slot)) -> usize
-    // {
-    //     let mut count:usize = 0;
-
-    //     for dir in Direction::iterator()
-    //     {
-    //         count += self.is_cut(dir, (x, y), (slot_player, slot_enemy));
-    //     }
-    //     count
-    // }
-
-    // fn is_cut(&self, dir: &Direction, (x, y):(i128, i128), (slot_player, slot_enemy): (&Slot, &Slot)) -> usize
-    // {
-    //     match dir.next_three((x, y), self)
-    //     {
-    //         (a, b, c) if (a, b, c) == (slot_enemy, slot_enemy, slot_enemy)   => 4,
-    //         (a, b, c) if (a, b, c) == (slot_enemy, slot_enemy, &Slot::Empty) => 3,
-    //         (a, b, c) if (a, b, c) == (&Slot::Empty, slot_enemy, slot_enemy) => 3,
-    //         (a, b, c) if (a, b, c) == (slot_enemy, &Slot::Empty, slot_enemy) => 3,
-    //         (a, b, _) if (a, b) == (slot_enemy, slot_enemy)                  => 2,
-    //         (a, b, _) if (a, b) == (slot_enemy, &Slot::Empty)                => 1,
-    //         (a, b, _) if (a, b) == (&Slot::Empty, slot_enemy)                => 1,
-    //         _                                                                => 0
-    //     }
-    // }
-
     pub fn find_value(&self, (x, y):(i128, i128)) -> i128
     {
         if x > 18 || y > 18 || x < 0 || y < 0
@@ -342,110 +250,6 @@ impl Map
         }
         (self.value[y as usize] & (0o3 << (3 * x))) >> 3 * x
     }
-
-    // pub fn is_winning_move(&self, (x, y):(i128, i128)) -> bool
-    // {
-    //     for axe in Direction::axes_iterator()
-    //     {
-    //         if self.is_five_align((x, y), find_slots_players!(self.current_player), axe)
-    //         {
-    //             println!("FIVE ALIGN FOR PLAYER {:?} !!!", find_slot_player!(self.current_player));
-    //             return true;
-    //         }
-    //     }
-    //     false
-    // }
-
-    // fn is_five_align(&self, (x, y):(i128, i128), (slot_player, slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
-    // {
-    //     if self.is_capturable((x, y), (slot_player, slot_enemy))
-    //     {
-    //         return false;
-    //     }
-
-    //     let coord_add_one = dir_add.new_coordonate((x, y));
-    //     let coord_sub_one = dir_sub.new_coordonate((x, y));
-
-    //     let slot_add_one = self.find_value(coord_add_one);
-    //     let slot_sub_one = self.find_value(coord_sub_one);
-
-    //     let coord_add_two = dir_add.new_coordonate(coord_add_one);
-    //     let coord_sub_two = dir_sub.new_coordonate(coord_sub_one);
-
-    //     let slot_add_two = self.find_value(coord_add_two);
-    //     let slot_sub_two = self.find_value(coord_sub_two);
-
-    //     let coord_add_three = dir_add.new_coordonate(coord_add_two);
-    //     let coord_sub_three = dir_sub.new_coordonate(coord_sub_two);
-
-    //     let slot_add_three = self.find_value(coord_add_three);
-    //     let slot_sub_three = self.find_value(coord_sub_three);
-
-    //     let coord_add_four = dir_add.new_coordonate(coord_add_three);
-    //     let coord_sub_four = dir_sub.new_coordonate(coord_sub_three);
-
-    //     let slot_add_four = self.find_value(coord_add_four);
-    //     let slot_sub_four = self.find_value(coord_sub_four);
-
-    //     let total_add = slots_winning![slot_player; &slot_enemy; self; [(coord_add_one, slot_add_one), (coord_add_two, slot_add_two), (coord_add_three, slot_add_three), (coord_add_four, slot_add_four)]];
-    //     let total_sub = slots_winning![slot_player; &slot_enemy; self; [(coord_sub_one, slot_sub_one), (coord_sub_two, slot_sub_two), (coord_sub_three, slot_sub_three), (coord_sub_four, slot_sub_four)]];
-
-    //     // 4 because the current slot isn't taking in consideration in slot_winning! macro
-    //     total_add + total_sub >= 4
-    // }
-
-    // pub fn is_capturable(&self, (x, y):(i128, i128), (slot_player, slot_enemy): (&Slot, &Slot)) -> bool
-    // {
-    //     for &(ref dir_add, ref dir_sub) in Direction::axes_iterator()
-    //     {
-    //         let (slot_add_one, slot_add_two) = dir_add.next_two((x, y), self);
-    //         let (slot_sub_one, slot_sub_two) = dir_sub.next_two((x, y), self);
-
-    //         let is_capturable = match (slot_add_two, slot_add_one, slot_sub_one, slot_sub_two)
-    //         {
-    //             (a, b, c, _) if (a, b, c) == (&Slot::Empty, slot_player, slot_enemy) => true,
-    //             (a, b, c, _) if (a, b, c) == (slot_enemy, slot_player, &Slot::Empty) => true,
-    //             (_, b, c, d) if (b, c, d) == (&Slot::Empty, slot_player, slot_enemy) => true,
-    //             (_, b, c, d) if (b, c, d) == (slot_enemy, slot_player, &Slot::Empty) => true,
-    //             _                                                                    => false
-    //         };
-    //         if is_capturable
-    //         {
-    //             return true;
-    //         }
-    //     }
-    //     false
-    // }
-
-    // pub fn align_value(&self, dir: &Direction, (x, y):(i128, i128), (slot_player, slot_enemy): (&Slot, &Slot), empty_before: bool) -> (i128, i128)
-    // {
-    //     // add check is_wining move for 4 or 5 slot
-    //     match dir.next_four((x, y), self)
-    //     {
-    //         (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, slot_player)                  => (100, 4),
-    //         (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, &Slot::Empty) && empty_before => (80, 3),
-    //         (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, &Slot::Empty)                 => (20, 3),
-    //         (a, b, c, d) if (a, b, c) == (slot_player, slot_player, slot_player) && empty_before                  => (20, 3),
-    //         (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, slot_player, &Slot::Empty)                 => (20, 3),
-    //         (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, &Slot::Empty, slot_player)                 => (15, 4),
-    //         (a, b, c, d) if (a, b, c, d) == (&Slot::Empty, slot_player, slot_player, slot_player)                 => (5, 5),
-    //         (a, b, c, _) if (a, b, c) == (slot_enemy, &Slot::Empty, slot_enemy)                 => (3, 1),
-    //         (a, b, c, _) if (a, b, c) == (slot_player, slot_player, &Slot::Empty)                                 => (4, 2),
-    //         (a, b, c, _) if (a, b, c) == (slot_player, &Slot::Empty, slot_player)                                 => (4, 3),
-    //         (a, b, c, _) if (a, b, c) == (&Slot::Empty, slot_player, slot_player) && empty_before                 => (4, 3),
-    //         (a, b, c, _) if (a, b, c) == (slot_enemy, slot_enemy, slot_player)                                   => (15, 3),
-    //         (a, b, c, _) if (a, b, c) == (slot_enemy, slot_enemy, &Slot::Empty)                                   => (10, 2),
-    //         (a, b, _, _) if (a, b) == (slot_enemy, slot_enemy)                                   => (4, 2),
-    //         (a, b, _, _) if (a, b) == (slot_player, slot_enemy) && empty_before                                   => (-15, 2),
-    //         (a, b, c, d) if (a, b, c, d) == (&Slot::Empty, slot_player, slot_player, slot_player)                 => (4, 4),
-
-    //         (a, b, c, d) if (a, b, c, d) == (slot_player, &Slot::Empty, slot_player, &Slot::Empty)                => (3, 3),
-    //         (a, b, c, d) if (a, b, c, d) == (slot_player, slot_player, &Slot::Empty, &Slot::Empty)                => (3, 2),
-    //         (a, b, c, _) if (a, b, c) == (slot_player, &Slot::Empty, &Slot::Empty) && empty_before                => (2, 1),
-    //         (a, b, _, _) if (a, b) == (&Slot::Empty, slot_player)                                                 => (2, 2),
-    //         _                                                                                                     => (0, 1)
-    //     }
-    // }
 
     pub fn print_map(&self) -> ()
     {
