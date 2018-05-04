@@ -118,11 +118,10 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 				Some(mut compare_action) => {
 					if compare_action.evaluate == false
 					{
-						if current_elem.alpha >= current_elem.beta
+						if current_elem.alpha < current_elem.beta
 						{
 							compare_action.action_done.push(current_elem);
 							current_elem = compare_action; 
-							new_trun = change_turn(&new_trun);
 						}
 					} 
 					else if current_elem.depth != compare_action.depth
@@ -135,7 +134,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 						compare_action.value = current_elem.value;
 						if compare_action.depth != depth
 						{
-							current_elem = compare_action; 
+							current_elem = compare_action;
 						}
 						new_trun = change_turn(&new_trun);
 					}
@@ -157,8 +156,8 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 			let new_map = current_elem.map.clone();
 			let a = current_elem.alpha;
 			let b = current_elem.beta;
-			dep = current_elem.depth -1; // test if not move
 
+			dep = current_elem.depth -1; // test if not move
 			go_stack.push(current_elem);
 			'root: for y_x in area.iter()
 			{
@@ -198,11 +197,10 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 				Some(mut compare_action) => {
 					if compare_action.evaluate == false
 					{
-						if current_elem.alpha >= current_elem.beta
+						if current_elem.alpha < current_elem.beta
 						{
 							compare_action.action_done.push(current_elem);
 							current_elem = compare_action; 
-							new_trun = change_turn(&new_trun);
 						}
 					} 
 					else if current_elem.depth != compare_action.depth
