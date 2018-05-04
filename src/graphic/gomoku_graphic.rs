@@ -78,7 +78,7 @@ impl App
 			match start_min_max(&map)
 			{
 				Some(action) => {
-					map.set_value((action.x_y.0 as i64, action.x_y.1 as i64), find_slot_player!(map.current_player));
+					map.set_value((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player!(map.current_player));
 					// map.number_captured((action.x_y.0 as i32, action.x_y.1 as i32), (&Slot::PlayerTwo, &Slot::PlayerOne), true);
 					// map.change_player_turn();
 				},
@@ -90,7 +90,7 @@ impl App
 			self.my_time = sec;
 		} 
 		else if !tmp_cursor.press && tmp_cursor.place_piece &&
-			map.is_available((tmp_cursor.cursor_in_board[0] as i64, tmp_cursor.cursor_in_board[1] as i64)) == 0
+			map.is_available((tmp_cursor.cursor_in_board[0] as i128, tmp_cursor.cursor_in_board[1] as i128)) == 0
 		{
 			// let slot_player = &find_slot_player![map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
 			// let slot_enemy = &find_slot_enemy![map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
@@ -99,7 +99,7 @@ impl App
 			
 			// map.number_captured((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32), (slot_player, slot_enemy), true);
 			
-			map.set_value((tmp_cursor.cursor_in_board[0] as i64, tmp_cursor.cursor_in_board[1] as i64), find_slot_player!(map.current_player));
+			map.set_value((tmp_cursor.cursor_in_board[0] as i128, tmp_cursor.cursor_in_board[1] as i128), find_slot_player!(map.current_player));
 			map.change_player_turn();
 
 			// println!("player one {}\nplayer two {}\n", heuristic::map_value(map, (&Slot::PlayerOne, &Slot::PlayerTwo)), heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne)));

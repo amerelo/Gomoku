@@ -29,7 +29,7 @@ fn place(map: Map, x: usize, y: usize, alpha_beta: (i32, i32)) -> Action
 
 	// action.map.is_winning_move(x, y);
 
-	action.map.set_value((x as i64, y as i64), find_slot_player!(action.map.current_player));
+	action.map.set_value((x as i128, y as i128), find_slot_player!(action.map.current_player));
 	// action.map.number_captured((x as i32, y as i32), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 
@@ -108,7 +108,7 @@ fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Opti
 
 pub fn start_min_max(map: &Map) -> Option<Action>
 {
-	let depth: i32 = 1;
+	let depth: i32 = 3;
 
 	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
 	// let action = None;

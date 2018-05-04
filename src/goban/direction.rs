@@ -16,7 +16,7 @@ pub enum Direction
 
 impl Direction
 {
-    pub fn new_coordonate(&self, (x, y): (i64, i64)) -> (i64, i64)
+    pub fn new_coordonate(&self, (x, y): (i128, i128)) -> (i128, i128)
     {
         match self
         {
@@ -31,7 +31,7 @@ impl Direction
         }
     }
 
-    pub fn next_four(&self, (x, y): (i64, i64), map: & Map) -> (i64, i64, i64, i64)
+    pub fn next_four(&self, (x, y): (i128, i128), map: & Map) -> (i128, i128, i128, i128)
     {
         let one = self.new_coordonate((x, y));
         let two = self.new_coordonate(one);
@@ -41,7 +41,7 @@ impl Direction
         (map.find_value(one), map.find_value(two), map.find_value(three), map.find_value(four))
     }
 
-    pub fn next_three(&self, (x, y): (i64, i64), map: & Map) -> (i64, i64, i64)
+    pub fn next_three(&self, (x, y): (i128, i128), map: & Map) -> (i128, i128, i128)
     {
         let one = self.new_coordonate((x, y));
         let two = self.new_coordonate(one);
@@ -50,7 +50,7 @@ impl Direction
         (map.find_value(one), map.find_value(two), map.find_value(three))
     }
 
-    pub fn next_two(&self, (x, y): (i64, i64), map: & Map) -> (i64, i64)
+    pub fn next_two(&self, (x, y): (i128, i128), map: & Map) -> (i128, i128)
     {
         let one = self.new_coordonate((x, y));
         let two = self.new_coordonate(one);
@@ -58,7 +58,7 @@ impl Direction
         (map.find_value(one), map.find_value(two))
     }
 
-    pub fn capture(&self, (x, y): (i64, i64), map: &mut Map) -> ()
+    pub fn capture(&self, (x, y): (i128, i128), map: &mut Map) -> ()
     {
         let one = self.new_coordonate((x, y));
         let two = self.new_coordonate(one);
