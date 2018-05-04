@@ -4,6 +4,42 @@ use std::i128;
 
 const  SIZEMAP: usize = 19;
 const  RSIZEMAP: i64 = 18;
+// const  CMP_THREE_MOVE_P2: [i64; 3] = [0o02220, 0o022020, 0o020220];
+// const  CMP_THREE_MOVE_D_P1: [i128; 3] = [0o001010100, 0o000101000100, 0o00100010100];
+// const  CMP_THREE_MOVE_D_P2: [i128; 3] = [0o002020200, 0o000202000200, 0o00200020200];
+
+// const  THREE_MOVE_P2: [i64; 3] = [0o32223, 0o322323, 0o323223];
+// const  THREE_MOVE_D_P1: [i128; 3] = [0o331313133, 0o333131333133, 0o33133313133];
+// const  THREE_MOVE_D_P2: [i128; 3] = [0o332323233, 0o333232333233, 0o33233323233];
+
+const THREE_MOVE_P1: [(i64, i64, i64); 9] = [
+                                             (0o33333, 0o01100, 3),
+                                             (0o33333, 0o01010, 6),
+                                             (0o33333, 0o00110, 9),
+                                             (0o333333, 0o10100, 3),
+                                             (0o333333, 0o010010, 6),
+                                             (0o333333, 0o000110, 12),
+                                             (0o333333, 0o011000, 3),
+                                             (0o333333, 0o010010, 9),
+                                             (0o333333, 0o001010, 12)
+                                            ];
+
+const THREE_MOVE_P2: [(i64, i64, i64); 9] = [
+                                             (0o33333, 0o02200, 3),
+                                             (0o33333, 0o02020, 6),
+                                             (0o33333, 0o00220, 9),
+                                             (0o333333, 0o20200, 3),
+                                             (0o333333, 0o020020, 6),
+                                             (0o333333, 0o000220, 12),
+                                             (0o333333, 0o022000, 3),
+                                             (0o333333, 0o020020, 9),
+                                             (0o333333, 0o002020, 12)
+                                            ];
+
+
+                                        // (0o333333, 0o011010),
+                                        // (0o333333, 0o010110)];
+
 
 #[derive(Debug, Clone)]
 pub struct Map
@@ -12,7 +48,7 @@ pub struct Map
     pub value_rotate: Vec<i64>,
     pub value_diagonale: Vec<i128>,
     pub value_diagonale_rotate: Vec<i128>,
-    pub players_kind: (PlayerKind, PlayerKind), // easier way for handling players number and players kind
+    pub players_kind: (PlayerKind, PlayerKind),
     pub players_score: (usize, usize),
     pub current_player: Player,
     pub turn: usize,
@@ -109,33 +145,59 @@ impl Map
 
     fn is_double_three_move(&self, (x, y):(i64, i64)) -> i64
     {
-        // match self.three_move_number((x, y), find_slot_player![self.current_player])
-        // {
-        //     1 => 0,
-        //     0 => 0,
-        //     _ => -1
-        // }
-        0
+        match self.three_move_number((x, y), find_tm_player![self.current_player, THREE_MOVE_P1, THREE_MOVE_P2])
+        {
+            1 => 0,
+            0 => 0,
+            _ => -1
+        }
     }
 
-    // fn three_move_number(&self, (x, y):(i64, i64), slot_player: Slot) -> usize
-    // {
-    //     let mut count:usize = 0;
-    //     let slot_enemy = find_slot_enemy![self.current_player];
+    fn three_move_number(&self, (x, y):(i64, i64), slot_player: [(i64, i64, i64); 9]) -> usize
+    {
+        let mut count:usize = 0;
 
-    //     for axe in Direction::axes_iterator()
-    //     {
-    //         if self.is_free_three((x, y), (&slot_player, &slot_enemy), axe)
-    //         {
-    //             count += 1;
-    //             if count == 2
-    //             {
-    //                 return 2
-    //             }
-    //         }
-    //     }
-    //     count
-    // }
+        count += match x
+        {
+            18 => 0,
+            17 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_player; [0, 3, 6]] as usize,
+            16 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_player; [0, 1, 3, 4]] as usize,
+            15 => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_player; [0, 1, 2, 3, 4, 7]] as usize,
+            _  => slot_cmp![self.value[y as usize], (RSIZEMAP - x) * 3 ; slot_player; [0, 1, 2, 3, 4, 5, 7, 8]] as usize
+        };
+
+        count += match y
+        {
+            0 => 0,
+            1 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_player; [0, 3, 6]] as usize,
+            2 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_player; [0, 1, 3, 4]] as usize,
+            3 => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_player; [0, 1, 2, 3, 4, 7]] as usize,
+            _  => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_player; [0, 1, 2, 3, 4, 5, 7, 8]] as usize
+        };
+
+
+        // count += match y
+        // {
+        //     0 => 0,
+        //     1 => slot_cmp![self.value_rotate[x as usize], y * 3 ; THREE_MOVE_P1; [0]] as usize,
+        //     2 => slot_cmp![self.value_rotate[x as usize], y * 3 ; THREE_MOVE_P1; [0, 1]] as usize,
+        //     _  => slot_cmp![self.value_rotate[x as usize], y * 3 ; THREE_MOVE_P1; [0, 1, 2]] as usize
+        // };
+
+        // count += slot_cmp![self.value_rotate[x as usize], y + 1; THREE_MOVE_P1; [0, 1, 2]] as usize;
+        // let conv:(i128, i128) = match x >= y
+        // {
+        //     true => (18 + (x - y) as i128, (x + y)as i128), 
+        //     _    => (18 - (y - x) as i128, (x + y)as i128)
+        // };
+
+        // count += slot_cmp![self.value[y as usize], 0; THREE_MOVE_P1; [0, 1, 2]] as usize;
+        // println!("value {:o}", self.value[y as usize]);
+        // println!("count {}", count);
+        // println!("rotat {:o}", self.value_rotate[x as usize]);
+        // println!("count {} {} {} {:o} {:o} {}", count, x, y, self.value[y as usize], ((self.value[y as usize] & (THREE_MOVE_P1[0].0 << ((RSIZEMAP - x) * 3 ))) >> ((RSIZEMAP - x) * 3 )), ((self.value[y as usize] & (THREE_MOVE_P1[0].0 << ((RSIZEMAP - x - 1) * 3 ))) >> ((RSIZEMAP - x - 1) * 3 )) == THREE_MOVE_P1[0].1 );
+        count
+    }
 
     // fn is_free_three(&self, (x, y):(i64, i64), (slot_player, slot_enemy): (&Slot, &Slot), &(ref dir_add, ref dir_sub): &(Direction, Direction)) -> bool
     // {

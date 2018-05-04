@@ -65,41 +65,25 @@ macro_rules! find_slots_players
 }
 
 #[macro_export]
-macro_rules! slot_cmp_or
+macro_rules! slot_cmp
 {
-    ($slot:expr; [ $( $value:expr ),* ]) =>
+    ($slot:expr, $mov:expr; $array:expr; [$($value:expr),*] ) =>
     {
-        $($slot == $value)||*
+        $((($slot & ($array[$value].0 << ($mov - $array[$value].2 ))) >> ($mov - $array[$value].2 )) == $array[$value].1)||*
     }
 }
 
 #[macro_export]
-macro_rules! slot_cmp
+macro_rules! find_tm_player
 {
-    ($player:expr; $value:expr) =>
-    {{
-        let (player, p) = match $player {
-            &Slot::PlayerOne => (&Slot::PlayerOne, &Slot::PlayerOne),
-            _               => (&Slot::PlayerTwo, &Slot::PlayerTwo),
+    ($n:expr, $p1:expr, $p2:expr) =>
+    {
+        match $n
+        {
+            Player::One => $p1,
+            _           => $p2
         };
-        let (a, b, c, d) = $value;
-
-        if (a, b, c) == (player, p, &Slot::Empty)
-            || (a, b, c, d) == (player, &Slot::Empty, p, &Slot::Empty)
-            || (a, b, c, d) == (&Slot::Empty, player, p, &Slot::Empty)
-        {
-            2
-        }
-        else if (a, b, c) == (&Slot::Empty, player, &Slot::Empty)
-            || (a, b) == (player, &Slot::Empty)
-        {
-            1
-        }
-        else
-        {
-            0
-        }
-    }}
+    }
 }
 
 #[macro_export]
