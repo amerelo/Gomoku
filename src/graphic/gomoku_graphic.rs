@@ -32,7 +32,7 @@ pub struct App {
 	go_b: GoElem,
 	map: Map,
 	cursor: Cursor,
-	// my_time = 
+	my_time: f64,
 }
 
 impl App
@@ -47,6 +47,7 @@ impl App
 			go_b: GoElem::new("resources/w_1.png", 0.09),
 			go_w: GoElem::new("resources/black.png", 0.10),
 			cursor: Cursor::new(),
+			my_time: 0.0,
 		}
 	}
 
@@ -57,14 +58,14 @@ impl App
 		let players = (&self.go_w, &self.go_b);
 		let mut tmp_cursor = &mut self.cursor;
 
-		let fps = &format!("fps: {}", self.fps.tick());
+		let fps_t = &format!("fps: {}            time of last AI move: {:.5} ms", self.fps.tick(), self.my_time);
 		// let turn = ;
 
 		self.gl.draw(args.viewport(), |c, gl|
 		{
 			clear(BACKGROUND, gl);
 
-			draw_text(c, gl, &mut glyph_cache, fps, c.transform.trans(5.0, 20.0));
+			draw_text(c, gl, &mut glyph_cache, fps_t, c.transform.trans(5.0, 20.0));
 			draw_text(c, gl, &mut glyph_cache, &format!("Turn: {}", map.turn), c.transform.trans(5.0, 40.0));
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, map, &mut tmp_cursor, players);
@@ -84,12 +85,9 @@ impl App
 				None => (),
 			}
 			map.change_player_turn();
-			
-			// println!("Time {:?}", (now.elapsed().as_secs() as f64) + f64::from(now.elapsed().subsec_nanos()) / 1000_000_000.0);
 			let elapsed = now.elapsed();
 			let sec = (elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1000_000_000.0);
-			println!("move solved in {:.7} seconds", sec);
-
+			self.my_time = sec;
 		} 
 		else if !tmp_cursor.press && tmp_cursor.place_piece &&
 			map.is_available((tmp_cursor.cursor_in_board[0] as i64, tmp_cursor.cursor_in_board[1] as i64)) == 0
