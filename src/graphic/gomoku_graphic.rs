@@ -72,7 +72,7 @@ impl App
 		});
 
 		// let player_turn = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
-		if find_kind_player![map.current_player, map.players_kind] == PlayerKind::AI
+		if find_kind_player![map.current_player, map.players_kind] == &PlayerKind::AI
 		{
 			let now = Instant::now();
 			match start_min_max(&map)

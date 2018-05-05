@@ -58,8 +58,8 @@ macro_rules! find_kind_player
     {
         match $n
         {
-            Player::One => $kinds.0,
-            _           => $kinds.1
+            Player::One => &$kinds.0,
+            _           => &$kinds.1
         };
     }
 }
