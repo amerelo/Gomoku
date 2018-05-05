@@ -6,7 +6,7 @@ use goban::player::{Player};
 use heuristic;
 
 const MAX_VEC_AREA: usize = 12;
-const DEAPH: usize = 1;
+const DEAPH: usize = 3;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
@@ -77,7 +77,7 @@ fn best_action(turn: &Turn, new_action: Action, tmp: &mut Action, action_set: &m
 	}
 }
 
-fn select_best_aciton(action_1: &mut Action, action_2: Action, turn: &Turn)
+fn select_best_action(action_1: &mut Action, action_2: Action, turn: &Turn)
 {
 	match *turn {
 		Turn::MIN => {
@@ -145,7 +145,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 					{
 						if current_elem.alpha < current_elem.beta
 						{
-							select_best_aciton(&mut current_elem, compare_action, &turn);
+							select_best_action(&mut current_elem, compare_action, &turn);
 						}
 					}
 				} 
@@ -170,8 +170,8 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 						Some(action) => go_stack.push(action),
 						_  => (),
 					};
-					new_action = Some(place_iterative(new_map.clone(), y_x.1 as usize , y_x.0 as usize, (a, b), dep));
 					
+					new_action = Some(place_iterative(new_map.clone(), y_x.1 as usize , y_x.0 as usize, (a, b), dep));
 				}
 			}
 			match new_action {
@@ -190,7 +190,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 				{
 					if current_elem.alpha < current_elem.beta
 					{
-						select_best_aciton(&mut current_elem, tmp_action, &turn);
+						select_best_action(&mut current_elem, tmp_action, &turn);
 					}
 				}
 			}
@@ -224,7 +224,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 					{
 						if current_elem.alpha < current_elem.beta
 						{
-							select_best_aciton(&mut current_elem, compare_action, &turn);
+							select_best_action(&mut current_elem, compare_action, &turn);
 						}
 					}
 				} 

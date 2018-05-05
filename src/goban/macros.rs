@@ -87,6 +87,23 @@ macro_rules! slot_cmp
 }
 
 #[macro_export]
+macro_rules! slot_value
+{
+    ( $slot:expr, $mov:expr; $array:expr; [$( $x:expr ),*] ) => {
+        {
+            let mut temp_vec = Vec::new();
+            $(
+                if (($slot & ($array[$x].0 << ($mov - $array[$x].2 ))) >> ($mov - $array[$x].2 )) == $array[$x].1
+                {
+                    temp_vec.push($array[$x].3);
+                }
+            )*
+            temp_vec.iter().fold(0, |sum, x| sum + x)
+        }
+    };
+}
+
+#[macro_export]
 macro_rules! find_tm_player
 {
     ($n:expr, $p1:expr, $p2:expr) =>
