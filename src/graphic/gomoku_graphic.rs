@@ -12,7 +12,7 @@ use opengl_graphics::{ GlGraphics, OpenGL, GlyphCache };
 use find_folder::Search;
 
 use fps_counter::FPSCounter;
-use goban::player::{Player};
+use goban::player::{Player, PlayerKind};
 use goban::map::{Map};
 // use graphics::*;
 use graphic::loader::{ GoElem };
@@ -72,7 +72,7 @@ impl App
 		});
 
 		// let player_turn = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
-		if map.current_player == Player::Two
+		if find_kind_player![map.current_player, map.players_kind] == PlayerKind::AI
 		{
 			let now = Instant::now();
 			match start_min_max(&map)

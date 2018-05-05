@@ -28,7 +28,7 @@ impl Default for Map
             value_rotate: mapinit![SIZEMAP, 0 as i128],
             value_diagonale: mapinit![SIZEMAP * 2, 0 as i128],
             value_diagonale_rotate: mapinit![SIZEMAP * 2, 0 as i128],
-            players_kind: (PlayerKind::Human, PlayerKind::Human),
+            players_kind: (PlayerKind::Human, PlayerKind::AI),
             players_score: (0, 0),
             current_player: Player::One,
             turn: 1,

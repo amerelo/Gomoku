@@ -52,6 +52,19 @@ macro_rules! find_slot_enemy
 }
 
 #[macro_export]
+macro_rules! find_kind_player
+{
+    ($n:expr, $kinds:expr) =>
+    {
+        match $n
+        {
+            Player::One => $kinds.0,
+            _           => $kinds.1
+        };
+    }
+}
+
+#[macro_export]
 macro_rules! find_score
 {
     ($n:expr, $scores:expr) =>
