@@ -27,8 +27,6 @@ fn place(map: Map, x: usize, y: usize, alpha_beta: (i32, i32)) -> Action
 {
 	let mut action = Action::new(map, (x, y), (alpha_beta.0, alpha_beta.1));
 	let slot_player = find_slot_player![action.map.current_player];
-	// let slot_player = &find_slot_player![action.map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
-	// let slot_enemy = &find_slot_enemy![action.map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
 
 	// action.map.is_winning_move(x, y);
 			
@@ -44,8 +42,6 @@ fn place_iterative(map: Map, x: usize, y: usize, alpha_beta: (i32, i32), depth: 
 {
 	let mut action = Action::new_iterative(map, (x, y), (alpha_beta.0, alpha_beta.1), depth);
 
-	// let slot_player = &find_slot_player![action.map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
-	// let slot_enemy = &find_slot_enemy![action.map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
 
 	// action.map.is_winning_move(x, y);
 
@@ -114,7 +110,6 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 	{
 		if current_elem.depth == 0
 		{
-									// last_action.value =	heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne));
 			current_elem.value = 0;
 			current_elem.evaluate = true;
 			match go_stack.pop()
@@ -244,7 +239,6 @@ fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Opti
 	{
 		let mut last_action: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
 													  // first slot is for the player we want the score
-		// last_action.value =	heuristic::map_value(map, (&Slot::PlayerTwo, &Slot::PlayerOne));
 		last_action.value =	0;
 
 		return Some(last_action);

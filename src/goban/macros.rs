@@ -32,7 +32,7 @@ macro_rules! insert_without_double
     {
         match $vec.binary_search(&$n)
         {
-            Ok(pos) => {},
+            Ok(_) => {},
             Err(pos) => $vec.insert(pos, $n),
         };
     }
@@ -58,8 +58,8 @@ macro_rules! find_score
     {
         match $n
         {
-            &Slot::PlayerOne => $scores.0 as i32,
-            _                => $scores.1 as i32
+            Player::One => $scores.0 as i32,
+            _           => $scores.1 as i32
         };
     }
 }

@@ -1,6 +1,5 @@
 pub mod constant;
 use goban::player::{Player, PlayerKind};
-use goban::direction::{Direction};
 use std::i128;
 use heuristic;
 use goban::map::constant::{*};
