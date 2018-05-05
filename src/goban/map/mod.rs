@@ -1,65 +1,9 @@
+pub mod constant;
 use goban::player::{Player, PlayerKind};
 use goban::direction::{Direction};
 use std::i128;
-
-const  SIZEMAP: usize = 19;
-const  RSIZEMAP: i128 = 18;
-// const  CMP_THREE_MOVE_P2: [i128; 3] = [0o02220, 0o022020, 0o020220];
-// const  CMP_THREE_MOVE_D_P1: [i128; 3] = [0o001010100, 0o000101000100, 0o00100010100];
-// const  CMP_THREE_MOVE_D_P2: [i128; 3] = [0o002020200, 0o000202000200, 0o00200020200];
-
-// const  THREE_MOVE_P2: [i128; 3] = [0o32223, 0o322323, 0o323223];
-// const  THREE_MOVE_D_P1: [i128; 3] = [0o331313133, 0o333131333133, 0o33133313133];
-// const  THREE_MOVE_D_P2: [i128; 3] = [0o332323233, 0o333232333233, 0o33233323233];
-
-const THREE_MOVE_P1: [(i128, i128, i128); 9] = [
-                                             (0o33333, 0o01100, 3),
-                                             (0o33333, 0o01010, 6),
-                                             (0o33333, 0o00110, 9),
-                                             (0o333333, 0o10100, 3),
-                                             (0o333333, 0o010010, 6),
-                                             (0o333333, 0o000110, 12),
-                                             (0o333333, 0o011000, 3),
-                                             (0o333333, 0o010010, 9),
-                                             (0o333333, 0o001010, 12)
-                                            ];
-
-const THREE_MOVE_P2: [(i128, i128, i128); 9] = [
-                                             (0o33333, 0o02200, 3),
-                                             (0o33333, 0o02020, 6),
-                                             (0o33333, 0o00220, 9),
-                                             (0o333333, 0o20200, 3),
-                                             (0o333333, 0o020020, 6),
-                                             (0o333333, 0o000220, 12),
-                                             (0o333333, 0o022000, 3),
-                                             (0o333333, 0o020020, 9),
-                                             (0o333333, 0o002020, 12)
-                                            ];
-
-const DTHREE_MOVE_P1: [(i128, i128, i128); 9] = [
-                                             (0o3333333333, 0o001010000, 6),
-                                             (0o3333333333, 0o001000100, 12),
-                                             (0o3333333333, 0o000010100, 18),
-                                             (0o33333333333, 0o00100010000, 6),
-                                             (0o33333333333, 0o00100000100, 12),
-                                             (0o33333333333, 0o00000010100, 24),
-                                             (0o33333333333, 0o00101000000, 6),
-                                             (0o33333333333, 0o00100000100, 18),
-                                             (0o33333333333, 0o00001000100, 24)
-                                            ];
-
-const DTHREE_MOVE_P2: [(i128, i128, i128); 9] = [
-                                             (0o3333333333, 0o002020000, 6),
-                                             (0o3333333333, 0o002000200, 12),
-                                             (0o3333333333, 0o000020200, 18),
-                                             (0o33333333333, 0o00200020000, 6),
-                                             (0o33333333333, 0o00200000200, 12),
-                                             (0o33333333333, 0o00000020200, 24),
-                                             (0o33333333333, 0o00202000000, 6),
-                                             (0o33333333333, 0o00200000200, 18),
-                                             (0o33333333333, 0o00002000200, 24)
-                                            ];
-
+use heuristic;
+use goban::map::constant::{SIZEMAP, RSIZEMAP, THREE_MOVE_P1, THREE_MOVE_P2, DTHREE_MOVE_P1, DTHREE_MOVE_P2};
 
 #[derive(Debug, Clone)]
 pub struct Map
@@ -114,45 +58,57 @@ impl Map
         self.value_rotate[x as usize] ^= value << 3 * y;
         let conv:(i128, i128) = match x >= y
         {
-            true => (18 + (x - y) as i128, (x + y)as i128), 
-            _    => (18 - (y - x) as i128, (x + y)as i128)
+            true => (RSIZEMAP + (x - y) as i128, (x + y)as i128), 
+            _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
         };
         self.value_diagonale[conv.1 as usize] ^= (value as i128) << 3 * conv.0;
         self.value_diagonale_rotate[conv.0 as usize] ^= (value as i128) << 3 * ((RSIZEMAP as i128) * 2 - conv.1);
     }
 
-	pub fn area_of_interest(&self) -> Vec<(i128, i128)>
+	pub fn area_of_interest(&self, number: usize) -> Vec<(i128, i128, i128)>
 	{
-		let mut area: Vec<(i128, i128)> = vec![];
+		let mut area: Vec<(i128, i128, i128)> = vec![];
 		// let mask:i128 = 0o3333_333333_333333_333;
-		let size_map: i128 = 18;
+		let size_map: i128 = RSIZEMAP;
 
 		for (y, elem_y) in self.value.iter().enumerate()
 		{
 			if *elem_y != 0
 			{
-				for x in 0..19
+				for x in 0..SIZEMAP
 				{
 					if ((elem_y >> ((size_map - x) * 3)) & 0x3 ) != 0
 					{
-                        insert_without_double![((y as i128 - 1), x as i128), area];
-                        insert_without_double![((y as i128 - 1), (x as i128 - 1)), area];
-                        insert_without_double![((y as i128 - 1), (x + 1) as i128), area];
-						insert_without_double![((y + 1) as i128, (x as i128 - 1)), area];
-						insert_without_double![((y + 1) as i128, (x + 1) as i128), area];
-						insert_without_double![((y + 1) as i128, x as i128), area];
-						insert_without_double![(y as i128, (x as i128 - 1)), area];
-						insert_without_double![(y as i128, (x + 1) as i128), area];
+                        insert_without_double![((y as i128 - 1), x as i128, 0), area];
+                        insert_without_double![((y as i128 - 1), (x as i128 - 1), 0), area];
+                        insert_without_double![((y as i128 - 1), (x + 1) as i128, 0), area];
+						insert_without_double![((y + 1) as i128, (x as i128 - 1), 0), area];
+						insert_without_double![((y + 1) as i128, (x + 1) as i128, 0), area];
+						insert_without_double![((y + 1) as i128, x as i128, 0), area];
+						insert_without_double![(y as i128, (x as i128 - 1), 0), area];
+						insert_without_double![(y as i128, (x + 1) as i128, 0), area];
 					}
 				}
 			}
 		}
-		area
-	}
+		for t in &mut area
+        {
+            t.2 = heuristic::value_slot(self, *t);
+        }
+        area.sort_by_key(|k| -k.2);
+        if number < area.len() - 1
+        {
+            area[0 .. number].to_vec()
+        }
+        else
+        {
+            area
+        }
+    }
 
     pub fn is_available(&self, (x, y):(i128, i128)) -> i128
     {
-        if x > 18 || y > 18 || x < 0 || y < 0
+        if x > RSIZEMAP || y > RSIZEMAP || x < 0 || y < 0
         {
             return -1;
         }
@@ -237,14 +193,9 @@ impl Map
         }
     }
 
-    pub fn move_authorize(&self, x: i128, y: i128, dir: Direction) -> bool
-    {
-        self.is_available(dir.new_coordonate((x, y))) == 0
-    }
-
     pub fn find_value(&self, (x, y):(i128, i128)) -> i128
     {
-        if x > 18 || y > 18 || x < 0 || y < 0
+        if x > RSIZEMAP || y > RSIZEMAP || x < 0 || y < 0
         {
             return -1;
         }
@@ -255,9 +206,9 @@ impl Map
     {
         for y in &self.value
         {
-            for x in 0..19
+            for x in 0..SIZEMAP
             {
-                match (y & (0o3 << (3 * (18 - x)))) >> 3 * (18 - x)
+                match (y & (0o3 << (3 * (RSIZEMAP - x)))) >> 3 * (RSIZEMAP - x)
                 {
                     1 => print!("1 "),
                     2 => print!("2 "),
