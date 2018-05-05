@@ -78,6 +78,7 @@ impl App
 			match start_min_max(&map)
 			{
 				Some(action) => {
+					map.number_captured((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player![map.current_player], true);
 					map.set_value((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player!(map.current_player));
 					// map.number_captured((action.x_y.0 as i32, action.x_y.1 as i32), (&Slot::PlayerTwo, &Slot::PlayerOne), true);
 					// map.change_player_turn();
@@ -97,7 +98,7 @@ impl App
 
 			// map.is_winning_move((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32));
 			
-			// map.number_captured((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32), (slot_player, slot_enemy), true);
+			map.number_captured((tmp_cursor.cursor_in_board[0] as i128, tmp_cursor.cursor_in_board[1] as i128), find_slot_player![map.current_player], true);
 			println!("value {}\n", heuristic::value_slot(map, (tmp_cursor.cursor_in_board[1] as i128, tmp_cursor.cursor_in_board[0] as i128, 2)));
 			
 			map.set_value((tmp_cursor.cursor_in_board[0] as i128, tmp_cursor.cursor_in_board[1] as i128), find_slot_player!(map.current_player));

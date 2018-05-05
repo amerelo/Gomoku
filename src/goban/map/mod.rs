@@ -3,7 +3,7 @@ use goban::player::{Player, PlayerKind};
 use goban::direction::{Direction};
 use std::i128;
 use heuristic;
-use goban::map::constant::{SIZEMAP, RSIZEMAP, THREE_MOVE_P1, THREE_MOVE_P2, DTHREE_MOVE_P1, DTHREE_MOVE_P2};
+use goban::map::constant::{*};
 
 #[derive(Debug, Clone)]
 pub struct Map
@@ -126,6 +126,113 @@ impl Map
             1 => 0,
             0 => 0,
             _ => -1
+        }
+    }
+
+     pub fn number_captured(&mut self, (x, y):(i128, i128), slot_player: i128, with_delete: bool) -> usize
+     {
+        let conv:(i128, i128) = match x >= y
+        {
+            true => (RSIZEMAP + (x - y) as i128, (x + y)as i128), 
+            _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
+        };
+        
+        self.is_capture((x, y, conv.0, conv.1), slot_player, with_delete)
+     }
+
+     fn is_capture(&mut self, (x, y, x2, y2):(i128, i128, i128, i128), slot_player: i128, with_delete: bool) -> usize
+     {
+        let masks = find_tm_player![self.current_player, CAPTURE_P1, CAPTURE_P2];
+        let mut count:usize = 0;
+
+        if x >= 2 && slot_capture![self.value[y as usize], 3 * (RSIZEMAP - x); masks; 0]
+        {
+            count += 2;
+            if with_delete
+            {
+                self.delete_captured(slot_player, (x - 1, y, x - 2, y));
+            }
+        }
+        if x <= RSIZEMAP - 3 && slot_capture![self.value[y as usize], 3 * (RSIZEMAP - x); masks; 1]
+        {
+            count += 2;
+            if with_delete
+            {
+                self.delete_captured(slot_player, (x + 1, y, x + 2, y));
+            }
+        }
+
+        if y >= 2 && slot_capture![self.value_rotate[x as usize], 3 * y; masks; 0]
+        {
+            count += 2;
+            if with_delete
+            {
+                self.delete_captured(slot_player, (x, y + 1, x, y + 2));
+            }
+        }
+
+        if y >= 3 && slot_capture![self.value_rotate[x as usize], 3 * y; masks; 1]
+        {
+            count += 2;
+            if with_delete
+            {
+                self.delete_captured(slot_player, (x, y - 1, x, y - 2));
+            }
+        }
+        if x <= RSIZEMAP - 2 && y >= 2 && slot_capture![self.value_diagonale[y2 as usize], 3 * x2; masks; 2]
+        {
+            count += 2;
+            if with_delete
+            {
+                self.delete_captured(slot_player, (x + 1, y - 1, x + 2, y - 2));
+            }
+        }
+
+        if y <= RSIZEMAP - 3 && x >= 3 && slot_capture![self.value_diagonale[y2 as usize], 3 * x2; masks; 3]
+        {
+            count += 2;
+            if with_delete
+            {
+                self.delete_captured(slot_player, (x - 1, y + 1, x - 2, y + 2));
+            }
+        }
+
+        if x >= 2 && y >= 2 && slot_capture![self.value_diagonale_rotate[x2 as usize], 3 * (RSIZEMAP * 2 - y2); masks; 2]
+        {
+            count += 2;
+            if with_delete
+            {
+                self.delete_captured(slot_player, (x - 1, y - 1, x - 2, y - 2));
+            }
+        }
+
+        if x <= RSIZEMAP - 3 && y <= RSIZEMAP - 3 && slot_capture![self.value_diagonale_rotate[x2 as usize], 3 * (RSIZEMAP * 2 - y2); masks; 3]
+        {
+            count += 2;
+            if with_delete
+            {
+                self.delete_captured(slot_player, (x + 1, y + 1, x + 2, y + 2));
+            }
+        }
+        count
+     }
+
+    fn delete_captured(&mut self, slot_player: i128, (x, y, x2, y2):(i128, i128, i128, i128)) -> ()
+    {
+        let slot_enemy = find_slot_enemy![self.current_player];
+
+        match slot_player
+        {
+            1 => self.players_score.0 += 2,
+            _ => self.players_score.1 += 2
+        }
+        self.set_value((x, y), slot_enemy);
+        self.set_value((x2, y2), slot_enemy);
+        println!("Score: {:?}", self.players_score);
+        if self.players_score.0 >= 10 || self.players_score.1 >= 10
+        {
+            self.is_finish = true;
+            println!("Finish");
         }
     }
 

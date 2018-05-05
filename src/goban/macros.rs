@@ -87,6 +87,15 @@ macro_rules! slot_cmp
 }
 
 #[macro_export]
+macro_rules! slot_capture
+{
+    ($slot:expr, $mov:expr; $array:expr; $value:expr ) =>
+    {
+        (($slot & ($array[$value].0 << ($mov - $array[$value].2 ))) >> ($mov - $array[$value].2 )) == $array[$value].1
+    }
+}
+
+#[macro_export]
 macro_rules! slot_value
 {
     ( $slot:expr, $mov:expr; $array:expr; [$( $x:expr ),*] ) => {

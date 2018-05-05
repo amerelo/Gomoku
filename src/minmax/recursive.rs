@@ -6,7 +6,7 @@ use goban::player::{Player};
 use heuristic;
 
 const MAX_VEC_AREA: usize = 12;
-const DEAPH: usize = 3;
+const DEAPH: usize = 5;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
@@ -26,13 +26,14 @@ fn change_turn(turn: &Turn) -> Turn
 fn place(map: Map, x: usize, y: usize, alpha_beta: (i32, i32)) -> Action
 {
 	let mut action = Action::new(map, (x, y), (alpha_beta.0, alpha_beta.1));
-
+	let slot_player = find_slot_player![action.map.current_player];
 	// let slot_player = &find_slot_player![action.map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
 	// let slot_enemy = &find_slot_enemy![action.map.current_player, Slot::PlayerOne, Slot::PlayerTwo];
 
 	// action.map.is_winning_move(x, y);
-
-	action.map.set_value((x as i128, y as i128), find_slot_player!(action.map.current_player));
+			
+	action.map.number_captured((x as i128, y as i128), slot_player, true);
+	action.map.set_value((x as i128, y as i128), slot_player);
 	// action.map.number_captured((x as i32, y as i32), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 
