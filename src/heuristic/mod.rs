@@ -18,7 +18,7 @@ pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128)) -> i128
     {
         return 0;
     }
-    println!("match x {} y {}", x, y);
+    // println!("match x {} y {}", x, y);
     count += match x
     {
         18 => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; masks_move.0; [0, 3, 6, 9, 11, 13, 21, 25, 30]],
@@ -27,7 +27,7 @@ pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128)) -> i128
         15 => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; masks_move.0; [0, 1, 2, 3, 4, 7, 9, 11, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33]],
         _  => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; masks_move.0; [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]]
     };
-    println!("x {} match y {}", x, y);
+    // println!("x {} match y {}", x, y);
     count += match y
     {
         0 => slot_value![map.value_rotate[x as usize], y * 3 ; masks_move.0; [0, 3, 6, 9, 11, 13, 21, 25, 30]],
@@ -38,12 +38,24 @@ pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128)) -> i128
     };
 
 // WIP
-    // count += match conv.0
-    // {
-    //     3 ... 5 => slot_value![map.value_diagonale[conv.1 as usize], conv.0 * 3 ; masks_move.1; [0, 3, 6]],
-    //     6 | 7 => slot_value![map.value_diagonale[conv.1 as usize], conv.0 * 3 ; masks_move.1; [0, 1, 2, 3, 4, 6, 7]],
-    //     _ => slot_value![map.value_diagonale[conv.1 as usize], conv.0 * 3 ; masks_move.1; [0, 1, 2, 3, 4, 5, 7, 8]]
-    // };
+    // println!("x {} y {} match conv.0 {} conv.1 {}", x, y, conv.0, conv.1);
+    count += match conv.0
+    {
+        0 ... 2 => 0,
+        3 ... 5 => slot_value![map.value_diagonale[conv.1 as usize], conv.0 * 3 ; masks_move.1; [0, 1, 3, 4, 6, 9, 11, 13, 15, 17, 21, 22, 25, 26, 30, 31]],
+        6 | 7 => slot_value![map.value_diagonale[conv.1 as usize], conv.0 * 3 ; masks_move.1; [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31,32, 33]],
+        _ => slot_value![map.value_diagonale[conv.1 as usize], conv.0 * 3 ; masks_move.1; [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]]
+    };
+
+
+//    println!("x {} y {} match conv.0 {} conv.1 {}", x, y, conv.0, conv.1);
+   count += match (RSIZEMAP as i128) * 2 - conv.1
+    {
+        0 ... 2 => 0,
+        3 ... 5 => slot_value![map.value_diagonale_rotate[conv.0 as usize], ((RSIZEMAP as i128) * 2 - conv.1) * 3 ; masks_move.1; [0, 1, 3, 4, 6, 9, 11, 13, 15, 17, 21, 22, 25, 26, 30, 31]],
+        6 | 7 => slot_value![map.value_diagonale_rotate[conv.0 as usize], ((RSIZEMAP as i128) * 2 - conv.1) * 3 ; masks_move.1; [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31,32, 33]],
+        _ => slot_value![map.value_diagonale_rotate[conv.0 as usize], ((RSIZEMAP as i128) * 2 - conv.1) * 3 ; masks_move.1; [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]]
+    };
 
     // count += match (RSIZEMAP as i128) * 2 - conv.1
     // {
