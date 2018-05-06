@@ -107,7 +107,7 @@ pub const MOVE_P1: [(i128, i128, i128, i128); 35] = [
                             /*01 01*/        (0o3333, 0o0101, 3, THREE_ALIGN),        // |.1X1
                             /*02 02*/        (0o3333, 0o0011, 6, THREE_ALIGN),        // |.X11
                             /*03 00*/        (0o33333, 0o01010, 0, THREE_ALIGN_CUT),  // .1.1X
-                            /*04 01*/        (0o333333, 0o01001, 3, THREE_ALIGN_CUT), // .1.X1
+                            /*04 01*/        (0o33333, 0o01001, 3, THREE_ALIGN_CUT),  // .1.X1
                             /*05 03*/        (0o33333, 0o0011, 9, THREE_ALIGN_CUT),   // .X.11
                             /*06 00*/        (0o33333, 0o01100, 0, THREE_ALIGN_CUT),  // .11.X
                             /*07 02*/        (0o33333, 0o01001, 6, THREE_ALIGN_CUT),  // .1.X1
@@ -139,7 +139,6 @@ pub const MOVE_P1: [(i128, i128, i128, i128); 35] = [
                             /*33 03*/        (0o33333, 0o20222, 9, ENEMY_FIVE_ALIGN), // 2X222
                             /*34 04*/        (0o33333, 0o02222, 12, ENEMY_FIVE_ALIGN),// X2222
 
-
                                             ];
 
 pub const MOVE_P2: [(i128, i128, i128, i128); 35] = [
@@ -147,7 +146,7 @@ pub const MOVE_P2: [(i128, i128, i128, i128); 35] = [
                             /*01 01*/        (0o3333, 0o0202, 3, THREE_ALIGN),        // |.2X2
                             /*02 02*/        (0o3333, 0o0022, 6, THREE_ALIGN),        // |.X22
                             /*03 00*/        (0o33333, 0o02020, 0, THREE_ALIGN_CUT),  // .2.2X
-                            /*04 01*/        (0o333333, 0o02002, 3, THREE_ALIGN_CUT), // .2.X2
+                            /*04 01*/        (0o33333, 0o02002, 3, THREE_ALIGN_CUT),  // .2.X2
                             /*05 03*/        (0o3333, 0o0022, 9, THREE_ALIGN_CUT),    // .X.22
                             /*06 00*/        (0o33333, 0o02200, 0, THREE_ALIGN_CUT),  // .22.X
                             /*07 02*/        (0o33333, 0o02002, 6, THREE_ALIGN_CUT),  // .2.X2
