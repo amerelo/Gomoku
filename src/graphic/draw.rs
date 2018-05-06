@@ -26,7 +26,7 @@ enum Colors
 pub fn draw_text(c: Context, gl: &mut GlGraphics, glyph_cache: &mut GlyphCache, my_text: &str, transform: [[f64; 3]; 2])
 {
 	text(
-		[0.0, 0.0, 0.0, 1.0],
+		[1.0, 1.0, 1.0, 1.0],
 		20,
 		my_text,
 		glyph_cache,

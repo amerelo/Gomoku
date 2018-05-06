@@ -18,6 +18,7 @@ use goban::map::{Map};
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
 use graphic::draw::{ draw_goban, draw_player, draw_text };
+use graphic::settings::{ Settings };
 use minmax::recursive::{ start_min_max };
 use heuristic;
 
@@ -129,6 +130,7 @@ pub fn start()
 		.unwrap();
 
 	let mut app = App::new(opengl);
+	let mut settings = Settings::new(opengl);
 	let mut events = Events::new(EventSettings::new());
 	// .max_fps(200)
 	// .lazy(true)
@@ -142,9 +144,6 @@ pub fn start()
 	TextureSettings::new(),
 	).unwrap();
 
-	// let text = Text::new(20);
-
-	window.set_lazy(true);
 	while let Some(e) = events.next(&mut window)
 	{
 		if let Some(button) = e.press_args()
@@ -180,8 +179,7 @@ pub fn start()
 		{
 			// println!("fps => {}", app.fps.tick());
 			app.render(&r, &mut glyph_cache);
-			// draw_text(&e, &mut window, &mut app, &glyphs);
-			// draw_hint(&e, &mut window, &mut app);
+			// settings.render(&r, &mut glyph_cache);
 		}
 
 		// if let Some(u) = e.update_args()
