@@ -7,7 +7,7 @@ use goban::player::{Player};
 use heuristic;
 
 const MAX_VEC_AREA: usize = 12;
-const DEAPH: usize = 3;
+const DEAPH: usize = 5;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
@@ -285,8 +285,8 @@ pub fn start_min_max(map: &Map) -> Option<Action>
 {
 	let depth: i32 = DEAPH as i32;
 
-	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
-	// let action = solver_iterative(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
+	// let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
+	let action = solver_iterative(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
 	// let action = None;
 
 	return action;

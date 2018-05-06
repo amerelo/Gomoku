@@ -96,8 +96,8 @@ impl App
 
 			// map.is_winning_move((tmp_cursor.cursor_in_board[0] as i32, tmp_cursor.cursor_in_board[1] as i32));
 			
+			// println!("value {}\n", heuristic::value_slot(map, (tmp_cursor.cursor_in_board[1] as i128, tmp_cursor.cursor_in_board[0] as i128, 2)));
 			map.number_captured((tmp_cursor.cursor_in_board[0] as i128, tmp_cursor.cursor_in_board[1] as i128), find_slot_player![map.current_player], true);
-			println!("value {}\n", heuristic::value_slot(map, (tmp_cursor.cursor_in_board[1] as i128, tmp_cursor.cursor_in_board[0] as i128, 2)));
 			
 			map.set_value((tmp_cursor.cursor_in_board[0] as i128, tmp_cursor.cursor_in_board[1] as i128), find_slot_player!(map.current_player));
 			map.change_player_turn();

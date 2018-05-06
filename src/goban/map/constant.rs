@@ -64,70 +64,85 @@ pub const DTHREE_MOVE_P2: [(i128, i128, i128); 9] = [
                                              (0o33333333333, 0o00002000200, 24)
                                             ];
 
-
 /*
-
-    (a, b, c, d) = (0o3333, 0o0110, 6, 3)
-    a = the mask
-    b = the patern
-    c = the shift ( << ) ; can overflow if not checked before calling the macro
-    d = value of the patern
-
-
-    1 = player one
-    2 = player two
-    . = empty slot
-    | = not checked (used for alignement of the comment)
-    ' = will never be set (used for diagonal check)
-    X = empty slot where we want to check the patern
-
+** Value for heurestic
 */
 
-pub const MOVE_P1: [(i128, i128, i128, i128); 9] = [
-                                             (0o3333, 0o0110, 0, 3),    // |.11X
-                                             (0o3333, 0o0101, 3, 3),    // |.1X1
-                                             (0o3333, 0o0011, 6, 3),    // |.X11
-                                             (0o33333, 0o01010, 0, 2),  // .1.1X
-                                             (0o333333, 0o01001, 3, 2), // .1.X1
-                                             (0o33333, 0o0011, 9, 2),   // .X.11
-                                             (0o33333, 0o01100, 0, 2),  // .11.X
-                                             (0o33333, 0o01001, 6, 2),  // .1.X1
-                                             (0o33333, 0o00101, 9, 2)   // .X1.1
+const THREE_ALIGN: i128 = 3;
+const THREE_ALIGN_CUT: i128 = 2;
+const CAPTURE: i128 = 4;
+
+/*
+**
+**  (a, b, c, d) = (0o3333, 0o0110, 6, 3)
+**  a = the mask
+**  b = the patern
+**  c = the shift ( << ) ; can overflow if not checked before calling the macro
+**  d = value of the patern
+**
+**
+**  1 = player one
+**  2 = player two
+**  . = empty slot
+**  | = not checked (used for alignement of the comment)
+**  ' = will never be set (used for diagonal check)
+**  X = empty slot where we want to check the patern
+**
+*/
+
+pub const MOVE_P1: [(i128, i128, i128, i128); 11] = [
+                                             (0o3333, 0o0110, 0, THREE_ALIGN),        // |.11X
+                                             (0o3333, 0o0101, 3, THREE_ALIGN),        // |.1X1
+                                             (0o3333, 0o0011, 6, THREE_ALIGN),        // |.X11
+                                             (0o33333, 0o01010, 0, THREE_ALIGN_CUT),  // .1.1X
+                                             (0o333333, 0o01001, 3, THREE_ALIGN_CUT), // .1.X1
+                                             (0o33333, 0o0011, 9, THREE_ALIGN_CUT),   // .X.11
+                                             (0o33333, 0o01100, 0, THREE_ALIGN_CUT),  // .11.X
+                                             (0o33333, 0o01001, 6, THREE_ALIGN_CUT),  // .1.X1
+                                             (0o33333, 0o00101, 9, THREE_ALIGN_CUT),  // .X1.1
+                                             (0o3333, 0o1220, 0, CAPTURE),            // |122X
+                                             (0o3333, 0o0221, 9, CAPTURE)             // |X221
                                             ];
 
-pub const MOVE_P2: [(i128, i128, i128, i128); 9] = [
-                                             (0o3333, 0o0220, 0, 3),    // |.22X
-                                             (0o3333, 0o0202, 3, 3),    // |.2X2
-                                             (0o3333, 0o0022, 6, 3),    // |.X22
-                                             (0o33333, 0o02020, 0, 2),  // .2.2X
-                                             (0o333333, 0o02002, 3, 2), // .2.X2
-                                             (0o3333, 0o0022, 9, 2),    // .X.22
-                                             (0o33333, 0o02200, 0, 2),  // .22.X
-                                             (0o33333, 0o02002, 6, 2),  // .2.X2
-                                             (0o33333, 0o00202, 9, 2)   // .X2.2
+pub const MOVE_P2: [(i128, i128, i128, i128); 11] = [
+                                             (0o3333, 0o0220, 0, THREE_ALIGN),        // |.22X
+                                             (0o3333, 0o0202, 3, THREE_ALIGN),        // |.2X2
+                                             (0o3333, 0o0022, 6, THREE_ALIGN),        // |.X22
+                                             (0o33333, 0o02020, 0, THREE_ALIGN_CUT),  // .2.2X
+                                             (0o333333, 0o02002, 3, THREE_ALIGN_CUT), // .2.X2
+                                             (0o3333, 0o0022, 9, THREE_ALIGN_CUT),    // .X.22
+                                             (0o33333, 0o02200, 0, THREE_ALIGN_CUT),  // .22.X
+                                             (0o33333, 0o02002, 6, THREE_ALIGN_CUT),  // .2.X2
+                                             (0o33333, 0o00202, 9, THREE_ALIGN_CUT),  // .X2.2
+                                             (0o3333, 0o2110, 0, CAPTURE),            // |211X
+                                             (0o3333, 0o0112, 9, CAPTURE)             // |X112
                                             ];
 
-pub const DMOVE_P1: [(i128, i128, i128, i128); 9] = [
-                                             (0o3333333, 0o0010100, 0, 3),      // ||.'1'1'X
-                                             (0o3333333, 0o0010001, 6, 3),      // ||.'1'X'1
-                                             (0o3333333, 0o0000101, 12, 3),     // ||.'X'1'1
-                                             (0o333333333, 0o001000100, 0, 2),  // .'1'.'1'X
-                                             (0o333333333, 0o001000001, 6, 2),  // .'1'.'X'1
-                                             (0o333333333, 0o000000101, 18, 2), // .'X'.'1'1
-                                             (0o333333333, 0o001010000, 0, 2),  // .'1'1'.'X
-                                             (0o333333333, 0o001000001, 12, 2), // .'1'X'.'1
-                                             (0o333333333, 0o000010001, 18, 2)  // .'X'1'.'1
+pub const DMOVE_P1: [(i128, i128, i128, i128); 11] = [
+                                             (0o3333333, 0o0010100, 0, THREE_ALIGN),          // ||.'1'1'X
+                                             (0o3333333, 0o0010001, 6, THREE_ALIGN),          // ||.'1'X'1
+                                             (0o3333333, 0o0000101, 12, THREE_ALIGN),         // ||.'X'1'1
+                                             (0o333333333, 0o001000100, 0, THREE_ALIGN_CUT),  // .'1'.'1'X
+                                             (0o333333333, 0o001000001, 6, THREE_ALIGN_CUT),  // .'1'.'X'1
+                                             (0o333333333, 0o000000101, 18, THREE_ALIGN_CUT), // .'X'.'1'1
+                                             (0o333333333, 0o001010000, 0, THREE_ALIGN_CUT),  // .'1'1'.'X
+                                             (0o333333333, 0o001000001, 12, THREE_ALIGN_CUT), // .'1'X'.'1
+                                             (0o333333333, 0o000010001, 18, THREE_ALIGN_CUT), // .'X'1'.'1
+                                             (0o3333333, 0o1020200, 0, CAPTURE),              // ||1'2'2'X
+                                             (0o3333333, 0o0020201, 18, CAPTURE)              // ||X'2'2'1
                                             ];
 
-pub const DMOVE_P2: [(i128, i128, i128, i128); 9] = [
-                                             (0o3333333, 0o0020200, 0, 3),      // ||.'2'2'X
-                                             (0o3333333, 0o0020002, 6, 3),      // ||.'2'X'2
-                                             (0o3333333, 0o0000202, 12, 3),     // ||.'X'2'2
-                                             (0o333333333, 0o002000200, 0, 2),  // .'2'.'2'X
-                                             (0o333333333, 0o002000002, 6, 2),  // .'2'.'X'2
-                                             (0o333333333, 0o000000202, 18, 2), // .'X'.'2'2
-                                             (0o333333333, 0o002020000, 0, 2),  // .'2'2'.'X
-                                             (0o333333333, 0o002000002, 12, 2), // .'2'X'.'2
-                                             (0o333333333, 0o000020002, 18, 2)  // .'X'2'.'2
+pub const DMOVE_P2: [(i128, i128, i128, i128); 11] = [
+                                             (0o3333333, 0o0020200, 0, THREE_ALIGN),          // ||.'2'2'X
+                                             (0o3333333, 0o0020002, 6, THREE_ALIGN),          // ||.'2'X'2
+                                             (0o3333333, 0o0000202, 12, THREE_ALIGN),         // ||.'X'2'2
+                                             (0o333333333, 0o002000200, 0, THREE_ALIGN_CUT),  // .'2'.'2'X
+                                             (0o333333333, 0o002000002, 6, THREE_ALIGN_CUT),  // .'2'.'X'2
+                                             (0o333333333, 0o000000202, 18, THREE_ALIGN_CUT), // .'X'.'2'2
+                                             (0o333333333, 0o002020000, 0, THREE_ALIGN_CUT),  // .'2'2'.'X
+                                             (0o333333333, 0o002000002, 12, THREE_ALIGN_CUT), // .'2'X'.'2
+                                             (0o333333333, 0o000020002, 18, THREE_ALIGN_CUT), // .'X'2'.'2
+                                             (0o3333333, 0o2010100, 0, CAPTURE),              // ||2'1'1'X
+                                             (0o3333333, 0o0010102, 18, CAPTURE)              // ||X'1'1'2
                                             ];
 
