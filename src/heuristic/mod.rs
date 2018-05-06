@@ -14,13 +14,14 @@ pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128)) -> i128
         _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
     };
 
-    if x < 0 || y < 0 || x > RSIZEMAP || y > RSIZEMAP || find_slot_player![map.current_player] == 2
+    if x < 0 || y < 0 || x > RSIZEMAP || y > RSIZEMAP
     {
         return 0;
     }
 
     count += match x
     {
+        18 => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; masks_move.0; [0, 3, 6]],
         17 => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; masks_move.0; [0, 3, 6]],
         16 => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; masks_move.0; [0, 1, 3, 4]],
         15 => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; masks_move.0; [0, 1, 2, 3, 4, 7]],
@@ -29,6 +30,7 @@ pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128)) -> i128
 
     count += match y
     {
+        0 => slot_value![map.value_rotate[x as usize], y * 3 ; masks_move.0; [0, 3, 6]],
         1 => slot_value![map.value_rotate[x as usize], y * 3 ; masks_move.0; [0, 3, 6]],
         2 => slot_value![map.value_rotate[x as usize], y * 3 ; masks_move.0; [0, 1, 3, 4]],
         3 => slot_value![map.value_rotate[x as usize], y * 3 ; masks_move.0; [0, 1, 2, 3, 4, 7]],
