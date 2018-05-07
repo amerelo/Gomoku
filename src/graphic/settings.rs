@@ -29,7 +29,10 @@ impl Settings
 		{
 			clear(BACKGROUND, gl);
 
-			draw_text(c, gl, &mut glyph_cache, &format!(" test "), c.transform.trans(200.0, 200.0));
+			draw_text(c, gl, &mut glyph_cache, &format!(" test "), c.transform.trans(350.0, 150.0));
+			draw_text(c, gl, &mut glyph_cache, &format!(" test "), c.transform.trans(350.0, 250.0));
+			draw_text(c, gl, &mut glyph_cache, &format!(" test "), c.transform.trans(350.0, 350.0));
+			draw_text(c, gl, &mut glyph_cache, &format!(" test "), c.transform.trans(350.0, 450.0));
 			// draw_text(c, gl, &mut glyph_cache, &format!("Turn: {}", map.turn), c.transform.trans(5.0, 40.0));
 		});
 	}

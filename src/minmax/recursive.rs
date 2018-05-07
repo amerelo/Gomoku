@@ -6,7 +6,7 @@ use goban::map::{ Map };
 use goban::player::{Player};
 use heuristic;
 
-const MAX_VEC_AREA: usize = 12;
+const MAX_VEC_AREA: usize = 30;
 const DEAPH: usize = 3;
 
 #[derive(PartialEq, Clone)]
@@ -140,6 +140,10 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 						{
 							current_elem = compare_action;
 						}
+						else {
+							new_action = Some(current_elem);
+							break 'start_of_loop;
+						}
 						current_trun = change_turn(&current_trun);
 					}
 					else if current_elem.alpha < current_elem.beta
@@ -147,7 +151,10 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 						select_best_action(&mut current_elem, compare_action, &current_trun);
 					}
 				} 
-				_ => break 'start_of_loop,
+				_ => {
+					new_action = None;
+					break 'start_of_loop
+				},
 			};
 		}
 		else if current_elem.evaluate == false
@@ -216,6 +223,10 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 						{
 							current_elem = compare_action; 
 						}
+						else {
+							new_action = Some(current_elem);
+							break 'start_of_loop;
+						}
 						current_trun = change_turn(&current_trun);
 					}
 					else if current_elem.alpha < current_elem.beta
@@ -223,12 +234,16 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 						select_best_action(&mut current_elem, compare_action, &current_trun);
 					}
 				} 
-				_ => break 'start_of_loop,
+				_ => {
+					println!("{}", "last 2");
+					new_action = None;
+					break 'start_of_loop;
+				},
 			};
 		}
 	}
 
-	return Some(current_elem);
+	return new_action;
 }
 
 #[allow(dead_code)]
@@ -286,6 +301,13 @@ pub fn start_min_max(map: &Map) -> Option<Action>
 	// let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
 	let action = solver_iterative(depth, &mut map.clone(), Turn::MIN, (MIN, MAX));
 	// let action = None;
+
+	match &action
+	{
+		Some(_t) => (),
+		_ => println!("ERROR no NULL return" ), 
+	}
+
 
 	return action;
 }
