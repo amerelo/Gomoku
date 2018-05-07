@@ -105,7 +105,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 	let mut new_action: Option<Action> = None;
 	
 	let mut dep;
-	let mut new_trun: Turn = turn;
+	let mut current_trun: Turn = turn;
 
 	'start_of_loop: loop 
 	{
@@ -121,17 +121,17 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 						if current_elem.depth != compare_action.depth
 						{
 							println!("current elem {} -- compare elem {}",  current_elem.depth, compare_action.depth);
-						}
+						} // need this to see if some bug appear
 
 						compare_action.value = 0;
 						compare_action.evaluate = true;
 
-						select_best_action(&mut current_elem, compare_action, &new_trun);
+						select_best_action(&mut current_elem, compare_action, &current_trun);
 					} 
 					else if current_elem.depth != compare_action.depth
 					{
 						//check if current_elem.depth < compare_action.depth
-						match new_trun {
+						match current_trun {
 							Turn::MIN => compare_action.beta = current_elem.value,
 							Turn::MAX => compare_action.alpha = current_elem.value,
 						};
@@ -140,14 +140,11 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 						{
 							current_elem = compare_action;
 						}
-						new_trun = change_turn(&new_trun);
+						current_trun = change_turn(&current_trun);
 					}
-					else
+					else if current_elem.alpha < current_elem.beta
 					{
-						if current_elem.alpha < current_elem.beta
-						{
-							select_best_action(&mut current_elem, compare_action, &new_trun);
-						}
+						select_best_action(&mut current_elem, compare_action, &current_trun);
 					}
 				} 
 				_ => break 'start_of_loop,
@@ -155,7 +152,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 		}
 		else if current_elem.evaluate == false
 		{
-			let area = map.area_of_interest(MAX_VEC_AREA - DEAPH);
+			let area = current_elem.map.area_of_interest(MAX_VEC_AREA - DEAPH);
 			current_elem.evaluate = true;
 			let new_map = current_elem.map.clone();
 			let a = current_elem.alpha;
@@ -181,7 +178,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 			};
 
 			new_action = None;
-			new_trun = change_turn(&new_trun);
+			current_trun = change_turn(&current_trun);
 		}
 		else if current_elem.evaluate == true
 		{
@@ -191,7 +188,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 				{
 					if current_elem.alpha < current_elem.beta
 					{
-						select_best_action(&mut current_elem, tmp_action, &new_trun);
+						select_best_action(&mut current_elem, tmp_action, &current_trun);
 					}
 				}
 			}
@@ -210,7 +207,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 					else if current_elem.depth != compare_action.depth
 					{
 						//check if current_elem.depth < compare_action.depth
-						match new_trun {
+						match current_trun {
 							Turn::MIN => compare_action.beta = current_elem.value,
 							Turn::MAX => compare_action.alpha = current_elem.value,
 						};
@@ -219,14 +216,11 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 						{
 							current_elem = compare_action; 
 						}
-						new_trun = change_turn(&new_trun);
+						current_trun = change_turn(&current_trun);
 					}
-					else
+					else if current_elem.alpha < current_elem.beta
 					{
-						if current_elem.alpha < current_elem.beta
-						{
-							select_best_action(&mut current_elem, compare_action, &new_trun);
-						}
+						select_best_action(&mut current_elem, compare_action, &current_trun);
 					}
 				} 
 				_ => break 'start_of_loop,
@@ -251,7 +245,7 @@ fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Opti
 
 	let mut action_set = false;
 	let mut tmp: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
-	let new_trun: Turn = change_turn(&turn);
+	let current_trun: Turn = change_turn(&turn);
 	
 	let area = map.area_of_interest(MAX_VEC_AREA);
 
@@ -262,7 +256,7 @@ fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Opti
 			let mut new_map = map.clone();
 			let mut new_action = place(new_map, y_x.1 as usize , y_x.0 as usize, (tmp.alpha, tmp.beta));
 
-			match solver(depth - 1, &mut new_action.map, new_trun.clone(), (new_action.alpha, new_action.beta))
+			match solver(depth - 1, &mut new_action.map, current_trun.clone(), (new_action.alpha, new_action.beta))
 			{
 				Some(action) => {
 					new_action.value = action.value;
