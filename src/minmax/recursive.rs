@@ -105,7 +105,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 	let mut new_action: Option<Action> = None;
 	
 	let mut dep;
-	let mut new_trun: Turn = Turn::MAX;
+	let mut new_trun: Turn = turn;
 
 	'start_of_loop: loop 
 	{
@@ -118,11 +118,15 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 				Some(mut compare_action) => {
 					if compare_action.evaluate == false
 					{
-						if current_elem.alpha < current_elem.beta
+						if current_elem.depth != compare_action.depth
 						{
-							compare_action.action_done.push(current_elem);
-							current_elem = compare_action; 
+							println!("current elem {} -- compare elem {}",  current_elem.depth, compare_action.depth);
 						}
+
+						compare_action.value = 0;
+						compare_action.evaluate = true;
+
+						select_best_action(&mut current_elem, compare_action, &new_trun);
 					} 
 					else if current_elem.depth != compare_action.depth
 					{
@@ -142,7 +146,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 					{
 						if current_elem.alpha < current_elem.beta
 						{
-							select_best_action(&mut current_elem, compare_action, &turn);
+							select_best_action(&mut current_elem, compare_action, &new_trun);
 						}
 					}
 				} 
@@ -187,7 +191,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 				{
 					if current_elem.alpha < current_elem.beta
 					{
-						select_best_action(&mut current_elem, tmp_action, &turn);
+						select_best_action(&mut current_elem, tmp_action, &new_trun);
 					}
 				}
 			}
@@ -221,7 +225,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 					{
 						if current_elem.alpha < current_elem.beta
 						{
-							select_best_action(&mut current_elem, compare_action, &turn);
+							select_best_action(&mut current_elem, compare_action, &new_trun);
 						}
 					}
 				} 
@@ -286,7 +290,7 @@ pub fn start_min_max(map: &Map) -> Option<Action>
 	let depth: i32 = DEAPH as i32;
 
 	// let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
-	let action = solver_iterative(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
+	let action = solver_iterative(depth, &mut map.clone(), Turn::MIN, (MIN, MAX));
 	// let action = None;
 
 	return action;
