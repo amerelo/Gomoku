@@ -161,7 +161,7 @@ impl Map
             }
         }
 
-        if y >= 2 && slot_capture![self.value_rotate[x as usize], 3 * y; masks; 0]
+        if y >= 0 && slot_capture![self.value_rotate[x as usize], 3 * y; masks; 0]
         {
             count += 2;
             if with_delete
