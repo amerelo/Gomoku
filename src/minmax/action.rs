@@ -3,10 +3,10 @@ use goban::map::{Map};
 #[derive(Debug, Clone)]
 pub struct Action
 {
-	pub value: i32,
-	pub alpha: i32,
-	pub beta: i32,
-	pub depth: i32,
+	pub value: i128,
+	pub alpha: i128,
+	pub beta: i128,
+	pub depth: i128,
 	pub number_captured: usize,
 	pub x_y: (usize, usize),
 	pub evaluate: bool,
@@ -16,7 +16,7 @@ pub struct Action
 
 impl Action
 {
-	pub fn new(map: Map, x_y: (usize, usize), alpha_beta: (i32, i32)) -> Self
+	pub fn new(map: Map, x_y: (usize, usize), alpha_beta: (i128, i128)) -> Self
 	{
 		Action {
 			value: 0,
@@ -31,7 +31,7 @@ impl Action
 		}
 	}
 
-	pub fn new_iterative(map: Map, x_y: (usize, usize), alpha_beta: (i32, i32), depth: i32) -> Self
+	pub fn new_iterative(map: Map, x_y: (usize, usize), alpha_beta: (i128, i128), depth: i128) -> Self
 	{
 		Action {
 			value: 0,

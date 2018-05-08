@@ -62,15 +62,20 @@ pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128)) -> i128
     count as i128
 }
 
-pub fn value_map(map: &Map) -> i128
+pub fn value_map(map: &Map, slot: Player) -> i128
 {
-    if map.is_finish
+	let mut count:i128 = 0;
+
+	if map.is_finish
     {
-        match find_score![map.current_player, map.players_score] >= 10
+        match find_score![slot, map.players_score] >= 10
         {
             true => { return MAX },
             _    => { return MIN }
         }
     }
-    0
+	count += find_score![slot, map.players_score] as i128 * 5;
+	count -= find_enemy_score![slot, map.players_score] as i128 * 5;
+
+    count
 }

@@ -1,12 +1,12 @@
-use std::i32::{MIN, MAX};
+use std::i128::{MIN, MAX};
 
 use minmax::action::{ Action };
 use goban::map::{ Map };
 use goban::player::{Player};
-// use heuristic;
+use heuristic;
 
-const MAX_VEC_AREA: usize = 10;
-const DEAPH: usize = 3;
+const MAX_VEC_AREA: usize = 30;
+const DEAPH: usize = 2;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
@@ -23,7 +23,7 @@ fn change_turn(turn: &Turn) -> Turn
 	}
 }
 
-fn place(map: Map, x: usize, y: usize, alpha_beta: (i32, i32)) -> Action
+fn place(map: Map, x: usize, y: usize, alpha_beta: (i128, i128)) -> Action
 {
 	let mut action = Action::new(map, (x, y), (alpha_beta.0, alpha_beta.1));
 	let slot_player = find_slot_player![action.map.current_player];
@@ -32,20 +32,21 @@ fn place(map: Map, x: usize, y: usize, alpha_beta: (i32, i32)) -> Action
 			
 	action.map.number_captured((x as i128, y as i128), slot_player, true);
 	action.map.set_value((x as i128, y as i128), slot_player);
-	// action.map.number_captured((x as i32, y as i32), find_slots_players![action.map.current_player], true);
+	// action.map.number_captured((x as i128, y as i128), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 
 	action
 }
 
-fn place_iterative(map: Map, x: usize, y: usize, alpha_beta: (i32, i32), depth: i32) -> Action
+fn place_iterative(map: Map, x: usize, y: usize, alpha_beta: (i128, i128), depth: i128) -> Action
 {
 	let mut action = Action::new_iterative(map, (x, y), (alpha_beta.0, alpha_beta.1), depth);
+	let slot_player = find_slot_player![action.map.current_player];
 
 	// action.map.is_winning_move(x, y);
-
-	action.map.set_value((x as i128, y as i128), find_slot_player!(action.map.current_player));
-	// action.map.number_captured((x as i32, y as i32), find_slots_players![action.map.current_player], true);
+	action.map.number_captured((x as i128, y as i128), slot_player, true);
+	action.map.set_value((x as i128, y as i128), slot_player);
+	// action.map.number_captured((x as i128, y as i128), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 
 	action
@@ -94,7 +95,7 @@ fn select_best_action(action_1: &mut Action, action_2: Action, turn: &Turn)
 }
 
 #[allow(dead_code)]
-fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Option<Action>
+fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> Option<Action>
 {
 	let mut go_stack: Vec<Action> = vec![];
 
@@ -109,7 +110,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 	{
 		if current_elem.depth == 0
 		{
-			current_elem.value = 0;
+			current_elem.value = heuristic::value_map(&current_elem.map, Player::Two);
 			current_elem.evaluate = true;
 			match go_stack.pop()
 			{
@@ -121,7 +122,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 							println!("current elem {} -- compare elem {}",  current_elem.depth, compare_action.depth);
 						} // need this to see if some bug appear
 
-						compare_action.value = 0;
+						compare_action.value = heuristic::value_map(&current_elem.map, Player::Two);
 						compare_action.evaluate = true;
 
 						select_best_action(&mut current_elem, compare_action, &current_trun);
@@ -249,7 +250,7 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 }
 
 #[allow(dead_code)]
-fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Option<Action>
+fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> Option<Action>
 {
 	if depth == 0
 	{
@@ -298,7 +299,7 @@ fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Opti
 
 pub fn start_min_max(map: &Map) -> Option<Action>
 {
-	let depth: i32 = DEAPH as i32;
+	let depth: i128 = DEAPH as i128;
 
 	// let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
 	let action = solver_iterative(depth, &mut map.clone(), Turn::MIN, (MIN, MAX));

@@ -78,6 +78,20 @@ macro_rules! find_score
 }
 
 #[macro_export]
+macro_rules! find_enemy_score
+{
+    ($n:expr, $scores:expr) =>
+    {
+        match $n
+        {
+            Player::Two => $scores.0 as i32,
+            _           => $scores.1 as i32
+        };
+    }
+}
+
+
+#[macro_export]
 macro_rules! find_slots_players
 {
     ($n:expr) =>

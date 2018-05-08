@@ -12,7 +12,7 @@ pub struct Map
 	pub value_diagonale: Vec<i128>,
 	pub value_diagonale_rotate: Vec<i128>,
 	pub players_kind: (PlayerKind, PlayerKind),
-	pub players_score: (usize, usize),
+	pub players_score: (i128, i128),
 	pub current_player: Player,
 	pub turn: usize,
 	pub is_finish: bool,
