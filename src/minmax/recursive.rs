@@ -1,10 +1,9 @@
 use std::i32::{MIN, MAX};
-use std::time::{Instant, Duration};
 
 use minmax::action::{ Action };
 use goban::map::{ Map };
 use goban::player::{Player};
-use heuristic;
+// use heuristic;
 
 const MAX_VEC_AREA: usize = 30;
 const DEAPH: usize = 3;

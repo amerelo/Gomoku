@@ -14,25 +14,27 @@ const GOBAN_SPACE: f64 = 34.5;
 const COLOR_WS: [f32; 4] = [1.0, 1.0, 1.0, 0.6];
 const COLOR_W: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
 const COLOR_R: [f32; 4] = [1.0, 0.0, 0.0, 0.6];
+const COLOR_Y: [f32; 4] = [1.0, 1.0, 0.0, 1.0];
 
-enum Colors
+pub enum Colors
 {
 	SHADOW,
 	NORMAL,
 	RED,
+	Yellow,
 }
 
-
-pub fn draw_text(c: Context, gl: &mut GlGraphics, glyph_cache: &mut GlyphCache, my_text: &str, transform: [[f64; 3]; 2])
+pub fn draw_text(gl: &mut GlGraphics, glyph_cache: &mut GlyphCache, my_text: &str, transform: [[f64; 3]; 2], color: Colors)
 {
-	text(
-		[1.0, 1.0, 1.0, 1.0],
-		20,
-		my_text,
-		glyph_cache,
-		transform,
-		gl,
-	).unwrap();
+	let _success;
+	
+	match color
+	{
+		Colors::NORMAL	=> _success = text(COLOR_W, 20, my_text, glyph_cache, transform, gl),
+		Colors::RED		=> _success = text(COLOR_R, 20, my_text, glyph_cache, transform, gl),
+		Colors::Yellow	=> _success = text(COLOR_Y, 20, my_text, glyph_cache, transform, gl),
+		_				=> (), 
+	};
 }
 
 pub fn draw_goban(c: Context, gl: &mut GlGraphics, goban: &GoElem)
@@ -50,6 +52,7 @@ fn draw_img(gl: &mut GlGraphics, player: &GoElem, transform: [[f64; 3]; 2], cl: 
 		Colors::SHADOW => Image::new_color(COLOR_WS).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
 		Colors::NORMAL => Image::new_color(COLOR_W).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
 		Colors::RED => Image::new_color(COLOR_R).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
+		Colors::Yellow => Image::new_color(COLOR_Y).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
 	}
 }
 

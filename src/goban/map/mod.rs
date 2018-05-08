@@ -28,7 +28,7 @@ impl Default for Map
             value_rotate: mapinit![SIZEMAP, 0 as i128],
             value_diagonale: mapinit![SIZEMAP * 2, 0 as i128],
             value_diagonale_rotate: mapinit![SIZEMAP * 2, 0 as i128],
-            players_kind: (PlayerKind::Human, PlayerKind::AI),
+            players_kind: (PlayerKind::Human, PlayerKind::Human),
             players_score: (0, 0),
             current_player: Player::One,
             turn: 1,
@@ -39,7 +39,7 @@ impl Default for Map
 
 impl Map
 {
-    pub fn reset(&mut self) -> ()
+    pub fn reset(&mut self)
     {
         self.value = mapinit![SIZEMAP, 0];
         self.value_rotate = mapinit![SIZEMAP, 0];
@@ -50,6 +50,11 @@ impl Map
         self.is_finish = false;
         self.turn = 1;
     }
+
+	pub fn reset_players(&mut self, player1: PlayerKind, player2: PlayerKind)
+	{
+		self.players_kind = (player1, player2);
+	}
 
     pub fn set_value(&mut self, (x, y):(i128, i128), value: i128) -> ()
     {
@@ -78,9 +83,9 @@ impl Map
 				{
 					if ((elem_y >> ((size_map - x) * 3)) & 0x3 ) != 0
 					{
-                        insert_without_double![((y as i128 - 1), x as i128, 0), area];
-                        insert_without_double![((y as i128 - 1), (x as i128 - 1), 0), area];
-                        insert_without_double![((y as i128 - 1), (x + 1) as i128, 0), area];
+						insert_without_double![((y as i128 - 1), x as i128, 0), area];
+						insert_without_double![((y as i128 - 1), (x as i128 - 1), 0), area];
+						insert_without_double![((y as i128 - 1), (x + 1) as i128, 0), area];
 						insert_without_double![((y + 1) as i128, (x as i128 - 1), 0), area];
 						insert_without_double![((y + 1) as i128, (x + 1) as i128, 0), area];
 						insert_without_double![((y + 1) as i128, x as i128, 0), area];
