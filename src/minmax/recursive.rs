@@ -5,7 +5,7 @@ use goban::map::{ Map };
 use goban::player::{Player};
 // use heuristic;
 
-const MAX_VEC_AREA: usize = 30;
+const MAX_VEC_AREA: usize = 10;
 const DEAPH: usize = 3;
 
 #[derive(PartialEq, Clone)]
@@ -41,7 +41,6 @@ fn place(map: Map, x: usize, y: usize, alpha_beta: (i32, i32)) -> Action
 fn place_iterative(map: Map, x: usize, y: usize, alpha_beta: (i32, i32), depth: i32) -> Action
 {
 	let mut action = Action::new_iterative(map, (x, y), (alpha_beta.0, alpha_beta.1), depth);
-
 
 	// action.map.is_winning_move(x, y);
 
@@ -204,6 +203,11 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 				Some(mut compare_action) => {
 					if compare_action.evaluate == false
 					{
+						if current_elem.depth != compare_action.depth
+						{
+							println!("{}", "error in logique");
+						}
+
 						if current_elem.alpha < current_elem.beta
 						{
 							compare_action.action_done.push(current_elem);
@@ -234,7 +238,6 @@ fn solver_iterative(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32
 					}
 				} 
 				_ => {
-					println!("{}", "last 2");
 					new_action = None;
 					break 'start_of_loop;
 				},
@@ -261,7 +264,7 @@ fn solver(depth: i32, map: &mut Map, turn: Turn, alpha_beta: (i32, i32)) -> Opti
 	let mut tmp: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
 	let current_trun: Turn = change_turn(&turn);
 	
-	let area = map.area_of_interest(MAX_VEC_AREA);
+	let area = map.area_of_interest(MAX_VEC_AREA - DEAPH);
 
 	'root: for y_x in area.iter()
 	{

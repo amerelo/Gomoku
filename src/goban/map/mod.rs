@@ -7,34 +7,34 @@ use goban::map::constant::{*};
 #[derive(Debug, Clone)]
 pub struct Map
 {
-    pub value: Vec<i128>,
-    pub value_rotate: Vec<i128>,
-    pub value_diagonale: Vec<i128>,
-    pub value_diagonale_rotate: Vec<i128>,
-    pub players_kind: (PlayerKind, PlayerKind),
-    pub players_score: (usize, usize),
-    pub current_player: Player,
-    pub turn: usize,
-    pub is_finish: bool,
+	pub value: Vec<i128>,
+	pub value_rotate: Vec<i128>,
+	pub value_diagonale: Vec<i128>,
+	pub value_diagonale_rotate: Vec<i128>,
+	pub players_kind: (PlayerKind, PlayerKind),
+	pub players_score: (usize, usize),
+	pub current_player: Player,
+	pub turn: usize,
+	pub is_finish: bool,
 }
 
 impl Default for Map
 {
-    fn default() -> Map
-    {
-        Map
-        {
-            value: mapinit![SIZEMAP, 0 as i128],
-            value_rotate: mapinit![SIZEMAP, 0 as i128],
-            value_diagonale: mapinit![SIZEMAP * 2, 0 as i128],
-            value_diagonale_rotate: mapinit![SIZEMAP * 2, 0 as i128],
-            players_kind: (PlayerKind::Human, PlayerKind::Human),
-            players_score: (0, 0),
-            current_player: Player::One,
-            turn: 1,
-            is_finish: false,
-        }
-    }
+	fn default() -> Map
+	{
+		Map
+		{
+			value: mapinit![SIZEMAP, 0 as i128],
+			value_rotate: mapinit![SIZEMAP, 0 as i128],
+			value_diagonale: mapinit![SIZEMAP * 2, 0 as i128],
+			value_diagonale_rotate: mapinit![SIZEMAP * 2, 0 as i128],
+			players_kind: (PlayerKind::Human, PlayerKind::Human),
+			players_score: (0, 0),
+			current_player: Player::One,
+			turn: 1,
+			is_finish: false,
+		}
+	}
 }
 
 impl Map
@@ -95,20 +95,26 @@ impl Map
 				}
 			}
 		}
+
+		if area.len() == 0
+		{
+			area.push( (10,10,0) );
+		}
+
 		for t in &mut area
-        {
-            t.2 = heuristic::value_slot(self, *t);
-        }
-        area.sort_by_key(|k| -k.2);
-        if number < area.len() - 1
-        {
-            area[0 .. number].to_vec()
-        }
-        else
-        {
-            area
-        }
-    }
+		{
+			t.2 = heuristic::value_slot(self, *t);
+		}
+		area.sort_by_key(|k| -k.2);
+		if number < area.len() - 1
+		{
+			area[0 .. number].to_vec()
+		}
+		else
+		{
+			area
+		}
+	}
 
     pub fn is_available(&self, (x, y):(i128, i128)) -> i128
     {

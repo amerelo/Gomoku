@@ -50,7 +50,7 @@ impl Settings
 		let mut vect: Vec<SettingsElem> = vec![];
 		vect.push( SettingsElem { text: "".to_owned(), base: "Player One : ".to_owned(), t: (250.0, 200.0)} );
 		vect.push( SettingsElem { text: "".to_owned(), base: "Player Two : ".to_owned(), t: (250.0, 300.0)} );
-		vect.push( SettingsElem { text: "Start".to_owned(), base: "Start ".to_owned(), t: (300.0, 450.0)} );
+		vect.push( SettingsElem { text: "Start".to_owned(), base: "Start ".to_owned(), t: (350.0, 450.0)} );
 
 		Settings {
 			gl: GlGraphics::new(opengl),
@@ -111,7 +111,6 @@ impl Settings
 
 	pub fn render(&mut self, args: &RenderArgs, mut glyph_cache: &mut GlyphCache, mut cursor: &mut Cursor, map: &mut Map) //RenderArgs
 	{
-		// println!("pos {:?}", cursor.cursor_pos);
 		let index = self.select_index(&mut cursor);
 		self.select_action(&mut cursor, map);
 		self.format_text();
