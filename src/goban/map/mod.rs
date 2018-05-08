@@ -3,6 +3,7 @@ use goban::player::{Player, PlayerKind};
 use std::i128;
 use heuristic;
 use goban::map::constant::{*};
+use goban::finish::{Finish};
 
 #[derive(Debug, Clone)]
 pub struct Map
@@ -15,7 +16,7 @@ pub struct Map
 	pub players_score: (i128, i128),
 	pub current_player: Player,
 	pub turn: usize,
-	pub is_finish: bool,
+	pub is_finish: Finish,
 }
 
 impl Default for Map
@@ -32,7 +33,7 @@ impl Default for Map
 			players_score: (0, 0),
 			current_player: Player::One,
 			turn: 1,
-			is_finish: false,
+			is_finish: Finish::None,
 		}
 	}
 }
@@ -47,7 +48,7 @@ impl Map
         self.value_diagonale_rotate = mapinit![SIZEMAP * 2, 0];
         self.players_score = (0, 0);
         self.current_player = Player::One;
-        self.is_finish = false;
+        self.is_finish = Finish::None;
         self.turn = 1;
     }
 
@@ -241,7 +242,11 @@ impl Map
         println!("Score: {:?}", self.players_score);
         if self.players_score.0 >= 10 || self.players_score.1 >= 10
         {
-            self.is_finish = true;
+            match slot_player
+            {
+                1 => { self.is_finish = Finish::CapturePlayerOne },
+                _ => { self.is_finish = Finish::CapturePlayerTwo }
+            }
             println!("Finish");
         }
     }

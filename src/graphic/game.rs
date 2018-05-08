@@ -5,6 +5,7 @@ use piston_window::*;
 
 use goban::player::{Player, PlayerKind};
 use goban::map::{ Map };
+use goban::finish::{ Finish };
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
 use graphic::draw::{ draw_goban, draw_player, draw_text , Colors};
@@ -57,7 +58,7 @@ impl Game
 		});
 
 		// let player_turn = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
-		if map.is_finish
+		if map.is_finish != Finish::None
 		{
 			map.reset();
 		}

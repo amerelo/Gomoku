@@ -2,6 +2,7 @@
 pub mod macros;
 pub mod player;
 pub mod map;
+pub mod finish;
 
 #[cfg(test)]
 mod tests

@@ -1,7 +1,7 @@
-use goban::map::{ Map, constant::{*} };
-
-use goban::player::{Player};
 use std::i128::{MIN, MAX};
+use goban::map::{ Map, constant::{*} };
+use goban::player::{Player};
+use goban::finish::{Finish};
 
 pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128)) -> i128
 {
@@ -66,7 +66,7 @@ pub fn value_map(map: &Map, slot: Player) -> i128
 {
 	let mut count:i128 = 0;
 
-	if map.is_finish
+	if map.is_finish == Finish::CapturePlayerOne || map.is_finish == Finish::CapturePlayerTwo
     {
         match find_score![slot, map.players_score] >= 10
         {
