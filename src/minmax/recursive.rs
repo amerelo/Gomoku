@@ -3,10 +3,11 @@ use std::i128::{MIN, MAX};
 use minmax::action::{ Action };
 use goban::map::{ Map };
 use goban::player::{Player};
+use goban::finish::{ Finish };
 use heuristic;
 
 const MAX_VEC_AREA: usize = 10;
-const DEAPH: usize = 1;
+const DEAPH: usize = 5;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
@@ -21,22 +22,6 @@ fn change_turn(turn: &Turn) -> Turn
 		Turn::MIN => Turn::MAX,
 		Turn::MAX => Turn::MIN,
 	}
-}
-
-fn place(map: Map, x: usize, y: usize, alpha_beta: (i128, i128)) -> Action
-{
-	let mut action = Action::new(map, (x, y), (alpha_beta.0, alpha_beta.1));
-	let slot_player = find_slot_player![action.map.current_player];
-
-	// action.map.is_winning_move(x, y);
-			
-	action.map.number_captured((x as i128, y as i128), slot_player, true);
-	action.map.set_value((x as i128, y as i128), slot_player);
-	action.map.five_align();
-	// action.map.number_captured((x as i128, y as i128), find_slots_players![action.map.current_player], true);
-	action.map.change_player_turn();
-
-	action
 }
 
 fn place_iterative(map: Map, x: usize, y: usize, alpha_beta: (i128, i128), depth: i128) -> Action
@@ -54,27 +39,6 @@ fn place_iterative(map: Map, x: usize, y: usize, alpha_beta: (i128, i128), depth
 	action
 }
 
-fn best_action(turn: &Turn, new_action: Action, tmp: &mut Action, action_set: &mut bool)
-{
-	match *turn {
-		Turn::MIN => {
-			if  new_action.value < tmp.beta
-			{
-				*tmp = new_action;
-				tmp.beta = tmp.value;
-				*action_set = true;
-			}
-		},
-		Turn::MAX => {
-			if  new_action.value > tmp.alpha
-			{
-				*tmp = new_action;
-				tmp.alpha = tmp.value;
-				*action_set = true;
-			}
-		},
-	}
-}
 
 fn select_best_action(action_1: &mut Action, action_2: Action, turn: &Turn)
 {
@@ -262,10 +226,56 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 	return new_action;
 }
 
+
+fn place(map: Map, x: usize, y: usize, alpha_beta: (i128, i128)) -> Action
+{
+	let mut action = Action::new(map, (x, y), (alpha_beta.0, alpha_beta.1));
+	let slot_player = find_slot_player![action.map.current_player];
+
+	// action.map.is_winning_move(x, y);
+			
+	action.map.number_captured((x as i128, y as i128), slot_player, true);
+	action.map.set_value((x as i128, y as i128), slot_player);
+	action.map.five_align();
+	// action.map.number_captured((x as i128, y as i128), find_slots_players![action.map.current_player], true);
+	action.map.change_player_turn();
+
+	action
+}
+
+
+fn best_action(turn: &Turn, new_action: Action, tmp: &mut Action, action_set: &mut bool)
+{
+	match *turn {
+		Turn::MIN => {
+			if  new_action.value < tmp.beta
+			{
+				*tmp = new_action;
+				tmp.beta = tmp.value;
+				*action_set = true;
+			}
+		},
+		Turn::MAX => {
+			if  new_action.value > tmp.alpha
+			{
+				*tmp = new_action;
+				tmp.alpha = tmp.value;
+			}
+				*action_set = true;
+		},
+	}
+}
+
 #[allow(dead_code)]
 fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> Option<Action>
 {
-	if depth == 0
+	// println!("-- {}", depth);
+	// if  map.is_finish != Finish::None
+	// {
+	// 	println!("finish at depth {}", depth);
+	// }
+
+	if depth == 0 || map.is_finish != Finish::None
 	{
 		let mut last_action: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
 													  // first slot is for the player we want the score
@@ -290,14 +300,16 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> O
 			match solver(depth - 1, &mut new_action.map, current_trun.clone(), (new_action.alpha, new_action.beta))
 			{
 				Some(action) => {
+					// println!("					test value alpha {} --- beta {} || action va {}", tmp.alpha, tmp.beta, action.value);	
 					new_action.value = action.value;
 					best_action(&turn, new_action, &mut tmp, &mut action_set)
 				},
 				None => (),
-			}
+			};
 
 			if tmp.alpha >= tmp.beta
 			{
+				// println!(" cut tree al {} ---- beta {}", tmp.alpha, tmp.beta);
 				break 'root;
 			}
 		}
@@ -305,8 +317,10 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> O
 
 	if action_set == true
 	{
+		// println!("{}", "return some");
 		return Some(tmp);
 	}
+	// println!("{}", "return none");
 	None
 }
 
@@ -314,8 +328,8 @@ pub fn start_min_max(map: &Map) -> Option<Action>
 {
 	let depth: i128 = DEAPH as i128;
 
-	// let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
-	let action = solver_iterative(depth, &mut map.clone(), Turn::MIN, (MIN, MAX)); 
+	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
+	// let action = solver_iterative(depth, &mut map.clone(), Turn::MIN, (MIN, MAX)); 
 	// let action = None;
 
 	match &action
@@ -323,7 +337,6 @@ pub fn start_min_max(map: &Map) -> Option<Action>
 		Some(_t) => (),
 		_ => println!("ERROR no NULL return" ), 
 	}
-
 
 	return action;
 }
