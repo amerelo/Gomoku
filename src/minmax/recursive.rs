@@ -7,7 +7,7 @@ use goban::finish::{ Finish };
 use heuristic;
 
 const MAX_VEC_AREA: usize = 10;
-const DEAPH: usize = 5;
+const DEAPH: usize = 3;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
@@ -246,8 +246,18 @@ fn place(map: Map, x: usize, y: usize, alpha_beta: (i128, i128)) -> Action
 
 fn best_action(turn: &Turn, new_action: Action, tmp: &mut Action, action_set: &mut bool)
 {
+		if *action_set == false
+		{
+			tmp.value = new_action.value;
+		}
+
 	match *turn {
 		Turn::MIN => {
+			if new_action.value < tmp.value
+			{
+				tmp.value = new_action.value;
+			}
+
 			if  new_action.value < tmp.beta
 			{
 				*tmp = new_action;
@@ -256,6 +266,11 @@ fn best_action(turn: &Turn, new_action: Action, tmp: &mut Action, action_set: &m
 			*action_set = true;
 		},
 		Turn::MAX => {
+			if new_action.value > tmp.value
+			{
+				tmp.value = new_action.value;
+			}
+
 			if  new_action.value > tmp.alpha
 			{
 				*tmp = new_action;
