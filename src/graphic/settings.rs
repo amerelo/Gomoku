@@ -54,9 +54,9 @@ impl Settings
 
 		Settings {
 			gl: GlGraphics::new(opengl),
-			index: 0,
+			index: 2,
 			player_one: PlayerKind::Human,
-			player_two: PlayerKind::Human,
+			player_two: PlayerKind::AI,
 			elems: vect,
 		}
 	}

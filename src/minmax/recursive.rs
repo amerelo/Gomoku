@@ -159,6 +159,8 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 		else if current_elem.evaluate == false
 		{
 			let area = current_elem.map.area_of_interest(MAX_VEC_AREA - DEAPH);
+			// println!("new evale depth {} --- area size {}", current_elem.depth, area.len());
+			
 			current_elem.evaluate = true;
 			let new_map = current_elem.map.clone();
 			let a = current_elem.alpha;
@@ -176,8 +178,11 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 					};
 					
 					new_action = Some(place_iterative(new_map.clone(), y_x.1 as usize , y_x.0 as usize, (a, b), dep));
+					// println!("new action evaluate ? {:?}", new_action);
 				}
+				// println!("_________________________________________________________________________________-");
 			}
+			// println!("------------------------------------------------------------------------");
 			match new_action {
 				Some(tmp_a)		=> { current_elem = tmp_a },
 				_				=> current_elem = go_stack.pop().unwrap(), // need to replace for None
