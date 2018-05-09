@@ -122,6 +122,14 @@ macro_rules! slot_capture
     }
 }
 
+macro_rules! slot_capturable
+{
+    ($slot:expr, $mov:expr; $array:expr; [$($value:expr),*] ) =>
+    {
+        $((($slot & ($array[$value].0 << ($mov - $array[$value].2 ))) >> ($mov - $array[$value].2 )) == $array[$value].1)||*
+    }
+}
+
 #[macro_export]
 macro_rules! slot_value
 {

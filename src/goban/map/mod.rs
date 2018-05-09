@@ -149,173 +149,106 @@ impl Map
         self.is_capture((x, y, conv.0, conv.1), slot_player, with_delete)
      }
 
-     fn is_capture(&mut self, (x, y, x2, y2):(i128, i128, i128, i128), slot_player: i128, with_delete: bool) -> usize
-     {
-        let masks = find_tm_player![self.current_player, CAPTURE_P1, CAPTURE_P2];
-        let mut count:usize = 0;
-
-        if x >= 2 && slot_capture![self.value[y as usize], 3 * (RSIZEMAP - x); masks; 0]
-        {
-            count += 2;
-            if with_delete
-            {
-                self.delete_captured(slot_player, (x - 1, y, x - 2, y));
-            }
-        }
-        if x <= RSIZEMAP - 3 && slot_capture![self.value[y as usize], 3 * (RSIZEMAP - x); masks; 1]
-        {
-            count += 2;
-            if with_delete
-            {
-                self.delete_captured(slot_player, (x + 1, y, x + 2, y));
-            }
-        }
-
-        if y >= 0 && slot_capture![self.value_rotate[x as usize], 3 * y; masks; 0]
-        {
-            count += 2;
-            if with_delete
-            {
-                self.delete_captured(slot_player, (x, y + 1, x, y + 2));
-            }
-        }
-
-        if y >= 3 && slot_capture![self.value_rotate[x as usize], 3 * y; masks; 1]
-        {
-            count += 2;
-            if with_delete
-            {
-                self.delete_captured(slot_player, (x, y - 1, x, y - 2));
-            }
-        }
-        if x <= RSIZEMAP - 2 && y >= 2 && slot_capture![self.value_diagonale[y2 as usize], 3 * x2; masks; 2]
-        {
-            count += 2;
-            if with_delete
-            {
-                self.delete_captured(slot_player, (x + 1, y - 1, x + 2, y - 2));
-            }
-        }
-
-        if y <= RSIZEMAP - 3 && x >= 3 && slot_capture![self.value_diagonale[y2 as usize], 3 * x2; masks; 3]
-        {
-            count += 2;
-            if with_delete
-            {
-                self.delete_captured(slot_player, (x - 1, y + 1, x - 2, y + 2));
-            }
-        }
-
-        if x >= 2 && y >= 2 && slot_capture![self.value_diagonale_rotate[x2 as usize], 3 * (RSIZEMAP * 2 - y2); masks; 2]
-        {
-            count += 2;
-            if with_delete
-            {
-                self.delete_captured(slot_player, (x - 1, y - 1, x - 2, y - 2));
-            }
-        }
-
-        if x <= RSIZEMAP - 3 && y <= RSIZEMAP - 3 && slot_capture![self.value_diagonale_rotate[x2 as usize], 3 * (RSIZEMAP * 2 - y2); masks; 3]
-        {
-            count += 2;
-            if with_delete
-            {
-                self.delete_captured(slot_player, (x + 1, y + 1, x + 2, y + 2));
-            }
-        }
-        count
-     }
-
-    pub fn five_align(&mut self) -> ()
+    fn all_conv_xy(&self, (x, y): (i128, i128)) -> (i128, i128, i128, i128)
     {
-        let mask = 0o33333;
-        let d_mask = 0o303030303;
-
-        for (y, elem_y) in self.value.iter().enumerate()
+        let conv:(i128, i128) = match x >= y
         {
-            if *elem_y != 0
-            {
-                for x in 0..SIZEMAP
-                {
-                    let value = (elem_y >> ((RSIZEMAP - x) * 3)) & mask;
-                    if value == 0o11111
-                    {
-                        self.is_finish = Finish::AlignPlayerOne;
-                        return ;
-                    }
-                    else if value == 0o22222
-                    {
-                        self.is_finish = Finish::AlignPlayerTwo;
-                        return ;
-                    }
-                }
-            }
-        }
-        for (y, elem_y) in self.value_rotate.iter().enumerate()
-        {
-            if *elem_y != 0
-            {
-                for x in 0..SIZEMAP
-                {
-                    let value = (elem_y >> ((RSIZEMAP - x) * 3)) & mask;
-                    if value == 0o11111
-                    {
-                        self.is_finish = Finish::AlignPlayerOne;
-                        return ;
-                    }
-                    else if value == 0o22222
-                    {
-                        self.is_finish = Finish::AlignPlayerTwo;
-                        return ;
-                    }
-                }
-            }
-        }
-        for (y, elem_y) in self.value_diagonale.iter().enumerate()
-        {
-            if *elem_y != 0
-            {
-                for x in 0..(RSIZEMAP * 2)
-                {
-                    let value = (elem_y >> (x * 3)) & d_mask;
-                    if value == 0o101010101
-                    {
-                        self.is_finish = Finish::AlignPlayerOne;
-                        return ;
-                    }
-                    else if value == 0o202020202
-                    {
-                        self.is_finish = Finish::AlignPlayerTwo;
-                        return ;
-                    }
-                }
-            }
-        }
-
-        for (y, elem_y) in self.value_diagonale_rotate.iter().enumerate()
-        {
-            if *elem_y != 0
-            {
-                for x in 0..(RSIZEMAP * 2)
-                {
-                    let value = (elem_y >> (x * 3)) & d_mask;
-                    if value == 0o101010101
-                    {
-                        self.is_finish = Finish::AlignPlayerOne;
-                        return ;
-                    }
-                    else if value == 0o202020202
-                    {
-                        self.is_finish = Finish::AlignPlayerTwo;
-                        return ;
-                    }
-                }
-            }
-        }
-
-
+            true => (RSIZEMAP + (x - y) as i128, (x + y)as i128), 
+            _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
+        };
+        (x, y, conv.0, conv.1)
     }
 
+    fn all_xy_conv(&self, (x, y): (i128, i128)) -> (i128, i128, i128, i128)
+    {
+        let (rx, ry) = match (x > RSIZEMAP, y > RSIZEMAP, x > y)
+        {
+            (false, false, true) => (RSIZEMAP - x, y + x - RSIZEMAP),  // ok
+            (false, false, false) => (y + x - RSIZEMAP, y + x - RSIZEMAP), // ok
+            (true, false, _)  => (y, RSIZEMAP - y ),
+            (false, true, _)  => (x, RSIZEMAP - y / 2),
+            (true, true, true)   => (36 - x, y + x - RSIZEMAP),
+            (true, true, false)   => (36 - x, y + x - RSIZEMAP),
+        };
+        (rx, ry, x, y)
+    }
+
+    fn is_capture(&mut self, (x, y, x2, y2):(i128, i128, i128, i128), slot_player: i128, with_delete: bool) -> usize
+    {
+       let masks = find_tm_player![self.current_player, CAPTURE_P1, CAPTURE_P2];
+       let mut count:usize = 0;
+
+       if x >= 2 && slot_capture![self.value[y as usize], 3 * (RSIZEMAP - x); masks; 0]
+       {
+           count += 2;
+           if with_delete
+           {
+               self.delete_captured(slot_player, (x - 1, y, x - 2, y));
+           }
+       }
+       if x <= RSIZEMAP - 3 && slot_capture![self.value[y as usize], 3 * (RSIZEMAP - x); masks; 1]
+       {
+           count += 2;
+           if with_delete
+           {
+               self.delete_captured(slot_player, (x + 1, y, x + 2, y));
+           }
+       }
+
+       if y >= 0 && slot_capture![self.value_rotate[x as usize], 3 * y; masks; 0]
+       {
+           count += 2;
+           if with_delete
+           {
+               self.delete_captured(slot_player, (x, y + 1, x, y + 2));
+           }
+       }
+
+       if y >= 3 && slot_capture![self.value_rotate[x as usize], 3 * y; masks; 1]
+       {
+           count += 2;
+           if with_delete
+           {
+               self.delete_captured(slot_player, (x, y - 1, x, y - 2));
+           }
+       }
+       if x <= RSIZEMAP - 2 && y >= 2 && slot_capture![self.value_diagonale[y2 as usize], 3 * x2; masks; 2]
+       {
+           count += 2;
+           if with_delete
+           {
+               self.delete_captured(slot_player, (x + 1, y - 1, x + 2, y - 2));
+           }
+       }
+
+       if y <= RSIZEMAP - 3 && x >= 3 && slot_capture![self.value_diagonale[y2 as usize], 3 * x2; masks; 3]
+       {
+           count += 2;
+           if with_delete
+           {
+               self.delete_captured(slot_player, (x - 1, y + 1, x - 2, y + 2));
+           }
+       }
+
+       if x >= 2 && y >= 2 && slot_capture![self.value_diagonale_rotate[x2 as usize], 3 * (RSIZEMAP * 2 - y2); masks; 2]
+       {
+           count += 2;
+           if with_delete
+           {
+               self.delete_captured(slot_player, (x - 1, y - 1, x - 2, y - 2));
+           }
+       }
+
+       if x <= RSIZEMAP - 3 && y <= RSIZEMAP - 3 && slot_capture![self.value_diagonale_rotate[x2 as usize], 3 * (RSIZEMAP * 2 - y2); masks; 3]
+       {
+           count += 2;
+           if with_delete
+           {
+               self.delete_captured(slot_player, (x + 1, y + 1, x + 2, y + 2));
+           }
+       }
+       count
+    }
 
     fn delete_captured(&mut self, slot_player: i128, (x, y, x2, y2):(i128, i128, i128, i128)) -> ()
     {
@@ -338,6 +271,145 @@ impl Map
             }
             println!("Finish");
         }
+    }
+
+    pub fn five_align(&mut self) -> ()
+    {
+        let mask = 0o33333;
+        let d_mask = 0o303030303;
+
+        for (y, elem_y) in self.value.iter().enumerate()
+        {
+            if *elem_y != 0
+            {
+                for x in 0..(SIZEMAP - 4)
+                {
+                    let value = (elem_y >> ((RSIZEMAP - x) * 3)) & mask;
+                    if value == 0o11111 && !self.is_capturable(self.all_conv_xy((x, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x - 1, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x - 2, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x - 3, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x - 4, y as i128)), &Player::One)
+                    {
+                        self.is_finish = Finish::AlignPlayerOne;
+                        return ;
+                    }
+                    else if value == 0o22222 && !self.is_capturable(self.all_conv_xy((x, y as i128)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x + 1, y as i128)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x + 2, y as i128)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x + 3, y as i128)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x + 4, y as i128)), &Player::Two)
+                    {
+                        self.is_finish = Finish::AlignPlayerTwo;
+                        return ;
+                    }
+                }
+            }
+        }
+        for (x, elem_y) in self.value_rotate.iter().enumerate()
+        {
+            if *elem_y != 0
+            {
+                for y in 0..(SIZEMAP)
+                {
+                    let value = (elem_y >> ((RSIZEMAP - y) * 3)) & mask;
+                    if value == 0o11111 && !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x as i128, y - 1)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x as i128, y - 2)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x as i128, y - 3)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x as i128, y - 4)), &Player::One)
+                    {
+                        self.is_finish = Finish::AlignPlayerOne;
+                        return ;
+                    }
+                    else if value == 0o22222 && !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, y + 1)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, y + 2)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, y + 3)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, y + 4)), &Player::Two)
+                    {
+                        self.is_finish = Finish::AlignPlayerTwo;
+                        return ;
+                    }
+                }
+            }
+        }
+
+        // for (y, elem_y) in self.value_diagonale.iter().enumerate()
+        // {
+        //     if *elem_y != 0
+        //     {
+        //         for x in 0..(SIZEMAP * 2 - 8)
+        //         {
+        //             let value = (elem_y >> (x * 3)) & d_mask;
+        //             if value == 0o101010101
+        //             {
+        //                 println!("x {} y {}", x , y);
+        //                 println!("conv {:?}", self.all_xy_conv((x, y as i128)));
+        //                 println!("conv {:?}", self.all_xy_conv((x + 1, y as i128)));
+        //                 println!("conv {:?}", self.all_xy_conv((x + 2, y as i128)));
+        //                 println!("conv {:?}", self.all_xy_conv((x + 3, y as i128)));
+        //                 println!("conv {:?}", self.all_xy_conv((x + 4, y as i128)));
+        //                 self.is_finish = Finish::AlignPlayerOne;
+        //                 return ;
+        //             }
+        //             // else if value == 0o202020202 && !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::Two)
+        //             //                          && !self.is_capturable(self.all_conv_xy((x as i128, y + 1)), &Player::Two)
+        //             //                          && !self.is_capturable(self.all_conv_xy((x as i128, y + 2)), &Player::Two)
+        //             //                          && !self.is_capturable(self.all_conv_xy((x as i128, y + 3)), &Player::Two)
+        //             //                          && !self.is_capturable(self.all_conv_xy((x as i128, y + 4)), &Player::Two)
+        //             // {
+        //             //     self.is_finish = Finish::AlignPlayerTwo;
+        //             //     return ;
+        //             // }
+        //         }
+        //     }
+        // }
+
+
+    }
+
+    fn is_capturable(&self, (x, y, x2, y2):(i128, i128, i128, i128), slot_player: &Player) -> bool
+    {
+       let masks = find_tm_player![slot_player, IS_CAPTURABLE_P1, IS_CAPTURABLE_P2];
+
+       if x < 0 || x > RSIZEMAP || y < 0 || y > RSIZEMAP
+       {
+           return false;
+       }
+       if x >= 2 && slot_capturable![self.value[y as usize], 3 * (RSIZEMAP - x); masks; [0, 2]]
+       {
+           return true;
+       }
+       if x <= RSIZEMAP - 3 && slot_capturable![self.value[y as usize], 3 * (RSIZEMAP - x); masks; [1, 3]]
+       {
+           return true;
+       }
+       if y >= 0 && slot_capturable![self.value_rotate[x as usize], 3 * y; masks; [0, 2]]
+       {
+           return true;
+       }
+       if y >= 3 && slot_capturable![self.value_rotate[x as usize], 3 * y; masks; [1, 3]]
+       {
+           return true;
+       }
+       if x <= RSIZEMAP - 2 && y >= 2 && slot_capturable![self.value_diagonale[y2 as usize], 3 * x2; masks; [4, 6]]
+       {
+           return true;
+       }
+       if y <= RSIZEMAP - 3 && x >= 3 && slot_capturable![self.value_diagonale[y2 as usize], 3 * x2; masks; [5, 7]]
+       {
+           return true;
+       }
+       if x >= 2 && y >= 2 && slot_capturable![self.value_diagonale_rotate[x2 as usize], 3 * (RSIZEMAP * 2 - y2); masks; [4, 6]]
+       {
+           return true;
+       }
+       if x <= RSIZEMAP - 3 && y <= RSIZEMAP - 3 && slot_capturable![self.value_diagonale_rotate[x2 as usize], 3 * (RSIZEMAP * 2 - y2); masks; [5, 7]]
+       {
+           return true;
+       }
+       false
     }
 
     fn three_move_number(&self, (x, y):(i128, i128), (slot_hv, slot_d): ([(i128, i128, i128); 9], [(i128, i128, i128); 9])) -> usize
