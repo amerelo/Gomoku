@@ -252,8 +252,8 @@ fn best_action(turn: &Turn, new_action: Action, tmp: &mut Action, action_set: &m
 			{
 				*tmp = new_action;
 				tmp.beta = tmp.value;
-				*action_set = true;
 			}
+			*action_set = true;
 		},
 		Turn::MAX => {
 			if  new_action.value > tmp.alpha
@@ -261,7 +261,7 @@ fn best_action(turn: &Turn, new_action: Action, tmp: &mut Action, action_set: &m
 				*tmp = new_action;
 				tmp.alpha = tmp.value;
 			}
-				*action_set = true;
+			*action_set = true;
 		},
 	}
 }
