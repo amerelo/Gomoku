@@ -5,8 +5,8 @@ use goban::map::{ Map };
 use goban::player::{Player};
 use heuristic;
 
-const MAX_VEC_AREA: usize = 30;
-const DEAPH: usize = 2;
+const MAX_VEC_AREA: usize = 20;
+const DEAPH: usize = 5;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
@@ -32,6 +32,7 @@ fn place(map: Map, x: usize, y: usize, alpha_beta: (i128, i128)) -> Action
 			
 	action.map.number_captured((x as i128, y as i128), slot_player, true);
 	action.map.set_value((x as i128, y as i128), slot_player);
+	action.map.five_align();
 	// action.map.number_captured((x as i128, y as i128), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 
@@ -46,6 +47,7 @@ fn place_iterative(map: Map, x: usize, y: usize, alpha_beta: (i128, i128), depth
 	// action.map.is_winning_move(x, y);
 	action.map.number_captured((x as i128, y as i128), slot_player, true);
 	action.map.set_value((x as i128, y as i128), slot_player);
+	action.map.five_align();
 	// action.map.number_captured((x as i128, y as i128), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 

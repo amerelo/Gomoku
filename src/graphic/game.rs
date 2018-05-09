@@ -83,6 +83,7 @@ fn ai_move(map: &mut Map, my_time: &mut f64)
 		Some(action) => {
 			map.number_captured((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player![map.current_player], true);
 			map.set_value((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player!(map.current_player));
+			map.five_align();
 			// map.change_player_turn();
 		},
 		None => (),
@@ -98,8 +99,8 @@ fn human_move(map: &mut Map, cursor: &mut Cursor)
 	// map.is_winning_move((cursor.cursor_in_board[0] as i32, cursor.cursor_in_board[1] as i32));
 	// println!("value {}\n", heuristic::value_slot(map, (cursor.cursor_in_board[1] as i128, cursor.cursor_in_board[0] as i128, 2)));
 	map.number_captured((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player![map.current_player], true);
-	
 	map.set_value((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player!(map.current_player));
+	map.five_align();
 	map.change_player_turn();
 
 	cursor.place_piece = false;

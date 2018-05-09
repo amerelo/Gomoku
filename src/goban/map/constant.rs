@@ -15,6 +15,24 @@ pub const CAPTURE_P2: [(i128, i128, i128); 4] = [
                                              (0o3333333, 0o0010102, 18)
                                             ];
 
+pub const IS_CAPTURABLE_P1: [(i128, i128, i128); 8] = [
+                                             (0o3333, 0o2110, 3),
+                                             (0o3333, 0o2110, 6),
+                                             (0o3333, 0o0112, 3),
+                                             (0o3333, 0o0112, 6),
+                                             (0o3333333, 0o1020200, 0),
+                                             (0o3333333, 0o1020200, 0),
+                                             (0o3333333, 0o0020201, 18),
+                                             (0o3333333, 0o0020201, 18),
+                                            ];
+
+pub const IS_CAPTURABLE_P2: [(i128, i128, i128); 4] = [
+                                             (0o3333, 0o2110, 0),
+                                             (0o3333, 0o0112, 9),
+                                             (0o3333333, 0o2010100, 0),
+                                             (0o3333333, 0o0010102, 18)
+                                            ];
+
 
 pub const THREE_MOVE_P1: [(i128, i128, i128); 9] = [
                                              (0o33333, 0o01100, 3),
@@ -75,7 +93,7 @@ pub const CAPTURE: i128 = 4;
 const ENEMY_FOUR_ALIGN: i128 = 8;
 const ENEMY_THREE_ALIGN: i128 = 7;
 const FOUR_ALIGN: i128 = 7;
-const FIVE_ALIGN: i128 = 10;
+const FIVE_ALIGN: i128 = 40;
 const ENEMY_FIVE_ALIGN: i128 = 9;
 
 /*

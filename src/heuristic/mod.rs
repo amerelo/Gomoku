@@ -67,30 +67,35 @@ pub fn value_map(map: &Map, slot: &Player) -> i128
 {
 	let mut count:i128 = 0;
 
-	if map.is_finish == Finish::CapturePlayerOne || map.is_finish == Finish::CapturePlayerTwo
+	match (&map.is_finish, slot)
     {
-        match find_score![slot, map.players_score] >= 10
-        {
-            true => { return MAX },
-            _    => { return MIN }
-        }
+        (&Finish::None, _) => {},
+        (&Finish::CapturePlayerOne, &Player::One) => { return MAX },
+        (&Finish::CapturePlayerOne, &Player::Two) => { return MIN },
+        (&Finish::CapturePlayerTwo, &Player::One) => { return MIN },
+        (&Finish::CapturePlayerTwo, &Player::Two) => { return MAX },
+        (&Finish::AlignPlayerOne, &Player::Two)   => { return MIN },
+        (&Finish::AlignPlayerOne, &Player::One)   => { return MAX },
+        (&Finish::AlignPlayerTwo, &Player::Two)   => { return MAX },
+        (&Finish::AlignPlayerTwo, &Player::One)   => { return MIN },
+        _                                        => {},
     }
 	count += find_score![slot, map.players_score] as i128 * CAPTURE * 2;
 	count -= find_enemy_score![slot, map.players_score] as i128 * CAPTURE * 2;
-	count += sum_value_slot(map, slot);
+	// count += sum_value_slot(map, slot);
 
     // println!("value map {}", count);
     count
 }
 
-fn sum_value_slot(map: &Map, player: &Player) -> i128
-{
-	let area = map.area_of_interest(usize::MAX, player);
-	let mut count:i128 = 0;
+// fn sum_value_slot(map: &Map, player: &Player) -> i128
+// {
+// 	// let area = map.area_of_interest(usize::MAX, player);
+// 	let mut count:i128 = 0;
 
-    for (_, _, value) in area
-    {
-        count += value;
-    }
-    count
-}
+//     // for (_, _, value) in area
+//     // {
+//     //     count += value;
+//     // }
+//     count
+// }
