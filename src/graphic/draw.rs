@@ -8,6 +8,8 @@ use goban::player::{Player};
 
 use heuristic;
 
+const SIZE_TEXT: u32 = 19;
+
 const GOBANPOS: (f64, f64) = (70.0, 40.0);
 const GOBAN_BOARD_X: f64 = 8.0;
 const GOBAN_BOARD_Y: f64 = 10.0;
@@ -34,10 +36,10 @@ pub fn draw_text(gl: &mut GlGraphics, glyph_cache: &mut GlyphCache, my_text: &st
 	
 	match color
 	{
-		Colors::NORMAL	=> _success = text(COLOR_W, 20, my_text, glyph_cache, transform, gl),
-		Colors::RED		=> _success = text(COLOR_R, 20, my_text, glyph_cache, transform, gl),
-		Colors::BLACK	=> _success = text(COLOR_B, 20, my_text, glyph_cache, transform, gl),
-		Colors::Yellow	=> _success = text(COLOR_Y, 20, my_text, glyph_cache, transform, gl),
+		Colors::NORMAL	=> _success = text(COLOR_W, SIZE_TEXT, my_text, glyph_cache, transform, gl),
+		Colors::RED		=> _success = text(COLOR_R, SIZE_TEXT, my_text, glyph_cache, transform, gl),
+		Colors::BLACK	=> _success = text(COLOR_B, SIZE_TEXT, my_text, glyph_cache, transform, gl),
+		Colors::Yellow	=> _success = text(COLOR_Y, SIZE_TEXT, my_text, glyph_cache, transform, gl),
 		_				=> (), 
 	};
 }

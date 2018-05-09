@@ -6,7 +6,7 @@ use goban::player::{Player};
 use heuristic;
 
 const MAX_VEC_AREA: usize = 10;
-const DEAPH: usize = 2;
+const DEAPH: usize = 1;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
@@ -32,6 +32,7 @@ fn place(map: Map, x: usize, y: usize, alpha_beta: (i128, i128)) -> Action
 			
 	action.map.number_captured((x as i128, y as i128), slot_player, true);
 	action.map.set_value((x as i128, y as i128), slot_player);
+	action.map.five_align();
 	// action.map.number_captured((x as i128, y as i128), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 
@@ -46,6 +47,7 @@ fn place_iterative(map: Map, x: usize, y: usize, alpha_beta: (i128, i128), depth
 	// action.map.is_winning_move(x, y);
 	action.map.number_captured((x as i128, y as i128), slot_player, true);
 	action.map.set_value((x as i128, y as i128), slot_player);
+	action.map.five_align();
 	// action.map.number_captured((x as i128, y as i128), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 
@@ -93,6 +95,10 @@ fn select_best_action(action_1: &mut Action, action_2: Action, turn: &Turn)
 		},
 	}
 }
+
+// fn iterative_last_move(current_elem: &mut Action, compare_action: &mut Action, current_trun: &Turn, depth: i128, new_action: &mut Option<Action>)
+// {
+// }
 
 #[allow(dead_code)]
 fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> Option<Action>
@@ -182,6 +188,7 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 				}
 				// println!("_________________________________________________________________________________-");
 			}
+			// println!("len of go_stack {}", go_stack.len());
 			// println!("------------------------------------------------------------------------");
 			match new_action {
 				Some(tmp_a)		=> { current_elem = tmp_a },
@@ -197,6 +204,7 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 			{
 				while let Some(tmp_action) = current_elem.action_done.pop()
 				{
+					// println!("{}", "use speed ");
 					if current_elem.alpha < current_elem.beta
 					{
 						select_best_action(&mut current_elem, tmp_action, &current_trun);

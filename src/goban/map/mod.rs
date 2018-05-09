@@ -73,8 +73,6 @@ impl Map
 	pub fn area_of_interest(&self, number: usize, player: &Player) -> Vec<(i128, i128, i128)>
 	{
 		let mut area: Vec<(i128, i128, i128)> = vec![];
-		// let mask:i128 = 0o3333_333333_333333_333;
-		let size_map: i128 = RSIZEMAP;
 
 		for (y, elem_y) in self.value.iter().enumerate()
 		{
@@ -82,7 +80,7 @@ impl Map
 			{
 				for x in 0..SIZEMAP
 				{
-					if ((elem_y >> ((size_map - x) * 3)) & 0x3 ) != 0
+					if ((elem_y >> ((RSIZEMAP - x) * 3)) & 0x3 ) != 0
 					{
 						insert_without_double![((y as i128 - 1), x as i128, 0), area];
 						insert_without_double![((y as i128 - 1), (x as i128 - 1), 0), area];
@@ -99,7 +97,7 @@ impl Map
 
 		if area.len() == 0
 		{
-			area.push( (10,10,0) );
+			area.push((9, 9, 0));
 		}
 
 		for t in &mut area
@@ -227,6 +225,97 @@ impl Map
         }
         count
      }
+
+    pub fn five_align(&mut self) -> ()
+    {
+        let mask = 0o33333;
+        let d_mask = 0o303030303;
+
+        for (y, elem_y) in self.value.iter().enumerate()
+        {
+            if *elem_y != 0
+            {
+                for x in 0..SIZEMAP
+                {
+                    let value = (elem_y >> ((RSIZEMAP - x) * 3)) & mask;
+                    if value == 0o11111
+                    {
+                        self.is_finish = Finish::AlignPlayerOne;
+                        return ;
+                    }
+                    else if value == 0o22222
+                    {
+                        self.is_finish = Finish::AlignPlayerTwo;
+                        return ;
+                    }
+                }
+            }
+        }
+        for (y, elem_y) in self.value_rotate.iter().enumerate()
+        {
+            if *elem_y != 0
+            {
+                for x in 0..SIZEMAP
+                {
+                    let value = (elem_y >> ((RSIZEMAP - x) * 3)) & mask;
+                    if value == 0o11111
+                    {
+                        self.is_finish = Finish::AlignPlayerOne;
+                        return ;
+                    }
+                    else if value == 0o22222
+                    {
+                        self.is_finish = Finish::AlignPlayerTwo;
+                        return ;
+                    }
+                }
+            }
+        }
+        for (y, elem_y) in self.value_diagonale.iter().enumerate()
+        {
+            if *elem_y != 0
+            {
+                for x in 0..(RSIZEMAP * 2)
+                {
+                    let value = (elem_y >> (x * 3)) & d_mask;
+                    if value == 0o101010101
+                    {
+                        self.is_finish = Finish::AlignPlayerOne;
+                        return ;
+                    }
+                    else if value == 0o202020202
+                    {
+                        self.is_finish = Finish::AlignPlayerTwo;
+                        return ;
+                    }
+                }
+            }
+        }
+
+        for (y, elem_y) in self.value_diagonale_rotate.iter().enumerate()
+        {
+            if *elem_y != 0
+            {
+                for x in 0..(RSIZEMAP * 2)
+                {
+                    let value = (elem_y >> (x * 3)) & d_mask;
+                    if value == 0o101010101
+                    {
+                        self.is_finish = Finish::AlignPlayerOne;
+                        return ;
+                    }
+                    else if value == 0o202020202
+                    {
+                        self.is_finish = Finish::AlignPlayerTwo;
+                        return ;
+                    }
+                }
+            }
+        }
+
+
+    }
+
 
     fn delete_captured(&mut self, slot_player: i128, (x, y, x2, y2):(i128, i128, i128, i128)) -> ()
     {

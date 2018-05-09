@@ -2,6 +2,7 @@ pub enum Scene
 {
 	Settings,
 	Game,
+	End,
 }
 
 pub struct Cursor

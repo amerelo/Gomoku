@@ -6,9 +6,9 @@ use sdl2_window::Sdl2Window;
 use opengl_graphics::{ OpenGL, GlyphCache };
 use find_folder::Search;
 
-use graphic::cursor::{ Cursor, Scene };
+use graphic::cursor::{ Cursor, Scene};
 use graphic::settings::{ Settings };
-use graphic::game::{ Game };
+use graphic::{ game::{ Game }, end_menu::{ EndMenu } };
 // use heuristic;
 
 pub fn start()
@@ -30,6 +30,7 @@ pub fn start()
 	
 	let mut game = Game::new(opengl);
 	let mut settings = Settings::new(opengl);
+	let mut end = EndMenu::new(opengl);
 	let mut cursor = Cursor::new();
 
 	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
@@ -74,6 +75,21 @@ pub fn start()
 						cursor.press = true;
 					}
 				},
+				Scene::End => { 
+					if button == Button::Keyboard(Key::Up)
+					{
+						cursor.up = true;
+					}
+					else if button == Button::Keyboard(Key::Down)
+					{
+						cursor.down = true;
+					}
+
+					if button == Button::Keyboard(Key::Return)
+					{
+						cursor.press = true;
+					}
+				}
 			};
 		}
 
@@ -88,6 +104,7 @@ pub fn start()
 			{
 				Scene::Game => game.render(&r, &mut glyph_cache, &mut cursor),
 				Scene::Settings => settings.render(&r, &mut glyph_cache, &mut cursor, &mut game.map),
+				Scene::End => end.render(&r, &mut glyph_cache, &mut cursor, &mut game.map),
 			};
 		}
 	}

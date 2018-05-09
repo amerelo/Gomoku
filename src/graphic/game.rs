@@ -4,10 +4,10 @@ use opengl_graphics::{ GlGraphics, OpenGL, GlyphCache };
 use piston_window::*;
 
 use goban::player::{Player, PlayerKind};
-use goban::map::{ Map };
 use goban::finish::{ Finish };
+use goban::map::{ Map };
 use graphic::loader::{ GoElem };
-use graphic::cursor::{ Cursor };
+use graphic::cursor::{ Cursor , Scene};
 use graphic::draw::{ draw_goban, draw_player, draw_text, draw_hint , Colors};
 use minmax::recursive::{ start_min_max };
 
@@ -45,14 +45,14 @@ impl Game
 		let map = &mut self.map;
 		let players = (&self.go_w, &self.go_b);
 
-		let fps_t = &format!("fps: {}            time of last AI move: {:.5} ms", self.fps.tick(), self.my_time);
+		let fps_t = &format!("fps: {}            Time of last AI move: {:.5} ms", self.fps.tick(), self.my_time);
 
 		self.gl.draw(args.viewport(), |c, gl|
 		{
 			clear(BACKGROUND, gl);
 
-			draw_text(gl, &mut glyph_cache, fps_t, c.transform.trans(5.0, 20.0), Colors::NORMAL);
-			draw_text(gl, &mut glyph_cache, &format!("Turn: {}", map.turn), c.transform.trans(5.0, 40.0), Colors::NORMAL);
+			draw_text(gl, &mut glyph_cache, fps_t, c.transform.trans(5.0, 20.0), Colors::BLACK);
+			draw_text(gl, &mut glyph_cache, &format!("Turn: {}", map.turn), c.transform.trans(5.0, 38.0), Colors::BLACK );
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, map, cursor, players);
 			draw_hint(c, gl, map, players, &mut glyph_cache);
@@ -61,7 +61,8 @@ impl Game
 		// let player_turn = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
 		if map.is_finish != Finish::None
 		{
-			map.reset();
+			self.my_time = 0.0;
+			cursor.selected_scene = Scene::End;
 		}
 		else if find_kind_player![map.current_player, map.players_kind] == &PlayerKind::AI
 		{
@@ -83,6 +84,7 @@ fn ai_move(map: &mut Map, my_time: &mut f64)
 		Some(action) => {
 			map.number_captured((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player![map.current_player], true);
 			map.set_value((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player!(map.current_player));
+			map.five_align();
 			// map.change_player_turn();
 		},
 		None => (),
@@ -98,8 +100,8 @@ fn human_move(map: &mut Map, cursor: &mut Cursor)
 	// map.is_winning_move((cursor.cursor_in_board[0] as i32, cursor.cursor_in_board[1] as i32));
 	// println!("value {}\n", heuristic::value_slot(map, (cursor.cursor_in_board[1] as i128, cursor.cursor_in_board[0] as i128, 2)));
 	map.number_captured((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player![map.current_player], true);
-	
 	map.set_value((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player!(map.current_player));
+	map.five_align();
 	map.change_player_turn();
 
 	cursor.place_piece = false;
