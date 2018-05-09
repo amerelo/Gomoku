@@ -6,6 +6,8 @@ use graphic::cursor::{ Cursor };
 use goban::map::{Map};
 use goban::player::{Player};
 
+use heuristic;
+
 const GOBANPOS: (f64, f64) = (70.0, 40.0);
 const GOBAN_BOARD_X: f64 = 8.0;
 const GOBAN_BOARD_Y: f64 = 10.0;
@@ -15,11 +17,13 @@ const COLOR_WS: [f32; 4] = [1.0, 1.0, 1.0, 0.6];
 const COLOR_W: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
 const COLOR_R: [f32; 4] = [1.0, 0.0, 0.0, 0.6];
 const COLOR_Y: [f32; 4] = [1.0, 1.0, 0.0, 1.0];
+const COLOR_B: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
 pub enum Colors
 {
 	SHADOW,
 	NORMAL,
+	BLACK,
 	RED,
 	Yellow,
 }
@@ -32,6 +36,7 @@ pub fn draw_text(gl: &mut GlGraphics, glyph_cache: &mut GlyphCache, my_text: &st
 	{
 		Colors::NORMAL	=> _success = text(COLOR_W, 20, my_text, glyph_cache, transform, gl),
 		Colors::RED		=> _success = text(COLOR_R, 20, my_text, glyph_cache, transform, gl),
+		Colors::BLACK	=> _success = text(COLOR_B, 20, my_text, glyph_cache, transform, gl),
 		Colors::Yellow	=> _success = text(COLOR_Y, 20, my_text, glyph_cache, transform, gl),
 		_				=> (), 
 	};
@@ -51,8 +56,9 @@ fn draw_img(gl: &mut GlGraphics, player: &GoElem, transform: [[f64; 3]; 2], cl: 
 	{
 		Colors::SHADOW => Image::new_color(COLOR_WS).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
 		Colors::NORMAL => Image::new_color(COLOR_W).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
-		Colors::RED => Image::new_color(COLOR_R).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
+		Colors::RED    => Image::new_color(COLOR_R).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
 		Colors::Yellow => Image::new_color(COLOR_Y).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
+		Colors::BLACK  => Image::new_color(COLOR_B).draw(&player.elem, &DrawState::new_alpha(), transform, gl),
 	}
 }
 
@@ -112,5 +118,30 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 	if cursor.press
 	{
 		draw_shadow(c, gl, players, near_pos, slot);
+	}
+}
+
+pub fn draw_hint(c: Context, gl: &mut GlGraphics, map: &mut Map, players: (&GoElem, &GoElem), glyph_cache: &mut GlyphCache)
+{
+	let mut near_pos: [f64; 2] = [0.0, 0.0];
+	let board_x = GOBANPOS.0 + GOBAN_BOARD_X;
+	let board_y = GOBANPOS.1 + GOBAN_BOARD_Y;
+
+	for (y, pos_y) in map.value.iter().enumerate()
+	{
+		let new_posy = board_y + y as f64 * GOBAN_SPACE;
+		for x in 0..19
+		{
+
+			let new_posx = board_x + x as f64 * GOBAN_SPACE;
+
+			match (pos_y & (0o3 << (3 * (18 - x)))) >> 3 * (18 - x)
+			{
+				0 => {
+						draw_text(gl, glyph_cache, &heuristic::value_slot(map, (y as i128, x as i128, 0)).to_string(), c.transform.trans(new_posx, new_posy).scale(0.5, 0.5), Colors::BLACK);
+					},
+				_ => {}
+			}
+		}
 	}
 }

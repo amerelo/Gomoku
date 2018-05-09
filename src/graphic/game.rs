@@ -8,7 +8,7 @@ use goban::map::{ Map };
 use goban::finish::{ Finish };
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
-use graphic::draw::{ draw_goban, draw_player, draw_text , Colors};
+use graphic::draw::{ draw_goban, draw_player, draw_text, draw_hint , Colors};
 use minmax::recursive::{ start_min_max };
 
 const BACKGROUND:[f32; 4] = [0.65, 0.55, 0.45, 1.0];
@@ -55,6 +55,7 @@ impl Game
 			draw_text(gl, &mut glyph_cache, &format!("Turn: {}", map.turn), c.transform.trans(5.0, 40.0), Colors::NORMAL);
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, map, cursor, players);
+			draw_hint(c, gl, map, players, &mut glyph_cache);
 		});
 
 		// let player_turn = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
