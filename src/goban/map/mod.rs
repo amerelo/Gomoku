@@ -70,7 +70,7 @@ impl Map
         self.value_diagonale_rotate[conv.0 as usize] ^= (value as i128) << 3 * ((RSIZEMAP as i128) * 2 - conv.1);
     }
 
-	pub fn area_of_interest(&self, number: usize) -> Vec<(i128, i128, i128)>
+	pub fn area_of_interest(&self, number: usize, player: &Player) -> Vec<(i128, i128, i128)>
 	{
 		let mut area: Vec<(i128, i128, i128)> = vec![];
 		// let mask:i128 = 0o3333_333333_333333_333;
@@ -104,7 +104,7 @@ impl Map
 
 		for t in &mut area
 		{
-			t.2 = heuristic::value_slot(self, *t);
+			t.2 = heuristic::value_slot(self, *t, player);
 		}
 		area.sort_by_key(|k| -k.2);
 		if number < area.len() - 1

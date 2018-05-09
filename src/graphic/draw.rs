@@ -138,7 +138,7 @@ pub fn draw_hint(c: Context, gl: &mut GlGraphics, map: &mut Map, players: (&GoEl
 			{
 				continue ;
 			}
-			let value = heuristic::value_slot(map, (y as i128, x as i128, 0));
+			let value = heuristic::value_slot(map, (y as i128, x as i128, 0), &map.current_player);
 
 			match ((pos_y & (0o3 << (3 * (18 - x)))) >> 3 * (18 - x), value)
 			{

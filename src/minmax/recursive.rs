@@ -110,7 +110,7 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 	{
 		if current_elem.depth == 0
 		{
-			current_elem.value = heuristic::value_map(&current_elem.map, Player::Two);
+			current_elem.value = heuristic::value_map(&current_elem.map, &Player::Two);
 			current_elem.evaluate = true;
 			match go_stack.pop()
 			{
@@ -122,7 +122,7 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 							println!("current elem {} -- compare elem {}",  current_elem.depth, compare_action.depth);
 						} // need this to see if some bug appear
 
-						compare_action.value = heuristic::value_map(&current_elem.map, Player::Two);
+						compare_action.value = heuristic::value_map(&current_elem.map, &Player::Two);
 						compare_action.evaluate = true;
 
 						select_best_action(&mut current_elem, compare_action, &current_trun);
@@ -158,7 +158,7 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 		}
 		else if current_elem.evaluate == false
 		{
-			let area = current_elem.map.area_of_interest(MAX_VEC_AREA - DEAPH);
+			let area = current_elem.map.area_of_interest(MAX_VEC_AREA - DEAPH, &map.current_player);
 			// println!("new evale depth {} --- area size {}", current_elem.depth, area.len());
 			
 			current_elem.evaluate = true;
@@ -270,7 +270,7 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> O
 	let mut tmp: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
 	let current_trun: Turn = change_turn(&turn);
 	
-	let area = map.area_of_interest(MAX_VEC_AREA - DEAPH);
+	let area = map.area_of_interest(MAX_VEC_AREA - DEAPH, &map.current_player);
 
 	'root: for y_x in area.iter()
 	{

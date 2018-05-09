@@ -1,12 +1,13 @@
 use std::i128::{MIN, MAX};
+use std::usize;
 use goban::map::{ Map, constant::{*} };
 use goban::player::{Player};
 use goban::finish::{Finish};
 
-pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128)) -> i128
+pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128), player: &Player) -> i128
 {
     let mut count:i128 = 0;
-    let masks_move = find_tm_player![map.current_player, (MOVE_P1, DMOVE_P1), (MOVE_P2, DMOVE_P2)];
+    let masks_move = find_tm_player![player, (MOVE_P1, DMOVE_P1), (MOVE_P2, DMOVE_P2)];
 
     let conv:(i128, i128) = match x >= y
     {
@@ -62,7 +63,7 @@ pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128)) -> i128
     count as i128
 }
 
-pub fn value_map(map: &Map, slot: Player) -> i128
+pub fn value_map(map: &Map, slot: &Player) -> i128
 {
 	let mut count:i128 = 0;
 
@@ -74,8 +75,22 @@ pub fn value_map(map: &Map, slot: Player) -> i128
             _    => { return MIN }
         }
     }
-	count += find_score![slot, map.players_score] as i128 * 5;
-	count -= find_enemy_score![slot, map.players_score] as i128 * 5;
+	count += find_score![slot, map.players_score] as i128 * CAPTURE * 2;
+	count -= find_enemy_score![slot, map.players_score] as i128 * CAPTURE * 2;
+	count += sum_value_slot(map, slot);
 
+    // println!("value map {}", count);
+    count
+}
+
+fn sum_value_slot(map: &Map, player: &Player) -> i128
+{
+	let area = map.area_of_interest(usize::MAX, player);
+	let mut count:i128 = 0;
+
+    for (_, _, value) in area
+    {
+        count += value;
+    }
     count
 }
