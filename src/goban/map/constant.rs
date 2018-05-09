@@ -75,7 +75,7 @@ pub const CAPTURE: i128 = 4;
 const ENEMY_FOUR_ALIGN: i128 = 8;
 const ENEMY_THREE_ALIGN: i128 = 7;
 const FOUR_ALIGN: i128 = 7;
-const FIVE_ALIGN: i128 = 10;
+const FIVE_ALIGN: i128 = 40;
 const ENEMY_FIVE_ALIGN: i128 = 9;
 
 /*

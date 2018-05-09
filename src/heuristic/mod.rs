@@ -85,7 +85,7 @@ pub fn value_map(map: &Map, slot: &Player) -> i128
 
 fn sum_value_slot(map: &Map, player: &Player) -> i128
 {
-	let area = map.area_of_interest(usize::MAX, player);
+	let area = map.area_of_interest(10, player);
 	let mut count:i128 = 0;
 
     for (_, _, value) in area
