@@ -70,14 +70,14 @@ pub fn value_map(map: &Map, slot: &Player) -> i128
 	match (&map.is_finish, slot)
     {
         (&Finish::None, _) => {},
-        (&Finish::CapturePlayerOne, &Player::One) => { return MAX },
-        (&Finish::CapturePlayerOne, &Player::Two) => { return MIN },
-        (&Finish::CapturePlayerTwo, &Player::One) => { return MIN },
-        (&Finish::CapturePlayerTwo, &Player::Two) => { return MAX },
-        (&Finish::AlignPlayerOne, &Player::Two)   => { return MIN },
-        (&Finish::AlignPlayerOne, &Player::One)   => { return MAX },
-        (&Finish::AlignPlayerTwo, &Player::Two)   => { return MAX },
-        (&Finish::AlignPlayerTwo, &Player::One)   => { return MIN },
+        (&Finish::CapturePlayerOne, &Player::One) => { return MAX / 2 },
+        (&Finish::CapturePlayerOne, &Player::Two) => { return MIN / 2 },
+        (&Finish::CapturePlayerTwo, &Player::One) => { return MIN / 2 },
+        (&Finish::CapturePlayerTwo, &Player::Two) => { return MAX / 2 },
+        (&Finish::AlignPlayerOne, &Player::Two)   => { return MIN / 2 },
+        (&Finish::AlignPlayerOne, &Player::One)   => { return MAX / 2 },
+        (&Finish::AlignPlayerTwo, &Player::Two)   => { return MAX / 2 },
+        (&Finish::AlignPlayerTwo, &Player::One)   => { return MIN / 2 },
         _                                        => {},
     }
 	count += find_score![slot, map.players_score] as i128 * CAPTURE * 2;
