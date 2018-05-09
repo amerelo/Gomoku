@@ -134,11 +134,17 @@ pub fn draw_hint(c: Context, gl: &mut GlGraphics, map: &mut Map, players: (&GoEl
 		{
 
 			let new_posx = board_x + x as f64 * GOBAN_SPACE;
-
-			match (pos_y & (0o3 << (3 * (18 - x)))) >> 3 * (18 - x)
+			if map.is_available((x, y as i128)) != 0
 			{
-				0 => {
-						draw_text(gl, glyph_cache, &heuristic::value_slot(map, (y as i128, x as i128, 0)).to_string(), c.transform.trans(new_posx, new_posy).scale(0.5, 0.5), Colors::BLACK);
+				continue ;
+			}
+			let value = heuristic::value_slot(map, (y as i128, x as i128, 0));
+
+			match ((pos_y & (0o3 << (3 * (18 - x)))) >> 3 * (18 - x), value)
+			{
+				(0, 0) => {},
+				(0, v) => {
+						draw_text(gl, glyph_cache, &v.to_string(), c.transform.trans(new_posx, new_posy).scale(0.5, 0.5), Colors::BLACK);
 					},
 				_ => {}
 			}
