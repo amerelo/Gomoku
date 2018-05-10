@@ -82,20 +82,20 @@ pub fn value_map(map: &Map, slot: &Player) -> i128
     }
 	count += find_score![slot, map.players_score] as i128 * CAPTURE * 2;
 	count -= find_enemy_score![slot, map.players_score] as i128 * CAPTURE * 2;
-	// count += sum_value_slot(map, slot);
+	count += sum_value_slot(map, slot);
 
     // println!("value map {}", count);
     count
 }
 
-// fn sum_value_slot(map: &Map, player: &Player) -> i128
-// {
-// 	// let area = map.area_of_interest(usize::MAX, player);
-// 	let mut count:i128 = 0;
+fn sum_value_slot(map: &Map, player: &Player) -> i128
+{
+	let area = map.area_of_interest(usize::MAX, player);
+	let mut count:i128 = 0;
 
-//     // for (_, _, value) in area
-//     // {
-//     //     count += value;
-//     // }
-//     count
-// }
+    for (_, _, value) in area
+    {
+        count += value;
+    }
+    count
+}

@@ -27,8 +27,8 @@ impl Default for Map
 		{
 			value: mapinit![SIZEMAP, 0 as i128],
 			value_rotate: mapinit![SIZEMAP, 0 as i128],
-			value_diagonale: mapinit![SIZEMAP * 2, 0 as i128],
-			value_diagonale_rotate: mapinit![SIZEMAP * 2, 0 as i128],
+			value_diagonale: map_diagonale_init![SIZEMAP * 2, 3 as i128],
+			value_diagonale_rotate: map_diagonale_init![SIZEMAP * 2, 3 as i128],
 			players_kind: (PlayerKind::Human, PlayerKind::Human),
 			players_score: (0, 0),
 			current_player: Player::One,
@@ -94,7 +94,7 @@ impl Map
 				}
 			}
 		}
-
+        // println!("area {:?}", area);
 		if area.len() == 0
 		{
 			area.push((9, 9, 0));

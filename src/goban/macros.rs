@@ -12,6 +12,75 @@ macro_rules! mapinit
     }}
 }
 
+macro_rules! map_diagonale_init
+{
+    ($n:expr, $val:expr) =>
+    {{
+        let mut map = Vec::new();
+        for _y in 0..$n
+        {
+            map.push($val);
+        }
+        for y in 0..19
+        {
+            for x in 0..19
+            {
+                let conv:(i128, i128) = match x >= y as i128
+                {
+                    true => (18 + (x - y as i128) as i128, (x + y as i128)as i128),
+                    _    => (18 - (y as i128 - x) as i128, (x + y as i128)as i128)
+                };
+                if x == 0
+                {
+                    // map[conv.1 as usize] ^= (3 as i128) << (3 * (conv.0 + 3));
+                    if y > 0
+                    {
+                        map[conv.1 as usize] ^= (0o33 as i128) << (3 * conv.0);
+                    }
+                    else
+                    {
+                        map[conv.1 as usize] ^= (0o3 as i128) << (3 * conv.0);
+                    }
+
+                }
+                else if y == 0
+                {
+                    if x == 18
+                    {
+                        map[conv.1 as usize] ^= (0o3 as i128) << (3 * conv.0);
+                    }
+                    else
+                    {
+                        map[conv.1 as usize] ^= (0o3 as i128) << (3 * conv.0);
+                    }
+
+                }
+                else if y == 18
+                {
+                    if x < 18
+                    {
+                        map[conv.1 as usize] ^= (0o33 as i128) << (3 * conv.0);
+                    }
+                    else
+                    {
+                        map[conv.1 as usize] ^= (0o3 as i128) << (3 * conv.0);
+                    }
+
+                }
+                else if x == 18
+                {
+                    map[conv.1 as usize] ^= (0o3 as i128) << (3 * conv.0);
+                }
+                else
+                {
+                    map[conv.1 as usize] ^= (0o33 as i128) << (3 * conv.0);
+                }
+            }
+        }
+        map
+    }}
+}
+
 #[macro_export]
 macro_rules! find_slot_player
 {
@@ -30,11 +99,14 @@ macro_rules! insert_without_double
 {
     ($n:expr, $vec:expr) =>
     {
-        match $vec.binary_search(&$n)
+        if $n.0 >= 0 && $n.0 < SIZEMAP && $n.1 >= 0 && $n.1 < SIZEMAP
         {
-            Ok(_) => {},
-            Err(pos) => $vec.insert(pos, $n),
-        };
+            match $vec.binary_search(&$n)
+            {
+                Ok(_) => {},
+                Err(pos) => $vec.insert(pos, $n),
+            };
+        }
     }
 }
 
