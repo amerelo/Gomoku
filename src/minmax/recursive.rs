@@ -60,7 +60,7 @@ fn select_best_action(action_1: &mut Action, action_2: Action, turn: &Turn)
 	}
 }
 
-// fn iterative_last_move(current_elem: &mut Action, compare_action: &mut Action, current_trun: &Turn, depth: i128, new_action: &mut Option<Action>)
+// fn iterative_last_move(current_elem: &mut Action, compare_action: &mut Action, current_turn: &Turn, depth: i128, new_action: &mut Option<Action>)
 // {
 // }
 
@@ -74,7 +74,7 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 	let mut new_action: Option<Action> = None;
 	
 	let mut dep;
-	let mut current_trun: Turn = turn;
+	let mut current_turn: Turn = turn;
 
 	'start_of_loop: loop 
 	{
@@ -95,12 +95,12 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 						compare_action.value = heuristic::value_map(&compare_action.map, &Player::Two) - heuristic::value_map(&compare_action.map, &Player::One);
 						compare_action.evaluate = true;
 
-						select_best_action(&mut current_elem, compare_action, &current_trun);
+						select_best_action(&mut current_elem, compare_action, &current_turn);
 					} 
 					else if current_elem.depth != compare_action.depth
 					{
 						//check if current_elem.depth < compare_action.depth
-						match current_trun {
+						match current_turn {
 							Turn::MIN => compare_action.beta = current_elem.value,
 							Turn::MAX => compare_action.alpha = current_elem.value,
 						};
@@ -113,11 +113,11 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 							new_action = Some(current_elem);
 							break 'start_of_loop;
 						}
-						current_trun = change_turn(&current_trun);
+						current_turn = change_turn(&current_turn);
 					}
 					else if current_elem.alpha < current_elem.beta
 					{
-						select_best_action(&mut current_elem, compare_action, &current_trun);
+						select_best_action(&mut current_elem, compare_action, &current_turn);
 					}
 				} 
 				_ => {
@@ -160,7 +160,7 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 			};
 
 			new_action = None;
-			current_trun = change_turn(&current_trun);
+			current_turn = change_turn(&current_turn);
 		}
 		else if current_elem.evaluate == true
 		{
@@ -171,7 +171,7 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 					// println!("{}", "use speed ");
 					if current_elem.alpha < current_elem.beta
 					{
-						select_best_action(&mut current_elem, tmp_action, &current_trun);
+						select_best_action(&mut current_elem, tmp_action, &current_turn);
 					}
 				}
 			}
@@ -195,7 +195,7 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 					else if current_elem.depth != compare_action.depth
 					{
 						//check if current_elem.depth < compare_action.depth
-						match current_trun {
+						match current_turn {
 							Turn::MIN => compare_action.beta = current_elem.value,
 							Turn::MAX => compare_action.alpha = current_elem.value,
 						};
@@ -208,11 +208,11 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 							new_action = Some(current_elem);
 							break 'start_of_loop;
 						}
-						current_trun = change_turn(&current_trun);
+						current_turn = change_turn(&current_turn);
 					}
 					else if current_elem.alpha < current_elem.beta
 					{
-						select_best_action(&mut current_elem, compare_action, &current_trun);
+						select_best_action(&mut current_elem, compare_action, &current_turn);
 					}
 				} 
 				_ => {
@@ -293,26 +293,27 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> O
 	if depth == 0 || map.is_finish != Finish::None
 	{
 		let mut last_action: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
-													  // first slot is for the player we want the score
-		last_action.value =	heuristic::value_map(&last_action.map, &Player::Two) - heuristic::value_map(&last_action.map, &Player::One);
 
+		last_action.value =	heuristic::value_map(&last_action.map, &Player::Two) - heuristic::value_map(&last_action.map, &Player::One);
 		return Some(last_action);
 	}
 
 	let mut action_set = false;
 	let mut tmp: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
-	let current_trun: Turn = change_turn(&turn);
+	let current_turn: Turn = change_turn(&turn);
 	
 	let area = map.area_of_interest(MAX_VEC_AREA - DEAPH, &map.current_player);
 
 	'root: for y_x in area.iter()
 	{
+		println!("{:?}", y_x);
 		if map.is_available((y_x.1 , y_x.0)) == 0
 		{
+			println!("yes");
 			let mut new_map = map.clone();
 			let mut new_action = place(new_map, y_x.1 as usize , y_x.0 as usize, (tmp.alpha, tmp.beta));
 
-			match solver(depth - 1, &mut new_action.map, current_trun.clone(), (new_action.alpha, new_action.beta))
+			match solver(depth - 1, &mut new_action.map, current_turn.clone(), (new_action.alpha, new_action.beta))
 			{
 				Some(action) => {
 					// println!("					test value alpha {} --- beta {} || action va {}", tmp.alpha, tmp.beta, action.value);	
@@ -327,6 +328,10 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> O
 				// println!(" cut tree al {} ---- beta {}", tmp.alpha, tmp.beta);
 				break 'root;
 			}
+		}
+		else
+		{
+			println!("no");
 		}
 	}
 
