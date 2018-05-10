@@ -41,10 +41,13 @@ pub fn start()
 	{
 		if let Some(button) = e.press_args()
 		{
-			if button == Button::Mouse(MouseButton::Left)
+			if let Scene::Game = cursor.selected_scene 
 			{
-				cursor.place_piece = false;
-				cursor.press = true;
+				if button == Button::Mouse(MouseButton::Left)
+				{
+					cursor.place_piece = false;
+					cursor.press = true;
+				}
 			}
 			
 		}
@@ -75,7 +78,7 @@ pub fn start()
 						cursor.press = true;
 					}
 				},
-				Scene::End => { 
+				Scene::End => {
 					if button == Button::Keyboard(Key::Up)
 					{
 						cursor.up = true;

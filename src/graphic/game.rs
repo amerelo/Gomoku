@@ -46,6 +46,8 @@ impl Game
 		let players = (&self.go_w, &self.go_b);
 
 		let fps_t = &format!("fps: {}            Time of last AI move: {:.5} ms", self.fps.tick(), self.my_time);
+		let pc_1 = &format!("P1 {}", map.players_score.0);
+		let pc_2 = &format!("P2 {}", map.players_score.1);
 
 		self.gl.draw(args.viewport(), |c, gl|
 		{
@@ -53,6 +55,8 @@ impl Game
 
 			draw_text(gl, &mut glyph_cache, fps_t, c.transform.trans(5.0, 20.0), Colors::BLACK);
 			draw_text(gl, &mut glyph_cache, &format!("Turn: {}", map.turn), c.transform.trans(5.0, 38.0), Colors::BLACK );
+			draw_text(gl, &mut glyph_cache, pc_1, c.transform.trans(5.0, 60.0), Colors::BLACK);
+			draw_text(gl, &mut glyph_cache, pc_2, c.transform.trans(5.0, 80.0), Colors::BLACK);
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, map, cursor, players);
 			draw_hint(c, gl, map, players, &mut glyph_cache);

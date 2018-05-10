@@ -50,7 +50,7 @@ impl Settings
 		let mut vect: Vec<SettingsElem> = vec![];
 		vect.push( SettingsElem { text: "".to_owned(), base: "Player One : ".to_owned(), t: (250.0, 200.0)} );
 		vect.push( SettingsElem { text: "".to_owned(), base: "Player Two : ".to_owned(), t: (250.0, 300.0)} );
-		vect.push( SettingsElem { text: "Start".to_owned(), base: "Start ".to_owned(), t: (350.0, 450.0)} );
+		vect.push( SettingsElem { text: "Start".to_owned(), base: "Start ".to_owned(), t: (370.0, 450.0)} );
 
 		Settings {
 			gl: GlGraphics::new(opengl),

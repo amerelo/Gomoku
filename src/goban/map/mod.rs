@@ -105,7 +105,7 @@ impl Map
 			t.2 = heuristic::value_slot(self, *t, player);
 		}
 		area.sort_by_key(|k| -k.2);
-		if number < area.len() - 1
+		if number < area.len()
 		{
 			area[0 .. number].to_vec()
 		}
@@ -261,8 +261,9 @@ impl Map
         }
         self.set_value((x, y), slot_enemy);
         self.set_value((x2, y2), slot_enemy);
-        println!("Score: {:?}", self.players_score);
-        if self.players_score.0 >= 10 || self.players_score.1 >= 10
+
+        // println!("Score: {:?}", self.players_score);
+		if self.players_score.0 >= 10 || self.players_score.1 >= 10
         {
             match slot_player
             {

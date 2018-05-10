@@ -94,7 +94,7 @@ impl EndMenu
 		{
 			clear(BACKGROUND, gl);
 
-			draw_text(gl, &mut glyph_cache, &winner ,c.transform.trans(200.0, 200.0), Colors::RED);
+			draw_text(gl, &mut glyph_cache, &winner ,c.transform.trans(270.0, 200.0), Colors::RED);
 			for (i, elem) in vect.iter().enumerate()
 			{
 				if index == i {
