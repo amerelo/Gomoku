@@ -16,8 +16,8 @@ pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128), player: &Player) -> i
 
     let conv:(i128, i128) = match x >= y
     {
-        true => (RSIZEMAP + (x - y) as i128, (x + y)as i128),
-        _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
+        true => (RSIZEMAP + (x - y) as i128, (x + y) as i128),
+        _    => (RSIZEMAP - (y - x) as i128, (x + y) as i128)
     };
 
     count += value_slot_x(map, (x, y), masks_move.0, (RSIZEMAP - x) * 3);
@@ -77,21 +77,6 @@ pub fn value_slot_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i1
         15 => slot_value![map.value[y as usize], index ; mask_move; [0, 1, 2, 3, 4, 7, 13, 14, 15, 16, 18, 19, 23]],
         _  => slot_value![map.value[y as usize], index ; mask_move; [0, 1, 2, 3, 4, 5, 7, 8, 12, 13, 14, 15, 16, 18, 19, 20, 23]]
     };
-
-// to do two align
-    // if count > 0
-    // {
-    //     return count;
-    // }
-
-    // count += match x // other
-    // {
-    //     18 => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; mask_move; [0, 3, 6, 13]],
-    //     17 => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; mask_move; [0, 3, 6, 13, 15]],
-    //     16 => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; mask_move; [0, 1, 3, 4, 13, 15, 16, 18, 23]],
-    //     15 => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; mask_move; [0, 1, 2, 3, 4, 7, 13, 14, 15, 16, 18, 19, 23, 24]],
-    //     _  => slot_value![map.value[y as usize], (RSIZEMAP - x) * 3 ; mask_move; [0, 1, 2, 3, 4, 5, 7, 8, 12, 13, 14, 15, 16, 18, 19, 20, 23, 24]]
-    // };
 
     count
 }
@@ -261,13 +246,12 @@ pub fn value_map(map: &Map, slot: &Player) -> i128
         (&Finish::AlignPlayerOne, &Player::One)   => { return MAX / 2 },
         (&Finish::AlignPlayerTwo, &Player::Two)   => { return MAX / 2 },
         (&Finish::AlignPlayerTwo, &Player::One)   => { return MIN / 2 },
-        _                                        => {},
+        _                                         => {},
     }
 	count += find_score![slot, map.players_score] as i128 * CAPTURE * 2;
 	count -= find_enemy_score![slot, map.players_score] as i128 * CAPTURE * 2;
 	count += sum_value_slot(map, slot);
 
-    // println!("value map {}", count);
     count
 }
 

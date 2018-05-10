@@ -487,7 +487,6 @@ impl Map
             _ => slot_cmp![self.value_diagonale_rotate[conv.0 as usize], ((RSIZEMAP as i128) * 2 - conv.1) * 3 ; slot_d; [0, 1, 2, 3, 4, 5, 7, 8]] as usize
         };
 
-        // println!("rotat {:o}", count);
         count
     }
 
@@ -526,6 +525,7 @@ impl Map
             print!("\n");
         }
     }
+
 	pub fn print_map_diagonal(&self) -> ()
     {
         for y in &self.value_diagonale
