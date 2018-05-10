@@ -282,23 +282,23 @@ impl Map
         {
             if *elem_y != 0
             {
-                for x in 0..(SIZEMAP - 4)
+                for x in 0..SIZEMAP
                 {
                     let value = (elem_y >> ((RSIZEMAP - x) * 3)) & mask;
-                    if value == 0o11111 && !self.is_capturable(self.all_conv_xy((x, y as i128)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x - 1, y as i128)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x - 2, y as i128)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x - 3, y as i128)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x - 4, y as i128)), &Player::One)
+                    if value == 0o11111 /*&& !self.is_capturable(self.all_conv_xy((x, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x + 1, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x + 2, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x + 3, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x + 4, y as i128)), &Player::One)*/
                     {
                         self.is_finish = Finish::AlignPlayerOne;
                         return ;
                     }
-                    else if value == 0o22222 && !self.is_capturable(self.all_conv_xy((x, y as i128)), &Player::Two)
+                    else if value == 0o22222 /*&& !self.is_capturable(self.all_conv_xy((x, y as i128)), &Player::Two)
                                              && !self.is_capturable(self.all_conv_xy((x + 1, y as i128)), &Player::Two)
                                              && !self.is_capturable(self.all_conv_xy((x + 2, y as i128)), &Player::Two)
                                              && !self.is_capturable(self.all_conv_xy((x + 3, y as i128)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x + 4, y as i128)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x + 4, y as i128)), &Player::Two)*/
                     {
                         self.is_finish = Finish::AlignPlayerTwo;
                         return ;
@@ -310,7 +310,7 @@ impl Map
         {
             if *elem_y != 0
             {
-                for y in 0..(SIZEMAP)
+                for y in 0..SIZEMAP
                 {
                     let value = (elem_y >> ((RSIZEMAP - y) * 3)) & mask;
                     if value == 0o11111 /*&& !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::One)
@@ -335,36 +335,60 @@ impl Map
             }
         }
 
-        // for (y, elem_y) in self.value_diagonale.iter().enumerate()
-        // {
-        //     if *elem_y != 0
-        //     {
-        //         for x in 0..(SIZEMAP * 2 - 8)
-        //         {
-        //             let value = (elem_y >> (x * 3)) & d_mask;
-        //             if value == 0o101010101
-        //             {
-        //                 println!("x {} y {}", x , y);
-        //                 println!("conv {:?}", self.all_xy_conv((x, y as i128)));
-        //                 println!("conv {:?}", self.all_xy_conv((x + 1, y as i128)));
-        //                 println!("conv {:?}", self.all_xy_conv((x + 2, y as i128)));
-        //                 println!("conv {:?}", self.all_xy_conv((x + 3, y as i128)));
-        //                 println!("conv {:?}", self.all_xy_conv((x + 4, y as i128)));
-        //                 self.is_finish = Finish::AlignPlayerOne;
-        //                 return ;
-        //             }
-        //             // else if value == 0o202020202 && !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::Two)
-        //             //                          && !self.is_capturable(self.all_conv_xy((x as i128, y + 1)), &Player::Two)
-        //             //                          && !self.is_capturable(self.all_conv_xy((x as i128, y + 2)), &Player::Two)
-        //             //                          && !self.is_capturable(self.all_conv_xy((x as i128, y + 3)), &Player::Two)
-        //             //                          && !self.is_capturable(self.all_conv_xy((x as i128, y + 4)), &Player::Two)
-        //             // {
-        //             //     self.is_finish = Finish::AlignPlayerTwo;
-        //             //     return ;
-        //             // }
-        //         }
-        //     }
-        // }
+        for (y, elem_y) in self.value_diagonale.iter().enumerate()
+        {
+            if *elem_y != 0
+            {
+                for x in 0..(SIZEMAP * 2)
+                {
+                    let value = (elem_y >> (x * 3)) & d_mask;
+                    if value == 0o101010101
+                    {
+                        // println!("x {} y {}", x , y);
+                        // println!("conv {:?}", self.all_xy_conv((x, y as i128)));
+                        // println!("conv {:?}", self.all_xy_conv((x + 1, y as i128)));
+                        // println!("conv {:?}", self.all_xy_conv((x + 2, y as i128)));
+                        // println!("conv {:?}", self.all_xy_conv((x + 3, y as i128)));
+                        // println!("conv {:?}", self.all_xy_conv((x + 4, y as i128)));
+                        self.is_finish = Finish::AlignPlayerOne;
+                        return ;
+                    }
+                    else if value == 0o202020202
+                    {
+                        self.is_finish = Finish::AlignPlayerTwo;
+                        return ;
+                    }
+                }
+            }
+        }
+
+        for (y, elem_y) in self.value_diagonale_rotate.iter().enumerate()
+        {
+            if *elem_y != 0
+            {
+                for x in 0..(SIZEMAP * 2)
+                {
+                    let value = (elem_y >> (x * 3)) & d_mask;
+                    if value == 0o101010101
+                    {
+                        // println!("x {} y {}", x , y);
+                        // println!("conv {:?}", self.all_xy_conv((x, y as i128)));
+                        // println!("conv {:?}", self.all_xy_conv((x + 1, y as i128)));
+                        // println!("conv {:?}", self.all_xy_conv((x + 2, y as i128)));
+                        // println!("conv {:?}", self.all_xy_conv((x + 3, y as i128)));
+                        // println!("conv {:?}", self.all_xy_conv((x + 4, y as i128)));
+                        self.is_finish = Finish::AlignPlayerOne;
+                        return ;
+                    }
+                    else if value == 0o202020202
+                    {
+                        self.is_finish = Finish::AlignPlayerTwo;
+                        return ;
+                    }
+                }
+            }
+        }
+
 
 
     }
