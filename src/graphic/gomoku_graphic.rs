@@ -5,6 +5,7 @@ use sdl2_window::Sdl2Window;
 
 use opengl_graphics::{ OpenGL, GlyphCache };
 use find_folder::Search;
+use goban::map::{ Map };
 
 use graphic::cursor::{ Cursor, Scene};
 use graphic::settings::{ Settings };
@@ -36,6 +37,7 @@ pub fn start()
 	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
 	let ref font = assets.join("DejaVuSerif.ttf");
 	let mut glyph_cache = GlyphCache::new(font, (), TextureSettings::new()).unwrap();
+	let mut list_of_maps: Vec<Map> = vec![];
 
 	while let Some(e) = events.next(&mut window)
 	{
@@ -105,9 +107,9 @@ pub fn start()
 		{
 			match cursor.selected_scene
 			{
-				Scene::Game => game.render(&r, &mut glyph_cache, &mut cursor),
+				Scene::Game => game.render(&r, &mut glyph_cache, &mut cursor, &mut list_of_maps),
 				Scene::Settings => settings.render(&r, &mut glyph_cache, &mut cursor, &mut game.map),
-				Scene::End => end.render(&r, &mut glyph_cache, &mut cursor, &mut game.map),
+				Scene::End => end.render(&r, &mut glyph_cache, &mut cursor, &mut game.map, &mut list_of_maps),
 			};
 		}
 	}

@@ -81,7 +81,7 @@ impl EndMenu
 		self.index
 	}
 
-	pub fn render(&mut self, args: &RenderArgs, mut glyph_cache: &mut GlyphCache, mut cursor: &mut Cursor, map: &mut Map) //RenderArgs
+	pub fn render(&mut self, args: &RenderArgs, mut glyph_cache: &mut GlyphCache, mut cursor: &mut Cursor, map: &mut Map, list_of_maps: &mut Vec<Map>) //RenderArgs
 	{
 		let index = self.select_index(&mut cursor);
 		self.select_action(&mut cursor, map);
@@ -89,6 +89,12 @@ impl EndMenu
 		let winner = player_win(&map);
 		let vect = &self.elems;
 
+		for elem in list_of_maps.iter()
+		{
+			elem.print_map();
+			println!("------------------------------------------------------");
+		}
+		list_of_maps.clear();
 
 		self.gl.draw(args.viewport(), |c, gl|
 		{

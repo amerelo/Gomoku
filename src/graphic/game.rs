@@ -12,6 +12,7 @@ use graphic::draw::{ draw_goban, draw_player, draw_text, draw_hint , Colors};
 use minmax::recursive::{ start_min_max };
 
 const BACKGROUND:[f32; 4] = [0.65, 0.55, 0.45, 1.0];
+const BLACK:[f32; 4] = [0.1, 0.1, 0.1, 0.7];
 // 0.95, 0.69, 0.50
 
 pub struct Game {
@@ -39,7 +40,7 @@ impl Game
 		}
 	}
 
-	pub fn render(&mut self, args: &RenderArgs, mut glyph_cache: &mut GlyphCache, cursor: &mut Cursor) //RenderArgs
+	pub fn render(&mut self, args: &RenderArgs, mut glyph_cache: &mut GlyphCache, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>) //RenderArgs
 	{
 		let goban = &self.goban;
 		let map = &mut self.map;
@@ -48,7 +49,7 @@ impl Game
 		let fps_t = &format!("fps: {}            Time of last AI move: {:.5} ms", self.fps.tick(), self.my_time);
 		let pc_1 = &format!("P1 {}", map.players_score.0);
 		let pc_2 = &format!("P2 {}", map.players_score.1);
-
+		// let square = rectangle::square(-150.0, -150.0, 300.0);
 		self.gl.draw(args.viewport(), |c, gl|
 		{
 			clear(BACKGROUND, gl);
@@ -60,6 +61,8 @@ impl Game
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, map, cursor, players);
 			draw_hint(c, gl, map, players, &mut glyph_cache);
+			// Draw a box rotating around the middle of the screen.
+			// rectangle(BLACK, square, c.transform.trans(300.0, 300.0), gl);
 		});
 
 		// let player_turn = find_slot_player!(map.current_player, Slot::PlayerOne, Slot::PlayerTwo);
@@ -70,11 +73,13 @@ impl Game
 		}
 		else if find_kind_player![map.current_player, map.players_kind] == &PlayerKind::AI
 		{
+			list_of_maps.push(map.clone());
 			ai_move(map, &mut self.my_time);
 		} 
 		else if !cursor.press && cursor.place_piece &&
 			map.is_available((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128)) == 0
 		{
+			list_of_maps.push(map.clone());
 			human_move(map, cursor);
 		}
 	}
