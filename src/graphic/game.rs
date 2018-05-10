@@ -97,6 +97,7 @@ fn ai_move(map: &mut Map, my_time: &mut f64)
 
 fn human_move(map: &mut Map, cursor: &mut Cursor)
 {
+	// map.print_map_diagonal();
 	// map.is_winning_move((cursor.cursor_in_board[0] as i32, cursor.cursor_in_board[1] as i32));
 	// println!("value {}\n", heuristic::value_slot(map, (cursor.cursor_in_board[1] as i128, cursor.cursor_in_board[0] as i128, 2)));
 	map.number_captured((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player![map.current_player], true);

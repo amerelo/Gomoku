@@ -27,8 +27,8 @@ impl Default for Map
 		{
 			value: mapinit![SIZEMAP, 0 as i128],
 			value_rotate: mapinit![SIZEMAP, 0 as i128],
-			value_diagonale: map_diagonale_init![SIZEMAP * 2, 3 as i128],
-			value_diagonale_rotate: map_diagonale_init![SIZEMAP * 2, 3 as i128],
+			value_diagonale: map_diagonale_init![SIZEMAP * 2, 0o3333333333333333333333333333333333333 as i128],
+			value_diagonale_rotate: map_diagonale_init![SIZEMAP * 2, 0o3333333333333333333333333333333333333 as i128],
 			players_kind: (PlayerKind::Human, PlayerKind::Human),
 			players_score: (0, 0),
 			current_player: Player::One,
@@ -44,8 +44,8 @@ impl Map
     {
         self.value = mapinit![SIZEMAP, 0];
         self.value_rotate = mapinit![SIZEMAP, 0];
-        self.value_diagonale = mapinit![SIZEMAP * 2, 0];
-        self.value_diagonale_rotate = mapinit![SIZEMAP * 2, 0];
+        self.value_diagonale = map_diagonale_init![SIZEMAP * 2, 0o3333333333333333333333333333333333333 as i128];
+        self.value_diagonale_rotate = map_diagonale_init![SIZEMAP * 2, 0o3333333333333333333333333333333333333 as i128];
         self.players_score = (0, 0);
         self.current_player = Player::One;
         self.is_finish = Finish::None;
@@ -519,6 +519,23 @@ impl Map
                 {
                     1 => print!("1 "),
                     2 => print!("2 "),
+                    _ => print!("- ")
+                }
+            }
+            print!("\n");
+        }
+    }
+	pub fn print_map_diagonal(&self) -> ()
+    {
+        for y in &self.value_diagonale
+        {
+            for x in 0..37
+            {
+                match (y & (0o3 << (3 * (36 - x)))) >> 3 * (36 - x)
+                {
+                    1 => print!("1 "),
+                    2 => print!("2 "),
+                    3 => print!("3 "),
                     _ => print!("- ")
                 }
             }
