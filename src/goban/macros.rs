@@ -136,6 +136,20 @@ macro_rules! find_kind_player
     }
 }
 
+
+#[macro_export]
+macro_rules! find_kind_enemy
+{
+    ($n:expr) =>
+    {
+        match $n
+        {
+            Player::One => &Player::Two,
+            _           => &Player::One
+        };
+    }
+}
+
 #[macro_export]
 macro_rules! find_score
 {

@@ -6,8 +6,8 @@ use goban::player::{Player};
 use goban::finish::{ Finish };
 use heuristic;
 
-const MAX_VEC_AREA: usize = 12;
-const DEAPH: usize = 10;
+const MAX_VEC_AREA: usize = 13;
+const DEAPH: usize = 2;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
@@ -282,7 +282,7 @@ fn best_action(turn: &Turn, new_action: Action, tmp: &mut Action, action_set: &m
 }
 
 #[allow(dead_code)]
-fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> Option<Action>
+fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), player: &Player) -> Option<Action>
 {
 	// println!("-- {}", depth);
 	// if  map.is_finish != Finish::None
@@ -294,7 +294,7 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> O
 	{
 		let mut last_action: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
 
-		last_action.value =	heuristic::value_map(&last_action.map, &Player::Two) - heuristic::value_map(&last_action.map, &Player::One);
+		last_action.value =	heuristic::value_map(&last_action.map, player) - heuristic::value_map(&last_action.map, find_kind_enemy!(player));
 		return Some(last_action);
 	}
 
@@ -306,14 +306,12 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> O
 
 	'root: for y_x in area.iter()
 	{
-		println!("{:?}", y_x);
 		if map.is_available((y_x.1 , y_x.0), &map.current_player) == 0
 		{
-			println!("yes");
 			let mut new_map = map.clone();
 			let mut new_action = place(new_map, y_x.1 as usize , y_x.0 as usize, (tmp.alpha, tmp.beta));
 
-			match solver(depth - 1, &mut new_action.map, current_turn.clone(), (new_action.alpha, new_action.beta))
+			match solver(depth - 1, &mut new_action.map, current_turn.clone(), (new_action.alpha, new_action.beta), player)
 			{
 				Some(action) => {
 					// println!("					test value alpha {} --- beta {} || action va {}", tmp.alpha, tmp.beta, action.value);	
@@ -328,10 +326,6 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> O
 				// println!(" cut tree al {} ---- beta {}", tmp.alpha, tmp.beta);
 				break 'root;
 			}
-		}
-		else
-		{
-			println!("no");
 		}
 	}
 
@@ -348,7 +342,7 @@ pub fn start_min_max(map: &Map) -> Option<Action>
 {
 	let depth: i128 = DEAPH as i128;
 
-	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX));
+	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX), &map.current_player);// 
 	// let action = solver_iterative(depth, &mut map.clone(), Turn::MIN, (MIN, MAX)); 
 	// let action = None;
 
