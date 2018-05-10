@@ -136,7 +136,7 @@ pub fn draw_hint(c: Context, gl: &mut GlGraphics, map: &mut Map, players: (&GoEl
 		{
 
 			let new_posx = board_x + x as f64 * GOBAN_SPACE;
-			if map.is_available((x, y as i128)) != 0
+			if map.is_available((x, y as i128), &map.current_player) != 0
 			{
 				continue ;
 			}

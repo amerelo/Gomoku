@@ -97,9 +97,9 @@ macro_rules! find_slot_player
 #[macro_export]
 macro_rules! insert_without_double
 {
-    ($n:expr, $vec:expr) =>
+    ($n:expr, $vec:expr, $map:expr, $player:expr) =>
     {
-        if $n.0 >= 0 && $n.0 < SIZEMAP && $n.1 >= 0 && $n.1 < SIZEMAP
+        if $map.is_available(($n.1, $n.0), $player) == 0
         {
             match $vec.binary_search(&$n)
             {

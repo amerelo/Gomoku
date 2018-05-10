@@ -140,7 +140,7 @@ fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i
 			go_stack.push(current_elem);
 			'root: for y_x in area.iter()
 			{
-				if map.is_available((y_x.1 , y_x.0)) == 0
+				if map.is_available((y_x.1 , y_x.0), &map.current_player) == 0
 				{
 					match new_action {
 						Some(action) => go_stack.push(action),
@@ -307,7 +307,7 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> O
 	'root: for y_x in area.iter()
 	{
 		println!("{:?}", y_x);
-		if map.is_available((y_x.1 , y_x.0)) == 0
+		if map.is_available((y_x.1 , y_x.0), &map.current_player) == 0
 		{
 			println!("yes");
 			let mut new_map = map.clone();

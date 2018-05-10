@@ -77,7 +77,7 @@ impl Game
 			ai_move(map, &mut self.my_time);
 		} 
 		else if !cursor.press && cursor.place_piece &&
-			map.is_available((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128)) == 0
+			map.is_available((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), &map.current_player) == 0
 		{
 			list_of_maps.push(map.clone());
 			human_move(map, cursor);

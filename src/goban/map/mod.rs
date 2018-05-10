@@ -82,14 +82,14 @@ impl Map
 				{
 					if ((elem_y >> ((RSIZEMAP - x) * 3)) & 0x3 ) != 0
 					{
-						insert_without_double![((y as i128 - 1), x as i128, 0), area];
-						insert_without_double![((y as i128 - 1), (x as i128 - 1), 0), area];
-						insert_without_double![((y as i128 - 1), (x + 1) as i128, 0), area];
-						insert_without_double![((y + 1) as i128, (x as i128 - 1), 0), area];
-						insert_without_double![((y + 1) as i128, (x + 1) as i128, 0), area];
-						insert_without_double![((y + 1) as i128, x as i128, 0), area];
-						insert_without_double![(y as i128, (x as i128 - 1), 0), area];
-						insert_without_double![(y as i128, (x + 1) as i128, 0), area];
+						insert_without_double![((y as i128 - 1), x as i128, 0), area, self, player];
+						insert_without_double![((y as i128 - 1), (x as i128 - 1), 0), area, self, player];
+						insert_without_double![((y as i128 - 1), (x + 1) as i128, 0), area, self, player];
+						insert_without_double![((y + 1) as i128, (x as i128 - 1), 0), area, self, player];
+						insert_without_double![((y + 1) as i128, (x + 1) as i128, 0), area, self, player];
+						insert_without_double![((y + 1) as i128, x as i128, 0), area, self, player];
+						insert_without_double![(y as i128, (x as i128 - 1), 0), area, self, player];
+						insert_without_double![(y as i128, (x + 1) as i128, 0), area, self, player];
 					}
 				}
 			}
@@ -115,7 +115,7 @@ impl Map
 		}
 	}
 
-    pub fn is_available(&self, (x, y):(i128, i128)) -> i128
+    pub fn is_available(&self, (x, y):(i128, i128), player: &Player) -> i128
     {
         if x > RSIZEMAP || y > RSIZEMAP || x < 0 || y < 0
         {
@@ -123,14 +123,14 @@ impl Map
         }
         match (self.value[y as usize] & 0o3 << (3 * (RSIZEMAP - x))) >> 3 * (RSIZEMAP - x)
         {
-            0     => self.is_double_three_move((x, y)),
+            0     => self.is_double_three_move((x, y), player),
             val   => val
         }
     }
 
-    fn is_double_three_move(&self, (x, y):(i128, i128)) -> i128
+    fn is_double_three_move(&self, (x, y):(i128, i128), player: &Player) -> i128
     {
-        match self.three_move_number((x, y), find_tm_player![self.current_player, (THREE_MOVE_P1, DTHREE_MOVE_P1), (THREE_MOVE_P2, DTHREE_MOVE_P2)])
+        match self.three_move_number((x, y), find_tm_player![player, (THREE_MOVE_P1, DTHREE_MOVE_P1), (THREE_MOVE_P2, DTHREE_MOVE_P2)])
         {
             1 => 0,
             0 => 0,
