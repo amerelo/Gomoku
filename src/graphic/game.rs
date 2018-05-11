@@ -89,9 +89,7 @@ impl Game
 		let pc_1 = &format!("P1 {}", map.players_score.0);
 		let pc_2 = &format!("P2 {}", map.players_score.1);
 
-		let square = rectangle::square(0.0, 0.0, 400.0);
 		let vect = &self.elems;
-		let winner = player_win(&map);
 		
 		if map.is_finish != Finish::None {
 			select_action(&index, cursor, &mut map);
@@ -107,68 +105,14 @@ impl Game
 			draw_text(gl, &mut glyph_cache, pc_2, c.transform.trans(5.0, 80.0), Colors::BLACK);
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, &mut map, cursor, players);
-			draw_hint(c, gl, &mut map, players, &mut glyph_cache);
+			draw_hint(c, gl, &mut map, &mut glyph_cache);
 
-			// Draw a box rotating around the middle of the screen.
 			if map.is_finish != Finish::None
 			{
-				rectangle(BLACK, square, c.transform.trans(200.0, 130.0), gl);
-				draw_text(gl, &mut glyph_cache, &winner ,c.transform.trans(270.0, 200.0), Colors::RED);
-				for (i, elem) in vect.iter().enumerate()
-				{
-					if index == i {
-						draw_text(gl, &mut glyph_cache, &elem.text, c.transform.trans(elem.t.0, elem.t.1), Colors::Yellow);
-					} else {
-						draw_text(gl, &mut glyph_cache, &elem.text, c.transform.trans(elem.t.0, elem.t.1), Colors::NORMAL);
-					}
-				}
+				end_menu(c, gl, &mut glyph_cache, &map, &vect, index)
 			}
 		});
-
-		if map.is_finish != Finish::None
-		{
-			self.my_time = 0.0;
-			cursor.controller = Controls::KeyBoard;
-		}
-		else if find_kind_player![map.current_player, map.players_kind] == &PlayerKind::AI
-		{
-			list_of_maps.push(map.clone());
-			ai_move(&mut map, &mut self.my_time);
-		} 
-		else if !cursor.press && cursor.place_piece &&
-			map.is_available((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), &map.current_player) == 0
-		{
-			list_of_maps.push(map.clone());
-			human_move(&mut map, cursor);
-		}
-	}
-}
-
-fn select_action(index: &usize, cursor: &mut Cursor, map: &mut Map)
-{
-	if cursor.press && *index == 0 {
-		map.reset();
-		cursor.selected_scene = Scene::Settings;
-		cursor.controller = Controls::KeyBoard;
-		cursor.press = false;
-	}
-	else if cursor.press && *index == 1 {
-		map.reset();
-		cursor.selected_scene = Scene::Game;
-		cursor.controller = Controls::Mouse;
-		cursor.press = false;
-	}
-}
-
-pub fn player_win(map: &Map) -> String
-{
-	match map.is_finish
-	{
-		Finish::CapturePlayerOne	=> "Player 1 Win by Capture".to_owned(),
-		Finish::CapturePlayerTwo	=> "Player 2 Win by Capture".to_owned(),
-		Finish::AlignPlayerOne		=> "Player 1 Win by Align".to_owned(),
-		Finish::AlignPlayerTwo		=> "Player 2 Win by Align".to_owned(),
-		_							=> "None".to_owned(),
+		game_action(&mut map, cursor, list_of_maps, &mut self.my_time);
 	}
 }
 
@@ -201,4 +145,70 @@ fn human_move(map: &mut Map, cursor: &mut Cursor)
 	map.change_player_turn();
 
 	cursor.place_piece = false;
+}
+
+fn game_action(map: &mut Map, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>, my_time: &mut f64)
+{
+	if map.is_finish != Finish::None
+	{
+		*my_time = 0.0;
+		cursor.controller = Controls::KeyBoard;
+	}
+	else if find_kind_player![map.current_player, map.players_kind] == &PlayerKind::AI
+	{
+		list_of_maps.push(map.clone());
+		ai_move(map, my_time);
+	} 
+	else if !cursor.press && cursor.place_piece &&
+		map.is_available((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), &map.current_player) == 0
+	{
+		list_of_maps.push(map.clone());
+		human_move(map, cursor);
+	}
+}
+
+fn select_action(index: &usize, cursor: &mut Cursor, map: &mut Map)
+{
+	if cursor.press && *index == 0 {
+		map.reset();
+		cursor.selected_scene = Scene::Settings;
+		cursor.controller = Controls::KeyBoard;
+		cursor.press = false;
+	}
+	else if cursor.press && *index == 1 {
+		map.reset();
+		cursor.selected_scene = Scene::Game;
+		cursor.controller = Controls::Mouse;
+		cursor.press = false;
+	}
+}
+
+pub fn player_win(map: &Map) -> String
+{
+	match map.is_finish
+	{
+		Finish::CapturePlayerOne	=> "Player 1 Win by Capture".to_owned(),
+		Finish::CapturePlayerTwo	=> "Player 2 Win by Capture".to_owned(),
+		Finish::AlignPlayerOne		=> "Player 1 Win by Align".to_owned(),
+		Finish::AlignPlayerTwo		=> "Player 2 Win by Align".to_owned(),
+		_							=> "None".to_owned(),
+	}
+}
+
+fn end_menu(c: Context, gl: &mut GlGraphics, glyph_cache: &mut GlyphCache, map: &Map, vect: &Vec<SettingsElem>, index: usize)
+{
+	let square = rectangle::square(0.0, 0.0, 400.0);
+	
+	let winner = player_win(&map);
+
+	rectangle(BLACK, square, c.transform.trans(200.0, 130.0), gl);
+	draw_text(gl, glyph_cache, &winner ,c.transform.trans(270.0, 200.0), Colors::RED);
+	for (i, elem) in vect.iter().enumerate()
+	{
+		if index == i {
+			draw_text(gl, glyph_cache, &elem.text, c.transform.trans(elem.t.0, elem.t.1), Colors::Yellow);
+		} else {
+			draw_text(gl, glyph_cache, &elem.text, c.transform.trans(elem.t.0, elem.t.1), Colors::NORMAL);
+		}
+	}
 }

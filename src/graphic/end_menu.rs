@@ -4,7 +4,6 @@ use piston_window::*;
 use opengl_graphics::{ GlGraphics, OpenGL, GlyphCache };
 use goban::map::{Map};
 use graphic::cursor::{ Cursor, Scene};
-use goban::player::{ PlayerKind};
 use graphic::draw::{ draw_text, Colors };
 use goban::finish::{ Finish };
 

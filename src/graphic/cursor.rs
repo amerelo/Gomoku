@@ -2,7 +2,6 @@ pub enum Scene
 {
 	Settings,
 	Game,
-	End,
 }
 
 pub enum Controls

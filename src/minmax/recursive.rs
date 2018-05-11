@@ -60,10 +60,6 @@ fn select_best_action(action_1: &mut Action, action_2: Action, turn: &Turn)
 	}
 }
 
-// fn iterative_last_move(current_elem: &mut Action, compare_action: &mut Action, current_turn: &Turn, depth: i128, new_action: &mut Option<Action>)
-// {
-// }
-
 #[allow(dead_code)]
 fn solver_iterative(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128)) -> Option<Action>
 {

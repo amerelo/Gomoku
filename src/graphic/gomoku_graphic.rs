@@ -9,7 +9,7 @@ use goban::map::{ Map };
 
 use graphic::cursor::{ Cursor, Scene, Controls};
 use graphic::settings::{ Settings };
-use graphic::{ game::{ Game }, end_menu::{ EndMenu } };
+use graphic::{ game::{ Game } }; // , end_menu::{ EndMenu }
 // use heuristic;
 
 pub fn start()
@@ -31,7 +31,7 @@ pub fn start()
 	
 	let mut game = Game::new(opengl);
 	let mut settings = Settings::new(opengl);
-	let mut end = EndMenu::new(opengl);
+	// let mut end = EndMenu::new(opengl);
 	let mut cursor = Cursor::new();
 
 	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
@@ -92,7 +92,7 @@ pub fn start()
 			{
 				Scene::Game => game.render(&r, &mut glyph_cache, &mut cursor, &mut list_of_maps),
 				Scene::Settings => settings.render(&r, &mut glyph_cache, &mut cursor, &mut game.map),
-				Scene::End => end.render(&r, &mut glyph_cache, &mut cursor, &mut game.map, &mut list_of_maps),
+				// Scene::End => end.render(&r, &mut glyph_cache, &mut cursor, &mut game.map, &mut list_of_maps),
 			};
 		}
 	}

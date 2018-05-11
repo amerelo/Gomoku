@@ -123,9 +123,8 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 	}
 }
 
-pub fn draw_hint(c: Context, gl: &mut GlGraphics, map: &mut Map, players: (&GoElem, &GoElem), glyph_cache: &mut GlyphCache)
+pub fn draw_hint(c: Context, gl: &mut GlGraphics, map: &mut Map, glyph_cache: &mut GlyphCache)
 {
-	let mut near_pos: [f64; 2] = [0.0, 0.0];
 	let board_x = GOBANPOS.0 + GOBAN_BOARD_X;
 	let board_y = GOBANPOS.1 + GOBAN_BOARD_Y;
 
