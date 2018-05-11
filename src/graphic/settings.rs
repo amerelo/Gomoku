@@ -3,7 +3,7 @@ use std::string::String;
 use piston_window::*;
 use opengl_graphics::{ GlGraphics, OpenGL, GlyphCache };
 use goban::map::{Map};
-use graphic::cursor::{ Cursor, Scene};
+use graphic::cursor::{ Cursor, Scene, Controls};
 use goban::player::{ PlayerKind};
 use graphic::draw::{ draw_text, Colors };
 
@@ -48,9 +48,9 @@ impl Settings
 	pub fn new(opengl: OpenGL) -> Self
 	{
 		let mut vect: Vec<SettingsElem> = vec![];
-		vect.push( SettingsElem { text: "".to_owned(), base: "Player One : ".to_owned(), t: (250.0, 200.0)} );
-		vect.push( SettingsElem { text: "".to_owned(), base: "Player Two : ".to_owned(), t: (250.0, 300.0)} );
-		vect.push( SettingsElem { text: "Start".to_owned(), base: "Start ".to_owned(), t: (370.0, 450.0)} );
+		vect.push( SettingsElem { text: "".to_owned(), base: "Player One : ".to_owned(), t: (300.0, 200.0)} );
+		vect.push( SettingsElem { text: "".to_owned(), base: "Player Two : ".to_owned(), t: (300.0, 300.0)} );
+		vect.push( SettingsElem { text: "Start".to_owned(), base: "Start ".to_owned(), t: (375.0, 450.0)} );
 
 		Settings {
 			gl: GlGraphics::new(opengl),
@@ -65,18 +65,19 @@ impl Settings
 	{
 		if cursor.press
 		{
+			cursor.press = false;
 			match self
 			{
 				Settings {index, player_one, ..} if *index == 0  => change_player_kind(player_one),
 				Settings {index, player_two, ..} if *index == 1  => change_player_kind(player_two),
 				Settings {index, player_one, player_two, ..} if *index == 2  => {
 					map.reset_players(player_one.clone(), player_two.clone());
+					cursor.controller = Controls::Mouse;
 					cursor.selected_scene = Scene::Game;
 				},
 				_  => (),
 			};
 
-			cursor.press = false;
 		}
 	}
 

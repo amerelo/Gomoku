@@ -7,7 +7,7 @@ use opengl_graphics::{ OpenGL, GlyphCache };
 use find_folder::Search;
 use goban::map::{ Map };
 
-use graphic::cursor::{ Cursor, Scene};
+use graphic::cursor::{ Cursor, Scene, Controls};
 use graphic::settings::{ Settings };
 use graphic::{ game::{ Game }, end_menu::{ EndMenu } };
 // use heuristic;
@@ -43,7 +43,7 @@ pub fn start()
 	{
 		if let Some(button) = e.press_args()
 		{
-			if let Scene::Game = cursor.selected_scene 
+			if let Controls::Mouse = cursor.controller
 			{
 				if button == Button::Mouse(MouseButton::Left)
 				{
@@ -51,51 +51,34 @@ pub fn start()
 					cursor.press = true;
 				}
 			}
-			
 		}
 		
 		if let Some(button) = e.release_args()
 		{
-			match cursor.selected_scene
+			if let Controls::Mouse = cursor.controller
 			{
-				Scene::Game => {
-					if button == Button::Mouse(MouseButton::Left)
-					{
-						cursor.place_piece = true;
-						cursor.press = false;
-					}
-				},
-				Scene::Settings => {
-					if button == Button::Keyboard(Key::Up)
-					{
-						cursor.up = true;
-					}
-					else if button == Button::Keyboard(Key::Down)
-					{
-						cursor.down = true;
-					}
-
-					if button == Button::Keyboard(Key::Return)
-					{
-						cursor.press = true;
-					}
-				},
-				Scene::End => {
-					if button == Button::Keyboard(Key::Up)
-					{
-						cursor.up = true;
-					}
-					else if button == Button::Keyboard(Key::Down)
-					{
-						cursor.down = true;
-					}
-
-					if button == Button::Keyboard(Key::Return)
-					{
-						cursor.press = true;
-					}
+				if button == Button::Mouse(MouseButton::Left)
+				{
+					cursor.place_piece = true;
+					cursor.press = false;
 				}
-			};
+			}
+			if let Controls::KeyBoard = cursor.controller
+			{
+				if button == Button::Keyboard(Key::Up)
+				{
+					cursor.up = true;
+				}
+				else if button == Button::Keyboard(Key::Down)
+				{
+					cursor.down = true;
+				}
+
+				if button == Button::Keyboard(Key::Return)
+				{
+					cursor.press = true;
+				}
+			}
 		}
 
 		if let Some(pos) = e.mouse_cursor_args()

@@ -29,8 +29,8 @@ impl EndMenu
 	pub fn new(opengl: OpenGL) -> Self
 	{
 		let mut vect: Vec<SettingsElem> = vec![];
-		vect.push( SettingsElem { text: "Retry ".to_owned(), base: "Retry ".to_owned(), t: (350.0, 300.0)} );
-		vect.push( SettingsElem { text: "Main Menu".to_owned(), base: "Main Menu".to_owned(), t: (350.0, 400.0)} );
+		vect.push( SettingsElem { text: "Main Menu".to_owned(), base: "Main Menu".to_owned(), t: (350.0, 300.0)} );
+		vect.push( SettingsElem { text: "Retry ".to_owned(), base: "Retry ".to_owned(), t: (350.0, 400.0)} );
 
 		EndMenu {
 			gl: GlGraphics::new(opengl),

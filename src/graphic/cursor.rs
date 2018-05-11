@@ -5,6 +5,12 @@ pub enum Scene
 	End,
 }
 
+pub enum Controls
+{
+	Mouse,
+	KeyBoard,
+}
+
 pub struct Cursor
 {
 	pub press: bool,
@@ -14,6 +20,7 @@ pub struct Cursor
 	pub cursor_pos: [f64; 2],
 	pub cursor_in_board: [usize; 2],
 	pub selected_scene: Scene,
+	pub controller: Controls,
 }
 
 impl Cursor
@@ -29,6 +36,7 @@ impl Cursor
 			cursor_pos: [0.0, 0.0],
 			cursor_in_board: [0, 0],
 			selected_scene: Scene::Settings,
+			controller: Controls::KeyBoard,
 		}
 	}
 }
