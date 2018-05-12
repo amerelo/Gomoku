@@ -492,11 +492,10 @@ impl Map
 
     pub fn change_player_turn(&mut self)
     {
-        self.turn += 1;
         match self.current_player
         {
             Player::One => self.current_player = Player::Two,
-            _           => self.current_player = Player::One
+            _           => { self.turn += 1; self.current_player = Player::One }
         }
     }
 
