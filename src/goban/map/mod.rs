@@ -1,9 +1,11 @@
 pub mod constant;
 use goban::player::{Player, PlayerKind};
 use std::i128;
+use std::usize::{MAX};
 use heuristic;
 use goban::map::constant::{*};
 use goban::finish::{Finish};
+use itertools::Itertools;
 
 #[derive(Debug, Clone)]
 pub struct Map
@@ -104,13 +106,17 @@ impl Map
 			t.2 = heuristic::value_slot(self, *t, player);
 		}
 		area.sort_by_key(|k| -k.2);
+        if number == MAX
+        {
+            return area;
+        }
 		if number < area.len()
 		{
-			area[0 .. number].to_vec()
+			area[0 .. number].to_vec().into_iter().unique_by(|s| s.2).collect()
 		}
 		else
 		{
-			area
+			area.into_iter().unique_by(|s| s.2).collect()
 		}
 	}
 

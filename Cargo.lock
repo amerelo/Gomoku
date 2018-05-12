@@ -339,6 +339,7 @@ dependencies = [
  "crossbeam 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "find_folder 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "fps_counter 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "itertools 0.5.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston 0.36.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston2d-graphics 0.26.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston2d-opengl_graphics 0.52.1 (registry+https://github.com/rust-lang/crates.io-index)",
