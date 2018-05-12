@@ -89,7 +89,7 @@ impl Game
 		
 		if self.map.is_finish != Finish::None
 		{
-			self.select_action(&index, cursor);
+			self.select_action(&index, cursor, list_of_maps);
 		}
 
 		let mut map = &mut self.map;
@@ -131,10 +131,11 @@ impl Game
 		self.file = File::create(format!["./save/{:?}.save", SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards").as_secs()]).expect("Unable to create file");
 	}
 
-	fn select_action(&mut self, index: &usize, cursor: &mut Cursor)
+	fn select_action(&mut self, index: &usize, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>)
 	{
 		if cursor.press && *index == 0 {
 			self.map.reset();
+			list_of_maps.clear();
 			self.new_file();
 			cursor.selected_scene = Scene::Settings;
 			cursor.controller = Controls::KeyBoard;
@@ -142,6 +143,7 @@ impl Game
 		}
 		else if cursor.press && *index == 1 {
 			self.map.reset();
+			list_of_maps.clear();
 			self.new_file();
 			cursor.selected_scene = Scene::Game;
 			cursor.controller = Controls::GameControls;

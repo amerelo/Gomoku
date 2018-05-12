@@ -121,6 +121,7 @@ impl Settings
 				Settings {index, player_two, ..} if *index == 3 => change_player_kind(player_two, cursor.ai2_level),
 				Settings {index, player_two, ..} if *index == 4	=> cursor.ai2_level = change_ai_level(cursor.ai2_level, cursor, player_two),
 				Settings {index, player_one, player_two, ..} if *index == 5	=> {
+					map.reset();
 					map.reset_players(player_one.clone(), player_two.clone());
 					cursor.controller = Controls::GameControls;
 					cursor.selected_scene = Scene::Game;
