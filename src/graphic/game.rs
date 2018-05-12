@@ -11,8 +11,13 @@ use graphic::cursor::{ Cursor , Scene, Controls};
 use graphic::draw::{ draw_goban, draw_player, draw_text, draw_hint , Colors};
 use minmax::recursive::{ start_min_max };
 
+use std::time::{SystemTime, UNIX_EPOCH};
+use std::fs::File;
+use std::io::prelude::*;
+
 const BACKGROUND:[f32; 4] = [0.65, 0.55, 0.45, 1.0];
 const BLACK:[f32; 4] = [0.1, 0.1, 0.1, 0.9];
+
 // 0.95, 0.69, 0.50
 
 struct SettingsElem
@@ -29,6 +34,7 @@ pub struct Game {
 	pub go_w: GoElem,
 	pub go_b: GoElem,
 	pub map: Map,
+	pub file: File,
 	pub my_time: f64,
 	index: usize,
 	elems: Vec<SettingsElem>,
@@ -42,17 +48,20 @@ impl Game
 		vect.push( SettingsElem { text: "Main Menu".to_owned(), base: "Main Menu".to_owned(), t: (300.0, 300.0)} );
 		vect.push( SettingsElem { text: "Retry ".to_owned(), base: "Retry ".to_owned(), t: (300.0, 400.0)} );
 		
-		Game {
+		let mut g = Game {
 			fps: FPSCounter::new(),
 			gl: GlGraphics::new(opengl),
 			map: Map {..Default::default() },
 			goban: GoElem::new("resources/goban.png", 1.5),
 			go_b: GoElem::new("resources/w_1.png", 0.09),
 			go_w: GoElem::new("resources/black.png", 0.10),
+			file: File::create(format!["./save/{:?}.save", SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards").as_secs()]).expect("Unable to create file"),
 			my_time: 0.0,
 			index: 1,
 			elems: vect,
-		}
+		};
+		g.backtrace(true);
+		g
 	}
 
 	fn select_index(&mut self, cursor: &mut Cursor) -> usize
@@ -113,6 +122,17 @@ impl Game
 			}
 		});
 		game_action(&mut map, cursor, list_of_maps, &mut self.my_time);
+	}
+
+	pub fn backtrace(&mut self, first_call: bool) -> ()
+	{
+		if first_call
+		{
+			self.file.write_all(b"Hello, world!");
+			self.file.write_all(b"Hello, world!");
+			return ;
+		}
+
 	}
 }
 
