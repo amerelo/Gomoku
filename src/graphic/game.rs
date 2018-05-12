@@ -98,8 +98,7 @@ impl Game
 		let goban = &self.goban;
 		let players = (&self.go_w, &self.go_b);
 
-		let fps_t = &format!("fps: {}            Time of last AI move: {:.5} ms", self.fps.tick(), self.my_time);
-
+		let fps_t = &format!("fps: {}            Time of last AI move: {:.5} s", self.fps.tick(), self.my_time);
 		let vect = &self.elems;
 		let pc_1 = &format!("P1 {}", map.players_score.0);
 		let pc_2 = &format!("P2 {}", map.players_score.1);
@@ -114,6 +113,7 @@ impl Game
 			draw_text(gl, &mut glyph_cache, pc_2, c.transform.trans(5.0, 80.0), Colors::BLACK);
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, &mut map, cursor, players);
+			
 			draw_hint(c, gl, &mut map, &mut glyph_cache);
 
 			if map.is_finish != Finish::None
@@ -142,7 +142,7 @@ impl Game
 			self.map.reset();
 			self.new_file();
 			cursor.selected_scene = Scene::Game;
-			cursor.controller = Controls::Mouse;
+			cursor.controller = Controls::GameControls;
 			cursor.press = false;
 		}
 	}
@@ -170,9 +170,6 @@ fn ai_move(map: &mut Map, my_time: &mut f64, file: &mut File)
 
 fn human_move(map: &mut Map, cursor: &mut Cursor, file: &mut File)
 {
-	// map.print_map_diagonal();
-	// map.is_winning_move((cursor.cursor_in_board[0] as i32, cursor.cursor_in_board[1] as i32));
-	// println!("value {}\n", heuristic::value_slot(map, (cursor.cursor_in_board[1] as i128, cursor.cursor_in_board[0] as i128, 2)));
 	map.number_captured((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player![map.current_player], true);
 	map.set_value((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player!(map.current_player));
 	map.five_align();
@@ -184,6 +181,32 @@ fn human_move(map: &mut Map, cursor: &mut Cursor, file: &mut File)
 
 fn game_action(map: &mut Map, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>, my_time: &mut f64, file: &mut File)
 {
+	if cursor.undo
+	{
+		let mut ai_count = 0;
+		if find_kind_player![map.current_player, map.players_kind] == &PlayerKind::AI
+		{
+			ai_count = ai_count + 1;
+		}
+		if find_kind_player![find_kind_enemy!(map.current_player) , map.players_kind] == &PlayerKind::AI
+		{
+			ai_count = ai_count + 1;
+		}
+
+		if ai_count == 1
+		{
+			let _ = list_of_maps.pop();
+		}
+		if ai_count <= 1
+		{
+			if let Some(lastmove) = list_of_maps.pop()
+			{
+				*map = lastmove;
+			}
+		}
+		cursor.undo = false;
+	}
+
 	if map.is_finish != Finish::None
 	{
 		*my_time = 0.0;

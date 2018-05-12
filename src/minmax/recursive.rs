@@ -6,8 +6,8 @@ use goban::player::{Player};
 use goban::finish::{ Finish };
 use heuristic;
 
-const MAX_VEC_AREA: usize = 12;
-const DEAPH: usize = 6;
+const MAX_VEC_AREA: usize = 20;
+const DEAPH: usize = 4;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
@@ -29,11 +29,9 @@ fn place_iterative(map: Map, x: usize, y: usize, alpha_beta: (i128, i128), depth
 	let mut action = Action::new_iterative(map, (x, y), (alpha_beta.0, alpha_beta.1), depth);
 	let slot_player = find_slot_player![action.map.current_player];
 
-	// action.map.is_winning_move(x, y);
 	action.map.number_captured((x as i128, y as i128), slot_player, true);
 	action.map.set_value((x as i128, y as i128), slot_player);
 	action.map.five_align();
-	// action.map.number_captured((x as i128, y as i128), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 
 	action
@@ -228,12 +226,9 @@ fn place(map: Map, x: usize, y: usize, alpha_beta: (i128, i128)) -> Action
 	let mut action = Action::new(map, (x, y), (alpha_beta.0, alpha_beta.1));
 	let slot_player = find_slot_player![action.map.current_player];
 
-	// action.map.is_winning_move(x, y);
-			
 	action.map.number_captured((x as i128, y as i128), slot_player, true);
 	action.map.set_value((x as i128, y as i128), slot_player);
 	action.map.five_align();
-	// action.map.number_captured((x as i128, y as i128), find_slots_players![action.map.current_player], true);
 	action.map.change_player_turn();
 
 	action
@@ -277,15 +272,8 @@ fn best_action(turn: &Turn, new_action: Action, tmp: &mut Action, action_set: &m
 	}
 }
 
-#[allow(dead_code)]
 fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), player: &Player) -> Option<Action>
 {
-	// println!("-- {}", depth);
-	// if  map.is_finish != Finish::None
-	// {
-	// 	println!("finish at depth {}", depth);
-	// }
-
 	if depth == 0 || map.is_finish != Finish::None
 	{
 		let mut last_action: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
@@ -310,7 +298,6 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), play
 			match solver(depth - 1, &mut new_action.map, current_turn.clone(), (new_action.alpha, new_action.beta), player)
 			{
 				Some(action) => {
-					// println!("					test value alpha {} --- beta {} || action va {}", tmp.alpha, tmp.beta, action.value);	
 					new_action.value = action.value;
 					best_action(&turn, new_action, &mut tmp, &mut action_set)
 				},
@@ -319,7 +306,6 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), play
 
 			if tmp.alpha >= tmp.beta
 			{
-				// println!(" cut tree al {} ---- beta {}", tmp.alpha, tmp.beta);
 				break 'root;
 			}
 		}
@@ -327,26 +313,15 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), play
 
 	if action_set == true
 	{
-		// println!("{}", "return some");
 		return Some(tmp);
 	}
-	// println!("{}", "return none");
 	None
 }
 
 pub fn start_min_max(map: &Map) -> Option<Action>
 {
 	let depth: i128 = DEAPH as i128;
-
 	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX), &map.current_player);// 
-	// let action = solver_iterative(depth, &mut map.clone(), Turn::MIN, (MIN, MAX)); 
-	// let action = None;
-
-	match &action
-	{
-		Some(_t) => (),
-		_ => println!("ERROR no NULL return" ), 
-	}
 
 	return action;
 }

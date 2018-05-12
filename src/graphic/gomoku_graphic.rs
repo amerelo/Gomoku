@@ -34,7 +34,7 @@ pub fn start()
 	// let mut end = EndMenu::new(opengl);
 	let mut cursor = Cursor::new();
 
-	let assets = Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
+	let assets = Search::ParentsThenKids(3, 3).for_folder("resources").unwrap();
 	let ref font = assets.join("DejaVuSerif.ttf");
 	let mut glyph_cache = GlyphCache::new(font, (), TextureSettings::new()).unwrap();
 	let mut list_of_maps: Vec<Map> = vec![];
@@ -43,7 +43,7 @@ pub fn start()
 	{
 		if let Some(button) = e.press_args()
 		{
-			if let Controls::Mouse = cursor.controller
+			if cursor.controller == Controls::Mouse || cursor.controller == Controls::GameControls
 			{
 				if button == Button::Mouse(MouseButton::Left)
 				{
@@ -55,7 +55,9 @@ pub fn start()
 		
 		if let Some(button) = e.release_args()
 		{
-			if let Controls::Mouse = cursor.controller
+			// println!("button = {:?}", button);
+
+			if cursor.controller == Controls::Mouse || cursor.controller == Controls::GameControls
 			{
 				if button == Button::Mouse(MouseButton::Left)
 				{
@@ -63,7 +65,17 @@ pub fn start()
 					cursor.press = false;
 				}
 			}
-			if let Controls::KeyBoard = cursor.controller
+			if cursor.controller == Controls::GameControls
+			{
+				if button == Button::Keyboard(Key::Minus)
+				{
+					cursor.undo = true;
+				}
+				// else if button == Button::Keyboard(Key::Equals)
+				// {
+				// }
+			}
+			if cursor.controller == Controls::KeyBoard
 			{
 				if button == Button::Keyboard(Key::Up)
 				{

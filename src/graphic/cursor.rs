@@ -1,13 +1,16 @@
+#[derive(PartialEq,)]
 pub enum Scene
 {
 	Settings,
 	Game,
 }
 
+#[derive(PartialEq,)]
 pub enum Controls
 {
 	Mouse,
 	KeyBoard,
+	GameControls,
 }
 
 pub struct Cursor
@@ -16,6 +19,7 @@ pub struct Cursor
 	pub up: bool,
 	pub down: bool,
 	pub place_piece: bool,
+	pub undo: bool,
 	pub cursor_pos: [f64; 2],
 	pub cursor_in_board: [usize; 2],
 	pub selected_scene: Scene,
@@ -32,6 +36,7 @@ impl Cursor
 			up: false,
 			down: false,
 			place_piece: false,
+			undo: false,
 			cursor_pos: [0.0, 0.0],
 			cursor_in_board: [0, 0],
 			selected_scene: Scene::Settings,

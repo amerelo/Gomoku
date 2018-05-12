@@ -72,7 +72,7 @@ impl Settings
 				Settings {index, player_two, ..} if *index == 1  => change_player_kind(player_two),
 				Settings {index, player_one, player_two, ..} if *index == 2  => {
 					map.reset_players(player_one.clone(), player_two.clone());
-					cursor.controller = Controls::Mouse;
+					cursor.controller = Controls::GameControls;
 					cursor.selected_scene = Scene::Game;
 				},
 				_  => (),
