@@ -92,8 +92,8 @@ pub const DTHREE_MOVE_P2: [(i128, i128, i128); 9] = [
 
 const THREE_ALIGN: i128 = 3;
 const THREE_ALIGN_CUT: i128 = 2;
-pub const CAPTURE: i128 = 4;
-const ENEMY_CAPTURE: i128 = -2;
+pub const CAPTURE: i128 = 6;
+const ENEMY_CAPTURE: i128 = -1;
 const ENEMY_FOUR_ALIGN: i128 = 8;
 const ENEMY_THREE_ALIGN: i128 = 7;
 const FOUR_ALIGN: i128 = 7;
