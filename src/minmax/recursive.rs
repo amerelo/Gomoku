@@ -6,7 +6,7 @@ use goban::player::{Player};
 use goban::finish::{ Finish };
 use heuristic;
 
-const MAX_VEC_AREA: usize = 20;
+const MAX_VEC_AREA: usize = 21;
 const DEAPH: usize = 6;
 
 #[derive(PartialEq, Clone)]
@@ -271,7 +271,7 @@ fn best_action(turn: &Turn, new_action: Action, tmp: &mut Action, action_set: &m
 	}
 }
 
-fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), player: &Player) -> Option<Action>
+fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), player: &Player, total_slot: usize) -> Option<Action>
 {
 	if depth == 0 || map.is_finish != Finish::None
 	{
@@ -285,7 +285,7 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), play
 	let mut tmp: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
 	let current_turn: Turn = change_turn(&turn);
 	
-	let area = map.area_of_interest(MAX_VEC_AREA - DEAPH, &map.current_player);
+	let area = map.area_of_interest(total_slot, &map.current_player);
 
 	'root: for y_x in area.iter()
 	{
@@ -294,7 +294,7 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), play
 			let mut new_map = map.clone();
 			let mut new_action = place(new_map, y_x.1 as usize , y_x.0 as usize, (tmp.alpha, tmp.beta));
 
-			match solver(depth - 1, &mut new_action.map, current_turn.clone(), (new_action.alpha, new_action.beta), player)
+			match solver(depth - 1, &mut new_action.map, current_turn.clone(), (new_action.alpha, new_action.beta), player, total_slot)
 			{
 				Some(action) => {
 					new_action.value = action.value;
@@ -320,7 +320,7 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), play
 pub fn start_min_max(map: &Map) -> Option<Action>
 {
 	let depth: i128 = find_kind_player![map.current_player, map.players_kind].depth();
-	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX), &map.current_player);// 
+	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX), &map.current_player, MAX_VEC_AREA - depth as usize);
 
 	return action;
 }
