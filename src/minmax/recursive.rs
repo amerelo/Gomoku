@@ -6,7 +6,7 @@ use goban::player::{Player};
 use goban::finish::{ Finish };
 use heuristic;
 
-const MAX_VEC_AREA: usize = 12;
+const MAX_VEC_AREA: usize = 22;
 const DEAPH: usize = 6;
 
 #[derive(PartialEq, Clone)]
@@ -286,7 +286,7 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), play
 	let mut tmp: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
 	let current_turn: Turn = change_turn(&turn);
 	
-	let area = map.area_of_interest(MAX_VEC_AREA - DEAPH, &map.current_player);
+	let area = map.area_of_interest(MAX_VEC_AREA - depth as usize, &map.current_player);
 
 	'root: for y_x in area.iter()
 	{
@@ -320,7 +320,7 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), play
 
 pub fn start_min_max(map: &Map) -> Option<Action>
 {
-	let depth: i128 = DEAPH as i128;
+	let depth: i128 = find_kind_player![map.current_player, map.players_kind].depth();
 	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX), &map.current_player);// 
 
 	return action;

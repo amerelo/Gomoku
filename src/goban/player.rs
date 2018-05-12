@@ -2,7 +2,7 @@
 pub enum PlayerKind
 {
     Human,
-    AI,
+    AI(i128),
 }
 
 #[derive(Debug, Clone)]
@@ -35,4 +35,17 @@ impl Player
             _            => format!["Turn {} for {}", turn, "Player Two :\n"],
         }
     }
+}
+
+impl PlayerKind
+{
+    pub fn depth(&self) -> i128
+    {
+        match self
+        {
+            PlayerKind::AI(d) => *d,
+            _                 => 0,
+        }
+    }
+
 }

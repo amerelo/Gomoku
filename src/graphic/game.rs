@@ -186,11 +186,11 @@ fn game_action(map: &mut Map, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>, 
 	if cursor.undo
 	{
 		let mut ai_count = 0;
-		if find_kind_player![map.current_player, map.players_kind] == &PlayerKind::AI
+		if find_kind_player![map.current_player, map.players_kind] != &PlayerKind::Human
 		{
 			ai_count = ai_count + 1;
 		}
-		if find_kind_player![find_kind_enemy!(map.current_player) , map.players_kind] == &PlayerKind::AI
+		if find_kind_player![find_kind_enemy!(map.current_player) , map.players_kind] != &PlayerKind::Human
 		{
 			ai_count = ai_count + 1;
 		}
@@ -214,7 +214,7 @@ fn game_action(map: &mut Map, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>, 
 		*my_time = 0.0;
 		cursor.controller = Controls::KeyBoard;
 	}
-	else if find_kind_player![map.current_player, map.players_kind] == &PlayerKind::AI
+	else if find_kind_player![map.current_player, map.players_kind] != &PlayerKind::Human
 	{
 		list_of_maps.push(map.clone());
 		ai_move(map, my_time, file);

@@ -29,8 +29,8 @@ pub fn change_player_kind(player: &mut PlayerKind)
 {
 	match player
 	{
-		PlayerKind::Human	=> *player = PlayerKind::AI,
-		PlayerKind::AI		=> *player = PlayerKind::Human,
+		PlayerKind::Human	  => *player = PlayerKind::AI(6),
+		PlayerKind::AI { .. } => *player = PlayerKind::Human,
 	}
 }
 
@@ -47,8 +47,8 @@ pub fn kind_to_str(player: &PlayerKind) -> String
 {
 	match player
 	{
-		PlayerKind::Human	=> "Human".to_owned(),
-		PlayerKind::AI		=> "AI".to_owned(),
+		PlayerKind::Human	  => "Human".to_owned(),
+		PlayerKind::AI { .. } => "AI".to_owned(),
 	}
 }
 
@@ -66,7 +66,7 @@ impl Settings
 			gl: GlGraphics::new(opengl),
 			index: 3,
 			player_one: PlayerKind::Human,
-			player_two: PlayerKind::AI,
+			player_two: PlayerKind::AI(6),
 			elems: vect,
 		}
 	}
