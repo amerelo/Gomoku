@@ -283,23 +283,23 @@ impl Map
         {
             if *elem_y != 0
             {
-                for x in 0..SIZEMAP
+                for x in 4..SIZEMAP
                 {
                     let value = (elem_y >> ((RSIZEMAP - x) * 3)) & mask;
-                    if value == 0o11111 /*&& !self.is_capturable(self.all_conv_xy((x, y as i128)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x + 1, y as i128)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x + 2, y as i128)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x + 3, y as i128)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x + 4, y as i128)), &Player::One)*/
+                    if value == 0o11111 && !self.is_capturable(self.all_conv_xy((x, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x - 1, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x - 2, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x - 3, y as i128)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x - 4, y as i128)), &Player::One)
                     {
                         self.is_finish = Finish::AlignPlayerOne;
                         return ;
                     }
-                    else if value == 0o22222 /*&& !self.is_capturable(self.all_conv_xy((x, y as i128)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x + 1, y as i128)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x + 2, y as i128)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x + 3, y as i128)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x + 4, y as i128)), &Player::Two)*/
+                    else if value == 0o22222 && !self.is_capturable(self.all_conv_xy((x, y as i128)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x - 1, y as i128)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x - 2, y as i128)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x - 3, y as i128)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x - 4, y as i128)), &Player::Two)
                     {
                         self.is_finish = Finish::AlignPlayerTwo;
                         return ;
@@ -311,23 +311,23 @@ impl Map
         {
             if *elem_y != 0
             {
-                for y in 0..SIZEMAP
+                for y in 4..SIZEMAP
                 {
                     let value = (elem_y >> ((RSIZEMAP - y) * 3)) & mask;
-                    if value == 0o11111 /*&& !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::One)
+                    if value == 0o11111 && !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::One)
                                         && !self.is_capturable(self.all_conv_xy((x as i128, y - 1)), &Player::One)
                                         && !self.is_capturable(self.all_conv_xy((x as i128, y - 2)), &Player::One)
                                         && !self.is_capturable(self.all_conv_xy((x as i128, y - 3)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x as i128, y - 4)), &Player::One)*/
+                                        && !self.is_capturable(self.all_conv_xy((x as i128, y - 4)), &Player::One)
                     {
                         self.is_finish = Finish::AlignPlayerOne;
                         return ;
                     }
-                    else if value == 0o22222 /*&& !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x as i128, y + 1)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x as i128, y + 2)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x as i128, y + 3)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x as i128, y + 4)), &Player::Two) */
+                    else if value == 0o22222 && !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, y - 1)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, y - 2)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, y - 3)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, y - 4)), &Player::Two)
                     {
                         self.is_finish = Finish::AlignPlayerTwo;
                         return ;
@@ -500,13 +500,28 @@ impl Map
         }
     }
 
-    pub fn find_value(&self, (x, y):(i128, i128)) -> i128
+    fn find_value(&self, (ref_x, ref_y):(i128, i128), is_rotate: bool) -> (i128, i128)
     {
-        if x > RSIZEMAP || y > RSIZEMAP || x < 0 || y < 0
+        for y in 0..SIZEMAP
         {
-            return -1;
+            for x in 0..SIZEMAP
+            {
+                let conv:(i128, i128) = match x >= y
+                {
+                    true => (RSIZEMAP + (x - y) as i128, (x + y)as i128),
+                    _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
+                };
+                if !is_rotate && conv.0 == ref_x && conv.1 == ref_y
+                {
+                    return (x, y);
+                }
+                else if is_rotate && conv.0 == ref_y && conv.1 == ref_x
+                {
+                    return (x, y);
+                }
+            }
         }
-        (self.value[y as usize] & (0o3 << (3 * x))) >> 3 * x
+        (-1, -1)
     }
 
     pub fn print_map(&self) -> ()
