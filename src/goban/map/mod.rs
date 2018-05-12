@@ -365,7 +365,7 @@ impl Map
         {
             if *elem_y != 0
             {
-                for y in 0..(SIZEMAP - 4)
+                for y in 0..(SIZEMAP)
                 {
                     let value = (elem_y >> ((RSIZEMAP - y) * 3)) & mask;
                     if value == 0o11111 && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y)), &Player::One)
