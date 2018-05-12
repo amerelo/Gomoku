@@ -108,6 +108,8 @@ impl Game
 		{
 			clear(BACKGROUND, gl);
 
+			draw_text(gl, &mut glyph_cache, "undo [P]", c.transform.trans(700.0, 20.0), Colors::BLACK);
+
 			draw_text(gl, &mut glyph_cache, fps_t, c.transform.trans(5.0, 20.0), Colors::BLACK);
 			draw_text(gl, &mut glyph_cache, &format!("Turn: {}", map.turn), c.transform.trans(5.0, 38.0), Colors::BLACK );
 			draw_text(gl, &mut glyph_cache, pc_1, c.transform.trans(5.0, 60.0), Colors::BLACK);
@@ -151,7 +153,7 @@ impl Game
 
 }
 
-fn ai_move(map: &mut Map, my_time: &mut f64, file: &mut File)
+fn ai_move(map: &mut Map, my_time: &mut f64, file: &mut File, cursor: &mut Cursor)
 {
 	let now = Instant::now();
 	match start_min_max(&map)
@@ -162,6 +164,7 @@ fn ai_move(map: &mut Map, my_time: &mut f64, file: &mut File)
 			*my_time = sec;
 			map.number_captured((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player![map.current_player], true);
 			map.set_value((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player!(map.current_player));
+			cursor.last_move_x_y = (action.x_y.0 as i128, action.x_y.1 as i128);
 			map.five_align();
 		},
 		None => (),
@@ -174,6 +177,7 @@ fn human_move(map: &mut Map, cursor: &mut Cursor, file: &mut File)
 {
 	map.number_captured((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player![map.current_player], true);
 	map.set_value((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player!(map.current_player));
+	cursor.last_move_x_y = (cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128);
 	map.five_align();
 	backtrace(file, map);
 	map.change_player_turn();
@@ -217,7 +221,7 @@ fn game_action(map: &mut Map, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>, 
 	else if find_kind_player![map.current_player, map.players_kind] != &PlayerKind::Human
 	{
 		list_of_maps.push(map.clone());
-		ai_move(map, my_time, file);
+		ai_move(map, my_time, file, cursor);
 	} 
 	else if !cursor.press && cursor.place_piece &&
 		map.is_available((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), &map.current_player) == 0

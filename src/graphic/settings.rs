@@ -96,7 +96,7 @@ impl Settings
 	{
 		self.elems[0].text = format!("{}{}", self.elems[0].base, cursor.hint.to_owned());
 		self.elems[1].text = format!("{}{}", self.elems[1].base, kind_to_str(&self.player_one));
-		self.elems[2].text = format!("{}{}", self.elems[1].base, kind_to_str(&self.player_two));
+		self.elems[2].text = format!("{}{}", self.elems[2].base, kind_to_str(&self.player_two));
 	}
 
 	fn select_index(&mut self, cursor: &mut Cursor) -> usize

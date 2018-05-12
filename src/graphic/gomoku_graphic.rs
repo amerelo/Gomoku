@@ -67,7 +67,7 @@ pub fn start()
 			}
 			if cursor.controller == Controls::GameControls
 			{
-				if button == Button::Keyboard(Key::Minus)
+				if button == Button::Keyboard(Key::P)
 				{
 					cursor.undo = true;
 				}

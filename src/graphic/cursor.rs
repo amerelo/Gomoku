@@ -25,6 +25,7 @@ pub struct Cursor
 	pub cursor_in_board: [usize; 2],
 	pub selected_scene: Scene,
 	pub controller: Controls,
+	pub last_move_x_y: (i128, i128),
 }
 
 impl Cursor
@@ -38,11 +39,12 @@ impl Cursor
 			down: false,
 			place_piece: false,
 			undo: false,
-			hint: true,
+			hint: false,
 			cursor_pos: [0.0, 0.0],
 			cursor_in_board: [0, 0],
 			selected_scene: Scene::Settings,
 			controller: Controls::KeyBoard,
+			last_move_x_y: (-1, -1),
 		}
 	}
 }

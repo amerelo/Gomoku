@@ -17,8 +17,9 @@ const GOBAN_SPACE: f64 = 34.5;
 
 const COLOR_WS: [f32; 4] = [1.0, 1.0, 1.0, 0.6];
 const COLOR_W: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
-const COLOR_R: [f32; 4] = [6.0, 0.0, 0.0, 0.6];
-const COLOR_Y: [f32; 4] = [1.0, 1.0, 0.0, 1.0];
+const COLOR_R: [f32; 4] = [0.8, 0.2, 0.2, 1.0];
+// const COLOR_Y: [f32; 4] = [0.98, 0.50, 0.45, 1.0];
+const COLOR_Y: [f32; 4] = [0.2, 0.83, 0.61, 1.0];
 const COLOR_B: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
 pub enum Colors
@@ -106,11 +107,24 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 			{
 				1 => {
 						let transform = c.transform.trans(new_posx, new_posy).scale(players.0.scale, players.0.scale);
-						draw_img(gl, &players.0, transform, Colors::NORMAL);
+						if cursor.last_move_x_y == (x, y as i128)
+						{
+							draw_img(gl, &players.0, transform, Colors::Yellow);
+						}
+						else {
+							draw_img(gl, &players.0, transform, Colors::NORMAL);
+						}
 					},
 				2 => {
 						let transform = c.transform.trans(new_posx, new_posy).scale(players.1.scale, players.1.scale);
-						draw_img(gl, &players.1, transform, Colors::NORMAL);
+						if cursor.last_move_x_y == (x, y as i128)
+						{
+							draw_img(gl, &players.1, transform, Colors::Yellow);
+						}
+						else {
+							draw_img(gl, &players.1, transform, Colors::NORMAL);
+						}
+						
 					},
 				_ => {}
 			}

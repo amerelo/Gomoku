@@ -6,7 +6,8 @@ use goban::player::{Player};
 use goban::finish::{ Finish };
 use heuristic;
 
-const MAX_VEC_AREA: usize = 22;
+
+const MAX_VEC_AREA: usize = 20;
 const DEAPH: usize = 6;
 
 #[derive(PartialEq, Clone)]
