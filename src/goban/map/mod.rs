@@ -131,9 +131,8 @@ impl Map
     {
         match self.three_move_number((x, y), find_tm_player![player, (THREE_MOVE_P1, DTHREE_MOVE_P1), (THREE_MOVE_P2, DTHREE_MOVE_P2)])
         {
-            1 => 0,
-            0 => 0,
-            _ => -1
+            0 | 1 => 0,
+            _     => -1
         }
     }
 
@@ -148,13 +147,18 @@ impl Map
         self.is_capture((x, y, conv.0, conv.1), slot_player, with_delete)
      }
 
+    fn conv_xy(&self, (x, y): (i128, i128)) -> (i128, i128)
+    {
+        match x >= y
+        {
+            true => { return (RSIZEMAP + (x - y) as i128, (x + y) as i128) },
+            _    => { return (RSIZEMAP - (y - x) as i128, (x + y) as i128) }
+        };
+    }
+
     fn all_conv_xy(&self, (x, y): (i128, i128)) -> (i128, i128, i128, i128)
     {
-        let conv:(i128, i128) = match x >= y
-        {
-            true => (RSIZEMAP + (x - y) as i128, (x + y)as i128), 
-            _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
-        };
+        let conv:(i128, i128) = self.conv_xy((x, y));
         (x, y, conv.0, conv.1)
     }
 
@@ -462,11 +466,7 @@ impl Map
             _ => slot_cmp![self.value_rotate[x as usize], y * 3 ; slot_hv; [0, 1, 2, 3, 4, 5, 7, 8]] as usize
         };
 
-       let conv:(i128, i128) = match x >= y
-        {
-            true => (RSIZEMAP + (x - y) as i128, (x + y)as i128),
-            _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
-        };
+       let conv:(i128, i128) = self.conv_xy((x, y));
 
         if conv.1 < 3 || conv.1 > 33 || conv.0 < 3 || conv.0 > 33
         {
@@ -505,11 +505,8 @@ impl Map
         {
             for x in 0..SIZEMAP
             {
-                let conv:(i128, i128) = match x >= y
-                {
-                    true => (RSIZEMAP + (x - y) as i128, (x + y)as i128),
-                    _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
-                };
+                let conv:(i128, i128) = self.conv_xy((x, y));
+
                 if !is_rotate && conv.0 == ref_x && conv.1 == ref_y
                 {
                     return (x, y);
@@ -533,24 +530,6 @@ impl Map
                 {
                     1 => print!("1 "),
                     2 => print!("2 "),
-                    _ => print!("- ")
-                }
-            }
-            print!("\n");
-        }
-    }
-
-	pub fn print_map_diagonal(&self) -> ()
-    {
-        for y in &self.value_diagonale
-        {
-            for x in 0..37
-            {
-                match (y & (0o3 << (3 * (36 - x)))) >> 3 * (36 - x)
-                {
-                    1 => print!("1 "),
-                    2 => print!("2 "),
-                    3 => print!("3 "),
                     _ => print!("- ")
                 }
             }

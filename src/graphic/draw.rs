@@ -3,7 +3,7 @@ use graphics::*;
 use opengl_graphics::{ GlGraphics, GlyphCache };
 use graphic::loader::{ GoElem };
 use graphic::cursor::{ Cursor };
-use goban::map::{Map};
+use goban::map::{Map, constant::{SIZEMAP, RSIZEMAP} };
 use goban::player::{Player};
 
 use heuristic;
@@ -89,7 +89,7 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 	for (y, pos_y) in map.value.iter().enumerate()
 	{
 		let new_posy = board_y + y as f64 * GOBAN_SPACE;
-		for x in 0..19
+		for x in 0..SIZEMAP
 		{
 
 			let new_posx = board_x + x as f64 * GOBAN_SPACE;
@@ -99,10 +99,10 @@ pub fn draw_player(c: Context, gl: &mut GlGraphics, map: &mut Map, cursor: &mut 
 				((near_pos[0] - cursor.cursor_pos[0]).abs() + (near_pos[1] - cursor.cursor_pos[1]).abs())
 			{
 				near_pos = [new_posx, new_posy];
-				cursor.cursor_in_board = [x, y];
+				cursor.cursor_in_board = [x as usize, y];
 			}
 
-			match (pos_y & (0o3 << (3 * (18 - x)))) >> 3 * (18 - x)
+			match (pos_y & (0o3 << (3 * (RSIZEMAP - x)))) >> 3 * (RSIZEMAP - x)
 			{
 				1 => {
 						let transform = c.transform.trans(new_posx, new_posy).scale(players.0.scale, players.0.scale);
@@ -131,7 +131,7 @@ pub fn draw_hint(c: Context, gl: &mut GlGraphics, map: &mut Map, glyph_cache: &m
 	for (y, pos_y) in map.value.iter().enumerate()
 	{
 		let new_posy = board_y + y as f64 * GOBAN_SPACE;
-		for x in 0..19
+		for x in 0..SIZEMAP
 		{
 
 			let new_posx = board_x + x as f64 * GOBAN_SPACE;
@@ -141,7 +141,7 @@ pub fn draw_hint(c: Context, gl: &mut GlGraphics, map: &mut Map, glyph_cache: &m
 			}
 			let value = heuristic::value_slot(map, (y as i128, x as i128, 0), &map.current_player);
 
-			match ((pos_y & (0o3 << (3 * (18 - x)))) >> 3 * (18 - x), value)
+			match ((pos_y & (0o3 << (3 * (RSIZEMAP - x)))) >> 3 * (RSIZEMAP - x), value)
 			{
 				(0, 0) => {},
 				(0, v) => {
