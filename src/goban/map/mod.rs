@@ -365,23 +365,23 @@ impl Map
         {
             if *elem_y != 0
             {
-                for y in 4..SIZEMAP
+                for y in 0..(SIZEMAP - 4)
                 {
                     let value = (elem_y >> ((RSIZEMAP - y) * 3)) & mask;
-                    if value == 0o11111 && !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x as i128, y - 1)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x as i128, y - 2)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x as i128, y - 3)), &Player::One)
-                                        && !self.is_capturable(self.all_conv_xy((x as i128, y - 4)), &Player::One)
+                    if value == 0o11111 && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y + 1)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y + 2)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y + 3)), &Player::One)
+                                        && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y + 4)), &Player::One)
                     {
                         self.is_finish = Finish::AlignPlayerOne;
                         return ;
                     }
-                    else if value == 0o22222 && !self.is_capturable(self.all_conv_xy((x as i128, y)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x as i128, y - 1)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x as i128, y - 2)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x as i128, y - 3)), &Player::Two)
-                                             && !self.is_capturable(self.all_conv_xy((x as i128, y - 4)), &Player::Two)
+                    else if value == 0o22222 && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y + 1)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y + 2)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y + 3)), &Player::Two)
+                                             && !self.is_capturable(self.all_conv_xy((x as i128, RSIZEMAP - y + 4)), &Player::Two)
                     {
                         self.is_finish = Finish::AlignPlayerTwo;
                         return ;
