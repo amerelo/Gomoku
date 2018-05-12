@@ -6,8 +6,8 @@ use goban::player::{Player};
 use goban::finish::{ Finish };
 use heuristic;
 
-const MAX_VEC_AREA: usize = 13;
-const DEAPH: usize = 6;
+const MAX_VEC_AREA: usize = 24;
+const DEAPH: usize = 4;
 
 #[derive(PartialEq, Clone)]
 pub enum Turn
