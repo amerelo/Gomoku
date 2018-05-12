@@ -94,7 +94,6 @@ impl Map
 				}
 			}
 		}
-        // println!("area {:?}", area);
 		if area.len() == 0
 		{
 			area.push((9, 9, 0));
@@ -262,7 +261,6 @@ impl Map
         self.set_value((x, y), slot_enemy);
         self.set_value((x2, y2), slot_enemy);
 
-        // println!("Score: {:?}", self.players_score);
 		if self.players_score.0 >= 10 || self.players_score.1 >= 10
         {
             match slot_player
@@ -270,7 +268,6 @@ impl Map
                 1 => { self.is_finish = Finish::CapturePlayerOne },
                 _ => { self.is_finish = Finish::CapturePlayerTwo }
             }
-            println!("Finish");
         }
     }
 
@@ -345,19 +342,29 @@ impl Map
                     let value = (elem_y >> (x * 3)) & d_mask;
                     if value == 0o101010101
                     {
-                        // println!("x {} y {}", x , y);
-                        // println!("conv {:?}", self.all_xy_conv((x, y as i128)));
-                        // println!("conv {:?}", self.all_xy_conv((x + 1, y as i128)));
-                        // println!("conv {:?}", self.all_xy_conv((x + 2, y as i128)));
-                        // println!("conv {:?}", self.all_xy_conv((x + 3, y as i128)));
-                        // println!("conv {:?}", self.all_xy_conv((x + 4, y as i128)));
-                        self.is_finish = Finish::AlignPlayerOne;
-                        return ;
+                        let (real_x, real_y) = self.find_value((x, y as i128), false);
+                        if !self.is_capturable(self.all_conv_xy((real_x, real_y)), &Player::One)
+                            && !self.is_capturable(self.all_conv_xy((real_x + 1, real_y - 1)), &Player::One)
+                            && !self.is_capturable(self.all_conv_xy((real_x + 2, real_y - 2)), &Player::One)
+                            && !self.is_capturable(self.all_conv_xy((real_x + 3, real_y - 3)), &Player::One)
+                            && !self.is_capturable(self.all_conv_xy((real_x + 4, real_y - 4)), &Player::One)
+                        {
+                            self.is_finish = Finish::AlignPlayerOne;
+                            return ;
+                        }
                     }
                     else if value == 0o202020202
                     {
-                        self.is_finish = Finish::AlignPlayerTwo;
-                        return ;
+                        let (real_x, real_y) = self.find_value((x, y as i128), false);
+                        if !self.is_capturable(self.all_conv_xy((real_x, real_y)), &Player::Two)
+                            && !self.is_capturable(self.all_conv_xy((real_x + 1, real_y - 1)), &Player::Two)
+                            && !self.is_capturable(self.all_conv_xy((real_x + 2, real_y - 2)), &Player::Two)
+                            && !self.is_capturable(self.all_conv_xy((real_x + 3, real_y - 3)), &Player::Two)
+                            && !self.is_capturable(self.all_conv_xy((real_x + 4, real_y - 4)), &Player::Two)
+                        {
+                            self.is_finish = Finish::AlignPlayerTwo;
+                            return ;
+                        }
                     }
                 }
             }
@@ -372,26 +379,33 @@ impl Map
                     let value = (elem_y >> (x * 3)) & d_mask;
                     if value == 0o101010101
                     {
-                        // println!("x {} y {}", x , y);
-                        // println!("conv {:?}", self.all_xy_conv((x, y as i128)));
-                        // println!("conv {:?}", self.all_xy_conv((x + 1, y as i128)));
-                        // println!("conv {:?}", self.all_xy_conv((x + 2, y as i128)));
-                        // println!("conv {:?}", self.all_xy_conv((x + 3, y as i128)));
-                        // println!("conv {:?}", self.all_xy_conv((x + 4, y as i128)));
-                        self.is_finish = Finish::AlignPlayerOne;
-                        return ;
+                        let (real_x, real_y) = self.find_value((x, y as i128), true);
+                        if !self.is_capturable(self.all_conv_xy((real_x, real_y)), &Player::One)
+                            && !self.is_capturable(self.all_conv_xy((real_x - 1, real_y - 1)), &Player::One)
+                            && !self.is_capturable(self.all_conv_xy((real_x - 2, real_y - 2)), &Player::One)
+                            && !self.is_capturable(self.all_conv_xy((real_x - 3, real_y - 3)), &Player::One)
+                            && !self.is_capturable(self.all_conv_xy((real_x - 4, real_y - 4)), &Player::One)
+                        {
+                            self.is_finish = Finish::AlignPlayerOne;
+                            return ;
+                        }
                     }
                     else if value == 0o202020202
                     {
-                        self.is_finish = Finish::AlignPlayerTwo;
-                        return ;
+                        let (real_x, real_y) = self.find_value((x, y as i128), true);
+                        if !self.is_capturable(self.all_conv_xy((real_x, real_y)), &Player::Two)
+                            && !self.is_capturable(self.all_conv_xy((real_x - 1, real_y - 1)), &Player::Two)
+                            && !self.is_capturable(self.all_conv_xy((real_x - 2, real_y - 2)), &Player::Two)
+                            && !self.is_capturable(self.all_conv_xy((real_x - 3, real_y - 3)), &Player::Two)
+                            && !self.is_capturable(self.all_conv_xy((real_x - 4, real_y - 4)), &Player::Two)
+                        {
+                            self.is_finish = Finish::AlignPlayerTwo;
+                            return ;
+                        }
                     }
                 }
             }
         }
-
-
-
     }
 
     fn is_capturable(&self, (x, y, x2, y2):(i128, i128, i128, i128), slot_player: &Player) -> bool
@@ -515,9 +529,9 @@ impl Map
                 {
                     return (x, y);
                 }
-                else if is_rotate && conv.0 == ref_y && conv.1 == ref_x
+                else if is_rotate && conv.0 == ref_x && conv.1 == ref_y
                 {
-                    return (x, y);
+                    return (y, RSIZEMAP - x);
                 }
             }
         }
