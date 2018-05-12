@@ -142,8 +142,8 @@ impl Map
         }
     }
 
-     pub fn number_captured(&mut self, (x, y):(i128, i128), slot_player: i128, with_delete: bool) -> i128
-     {
+    pub fn number_captured(&mut self, (x, y):(i128, i128), slot_player: i128, with_delete: bool) -> i128
+    {
         let conv:(i128, i128) = match x >= y
         {
             true => (RSIZEMAP + (x - y) as i128, (x + y)as i128), 
@@ -151,22 +151,22 @@ impl Map
         };
         
         self.is_capture((x, y, conv.0, conv.1), slot_player, with_delete)
-     }
+    }
 
-     pub fn number_captured_preview(&self, (x, y):(i128, i128)) -> i128
-     {
+    pub fn number_captured_preview(&self, (x, y):(i128, i128), slot_player: i128) -> i128
+    {
         let conv:(i128, i128) = match x >= y
         {
             true => (RSIZEMAP + (x - y) as i128, (x + y)as i128), 
             _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
         };
         
-        self.is_capture_preview((x, y, conv.0, conv.1))
-     }
+        self.is_capture_preview((x, y, conv.0, conv.1), slot_player)
+    }
 
-    fn is_capture_preview(&self, (x, y, x2, y2):(i128, i128, i128, i128)) -> i128
+    fn is_capture_preview(&self, (x, y, x2, y2):(i128, i128, i128, i128), slot_player: i128) -> i128
     {
-       let masks = find_tm_player![self.current_player, CAPTURE_P1, CAPTURE_P2];
+       let masks = find_tm_player_preview![slot_player, CAPTURE_P1, CAPTURE_P2];
        let mut count:i128 = 0;
 
        if x >= 2 && slot_capture![self.value[y as usize], 3 * (RSIZEMAP - x); masks; 0]

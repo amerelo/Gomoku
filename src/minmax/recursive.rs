@@ -37,7 +37,6 @@ fn place_iterative(map: Map, x: usize, y: usize, alpha_beta: (i128, i128), depth
 	action
 }
 
-
 fn select_best_action(action_1: &mut Action, action_2: Action, turn: &Turn)
 {
 	match *turn {
@@ -286,7 +285,7 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), play
 	let mut tmp: Action = Action::new(map.clone(), (0, 0), (alpha_beta.0, alpha_beta.1));
 	let current_turn: Turn = change_turn(&turn);
 	
-	let area = map.area_of_interest(MAX_VEC_AREA - depth as usize, &map.current_player);
+	let area = map.area_of_interest(MAX_VEC_AREA - DEAPH, &map.current_player);
 
 	'root: for y_x in area.iter()
 	{

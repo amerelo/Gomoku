@@ -103,6 +103,7 @@ impl Game
 		let pc_1 = &format!("P1 {}", map.players_score.0);
 		let pc_2 = &format!("P2 {}", map.players_score.1);
 
+		game_action(&mut map, cursor, list_of_maps, &mut self.my_time, &mut self.file);
 		self.gl.draw(args.viewport(), |c, gl|
 		{
 			clear(BACKGROUND, gl);
@@ -123,7 +124,6 @@ impl Game
 				end_menu(c, gl, &mut glyph_cache, &map, &vect, index)
 			}
 		});
-		game_action(&mut map, cursor, list_of_maps, &mut self.my_time, &mut self.file);
 	}
 
 	pub fn new_file(&mut self) -> ()

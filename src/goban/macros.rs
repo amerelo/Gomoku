@@ -229,3 +229,16 @@ macro_rules! find_tm_player
         };
     }
 }
+
+#[macro_export]
+macro_rules! find_tm_player_preview
+{
+    ($n:expr, $p1:expr, $p2:expr) =>
+    {
+        match $n
+        {
+            1 => $p1,
+            _ => $p2
+        };
+    }
+}
