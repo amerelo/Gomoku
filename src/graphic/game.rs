@@ -113,8 +113,10 @@ impl Game
 			draw_text(gl, &mut glyph_cache, pc_2, c.transform.trans(5.0, 80.0), Colors::BLACK);
 			draw_goban(c, gl, goban);
 			draw_player(c, gl, &mut map, cursor, players);
-			
-			draw_hint(c, gl, &mut map, &mut glyph_cache);
+			if cursor.hint
+			{
+				draw_hint(c, gl, &mut map, &mut glyph_cache);
+			}
 
 			if map.is_finish != Finish::None
 			{
@@ -233,7 +235,7 @@ pub fn player_win(map: &Map) -> String
 		Finish::CapturePlayerTwo	=> "Player 2 Win by Capture".to_owned(),
 		Finish::AlignPlayerOne		=> "Player 1 Win by Align".to_owned(),
 		Finish::AlignPlayerTwo		=> "Player 2 Win by Align".to_owned(),
-		_							=> "None".to_owned(),
+		_							=> "Draw".to_owned(),
 	}
 }
 
