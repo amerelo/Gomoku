@@ -32,7 +32,6 @@ macro_rules! map_diagonale_init
                 };
                 if x == 0
                 {
-                    // map[conv.1 as usize] ^= (3 as i128) << (3 * (conv.0 + 3));
                     if y > 0
                     {
                         map[conv.1 as usize] ^= (0o33 as i128) << (3 * conv.0);
@@ -136,7 +135,6 @@ macro_rules! find_kind_player
     }
 }
 
-
 #[macro_export]
 macro_rules! find_kind_enemy
 {
@@ -172,20 +170,6 @@ macro_rules! find_enemy_score
         {
             Player::Two => $scores.0 as i32,
             _           => $scores.1 as i32
-        };
-    }
-}
-
-
-#[macro_export]
-macro_rules! find_slots_players
-{
-    ($n:expr) =>
-    {
-        match $n
-        {
-            Player::One => (1, 2),
-            _           => (2, 1)
         };
     }
 }
@@ -244,23 +228,4 @@ macro_rules! find_tm_player
             _           => $p2
         };
     }
-}
-
-#[macro_export]
-macro_rules! slots_winning
-{
-    ($player:expr; $enemy:expr; $map:expr; $value:expr) =>
-    {{
-        let mut count:usize = 0;
-    
-        for slot in $value.iter()
-        {
-            if slot.1 != $player || $map.is_capturable(slot.0, ($player, $enemy))
-            {
-                break
-            }
-            count += 1;
-        }
-        count
-    }}
 }
