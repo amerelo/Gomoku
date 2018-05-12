@@ -11,8 +11,13 @@ use graphic::cursor::{ Cursor , Scene, Controls};
 use graphic::draw::{ draw_goban, draw_player, draw_text, draw_hint , Colors};
 use minmax::recursive::{ start_min_max };
 
+use std::time::{SystemTime, UNIX_EPOCH};
+use std::fs::File;
+use std::io::prelude::*;
+
 const BACKGROUND:[f32; 4] = [0.65, 0.55, 0.45, 1.0];
 const BLACK:[f32; 4] = [0.1, 0.1, 0.1, 0.9];
+
 // 0.95, 0.69, 0.50
 
 struct SettingsElem
@@ -29,6 +34,7 @@ pub struct Game {
 	pub go_w: GoElem,
 	pub go_b: GoElem,
 	pub map: Map,
+	pub file: File,
 	pub my_time: f64,
 	index: usize,
 	elems: Vec<SettingsElem>,
@@ -49,6 +55,7 @@ impl Game
 			goban: GoElem::new("resources/goban.png", 1.5),
 			go_b: GoElem::new("resources/w_1.png", 0.09),
 			go_w: GoElem::new("resources/black.png", 0.10),
+			file: File::create(format!["./save/{:?}.save", SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards").as_secs()]).expect("Unable to create file"),
 			my_time: 0.0,
 			index: 1,
 			elems: vect,
@@ -80,20 +87,22 @@ impl Game
 	pub fn render(&mut self, args: &RenderArgs, mut glyph_cache: &mut GlyphCache, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>) //RenderArgs
 	{
 		let index = self.select_index(cursor);
-		let mut map = &mut self.map;
 
+		
+		if self.map.is_finish != Finish::None
+		{
+			self.select_action(&index, cursor);
+		}
+
+		let mut map = &mut self.map;
 		let goban = &self.goban;
 		let players = (&self.go_w, &self.go_b);
 
 		let fps_t = &format!("fps: {}            Time of last AI move: {:.5} ms", self.fps.tick(), self.my_time);
-		let pc_1 = &format!("P1 {}", map.players_score.0);
-		let pc_2 = &format!("P2 {}", map.players_score.1);
 
 		let vect = &self.elems;
-		
-		if map.is_finish != Finish::None {
-			select_action(&index, cursor, &mut map);
-		}
+		let pc_1 = &format!("P1 {}", map.players_score.0);
+		let pc_2 = &format!("P2 {}", map.players_score.1);
 
 		self.gl.draw(args.viewport(), |c, gl|
 		{
@@ -112,11 +121,35 @@ impl Game
 				end_menu(c, gl, &mut glyph_cache, &map, &vect, index)
 			}
 		});
-		game_action(&mut map, cursor, list_of_maps, &mut self.my_time);
+		game_action(&mut map, cursor, list_of_maps, &mut self.my_time, &mut self.file);
 	}
+
+	pub fn new_file(&mut self) -> ()
+	{
+		self.file = File::create(format!["./save/{:?}.save", SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards").as_secs()]).expect("Unable to create file");
+	}
+
+	fn select_action(&mut self, index: &usize, cursor: &mut Cursor)
+	{
+		if cursor.press && *index == 0 {
+			self.map.reset();
+			self.new_file();
+			cursor.selected_scene = Scene::Settings;
+			cursor.controller = Controls::KeyBoard;
+			cursor.press = false;
+		}
+		else if cursor.press && *index == 1 {
+			self.map.reset();
+			self.new_file();
+			cursor.selected_scene = Scene::Game;
+			cursor.controller = Controls::Mouse;
+			cursor.press = false;
+		}
+	}
+
 }
 
-fn ai_move(map: &mut Map, my_time: &mut f64)
+fn ai_move(map: &mut Map, my_time: &mut f64, file: &mut File)
 {
 	let now = Instant::now();
 	match start_min_max(&map)
@@ -128,13 +161,14 @@ fn ai_move(map: &mut Map, my_time: &mut f64)
 		},
 		None => (),
 	}
+	backtrace(file, map);
 	map.change_player_turn();
 	let elapsed = now.elapsed();
 	let sec = (elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1000_000_000.0);
 	*my_time = sec;
 }
 
-fn human_move(map: &mut Map, cursor: &mut Cursor)
+fn human_move(map: &mut Map, cursor: &mut Cursor, file: &mut File)
 {
 	// map.print_map_diagonal();
 	// map.is_winning_move((cursor.cursor_in_board[0] as i32, cursor.cursor_in_board[1] as i32));
@@ -142,12 +176,13 @@ fn human_move(map: &mut Map, cursor: &mut Cursor)
 	map.number_captured((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player![map.current_player], true);
 	map.set_value((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), find_slot_player!(map.current_player));
 	map.five_align();
+	backtrace(file, map);
 	map.change_player_turn();
 
 	cursor.place_piece = false;
 }
 
-fn game_action(map: &mut Map, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>, my_time: &mut f64)
+fn game_action(map: &mut Map, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>, my_time: &mut f64, file: &mut File)
 {
 	if map.is_finish != Finish::None
 	{
@@ -157,29 +192,13 @@ fn game_action(map: &mut Map, cursor: &mut Cursor, list_of_maps: &mut Vec<Map>, 
 	else if find_kind_player![map.current_player, map.players_kind] == &PlayerKind::AI
 	{
 		list_of_maps.push(map.clone());
-		ai_move(map, my_time);
+		ai_move(map, my_time, file);
 	} 
 	else if !cursor.press && cursor.place_piece &&
 		map.is_available((cursor.cursor_in_board[0] as i128, cursor.cursor_in_board[1] as i128), &map.current_player) == 0
 	{
 		list_of_maps.push(map.clone());
-		human_move(map, cursor);
-	}
-}
-
-fn select_action(index: &usize, cursor: &mut Cursor, map: &mut Map)
-{
-	if cursor.press && *index == 0 {
-		map.reset();
-		cursor.selected_scene = Scene::Settings;
-		cursor.controller = Controls::KeyBoard;
-		cursor.press = false;
-	}
-	else if cursor.press && *index == 1 {
-		map.reset();
-		cursor.selected_scene = Scene::Game;
-		cursor.controller = Controls::Mouse;
-		cursor.press = false;
+		human_move(map, cursor, file);
 	}
 }
 
@@ -211,4 +230,9 @@ fn end_menu(c: Context, gl: &mut GlGraphics, glyph_cache: &mut GlyphCache, map: 
 			draw_text(gl, glyph_cache, &elem.text, c.transform.trans(elem.t.0, elem.t.1), Colors::NORMAL);
 		}
 	}
+}
+
+fn backtrace(file: &mut File, map: &mut Map) -> ()
+{
+	file.write_all(map.to_string().as_bytes()).expect("not working");
 }
