@@ -520,20 +520,23 @@ impl Map
         (-1, -1)
     }
 
-    pub fn print_map(&self) -> ()
+    pub fn to_string(&self) -> String
     {
+        let mut string = String::from(self.current_player.to_string(self.turn));
+
         for y in &self.value
         {
             for x in 0..SIZEMAP
             {
                 match (y & (0o3 << (3 * (RSIZEMAP - x)))) >> 3 * (RSIZEMAP - x)
                 {
-                    1 => print!("1 "),
-                    2 => print!("2 "),
-                    _ => print!("- ")
+                    1 => string.push_str("1 "),
+                    2 => string.push_str("2 "),
+                    _ => string.push_str("- ")
                 }
             }
-            print!("\n");
+            string.push_str("\n");
         }
+        string
     }
 }

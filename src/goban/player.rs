@@ -24,3 +24,15 @@ impl PartialEq for Player
         }
     }
 }
+
+impl Player
+{
+    pub fn to_string(&self, turn: usize) -> String
+    {
+        match self
+        {
+            &Player::One => format!["Turn {} for {}", turn, "Player One :\n"],
+            _            => format!["Turn {} for {}", turn, "Player Two :\n"],
+        }
+    }
+}
