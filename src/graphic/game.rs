@@ -18,8 +18,6 @@ use std::io::prelude::*;
 const BACKGROUND:[f32; 4] = [0.65, 0.55, 0.45, 1.0];
 const BLACK:[f32; 4] = [0.1, 0.1, 0.1, 0.9];
 
-// 0.95, 0.69, 0.50
-
 struct SettingsElem
 {
 	pub text: String,

@@ -30,9 +30,8 @@ pub fn start()
 	// .lazy(true)
 	
 	let mut game = Game::new(opengl);
-	let mut settings = Settings::new(opengl);
-	// let mut end = EndMenu::new(opengl);
 	let mut cursor = Cursor::new();
+	let mut settings = Settings::new(opengl, cursor.ai2_level);
 
 	let assets = Search::ParentsThenKids(3, 3).for_folder("resources").unwrap();
 	let ref font = assets.join("DejaVuSerif.ttf");
@@ -85,6 +84,15 @@ pub fn start()
 				{
 					cursor.down = true;
 				}
+				else if button == Button::Keyboard(Key::Right)
+				{
+					cursor.press = true;
+				}
+				else if button == Button::Keyboard(Key::Left)
+				{
+					cursor.prev = true;
+					cursor.press = true;
+				}
 
 				if button == Button::Keyboard(Key::Return)
 				{
@@ -104,7 +112,6 @@ pub fn start()
 			{
 				Scene::Game => game.render(&r, &mut glyph_cache, &mut cursor, &mut list_of_maps),
 				Scene::Settings => settings.render(&r, &mut glyph_cache, &mut cursor, &mut game.map),
-				// Scene::End => end.render(&r, &mut glyph_cache, &mut cursor, &mut game.map, &mut list_of_maps),
 			};
 		}
 	}
