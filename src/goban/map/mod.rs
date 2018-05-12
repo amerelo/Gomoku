@@ -158,20 +158,6 @@ impl Map
         (x, y, conv.0, conv.1)
     }
 
-    fn all_xy_conv(&self, (x, y): (i128, i128)) -> (i128, i128, i128, i128)
-    {
-        let (rx, ry) = match (x > RSIZEMAP, y > RSIZEMAP, x > y)
-        {
-            (false, false, true) => (RSIZEMAP - x, y + x - RSIZEMAP),  // ok
-            (false, false, false) => (y + x - RSIZEMAP, y + x - RSIZEMAP), // ok
-            (true, false, _)  => (y, RSIZEMAP - y ),
-            (false, true, _)  => (x, RSIZEMAP - y / 2),
-            (true, true, true)   => (36 - x, y + x - RSIZEMAP),
-            (true, true, false)   => (36 - x, y + x - RSIZEMAP),
-        };
-        (rx, ry, x, y)
-    }
-
     fn is_capture(&mut self, (x, y, x2, y2):(i128, i128, i128, i128), slot_player: i128, with_delete: bool) -> usize
     {
        let masks = find_tm_player![self.current_player, CAPTURE_P1, CAPTURE_P2];

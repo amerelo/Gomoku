@@ -182,7 +182,7 @@ pub fn value_slot_diagonale_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128
     count
 }
 
-pub fn value_slot_diagonale_y(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, i128); 35], index: i128) -> i128
+pub fn value_slot_diagonale_y(map: &Map, (x, _): (i128, i128), mask_move: [(i128, i128, i128, i128); 35], index: i128) -> i128
 {
 	let mut count:i128 = 0;
     let m = index / 3;
@@ -246,7 +246,6 @@ pub fn value_map(map: &Map, slot: &Player) -> i128
         (&Finish::AlignPlayerOne, &Player::One)   => { return MAX / 2 },
         (&Finish::AlignPlayerTwo, &Player::Two)   => { return MAX / 2 },
         (&Finish::AlignPlayerTwo, &Player::One)   => { return MIN / 2 },
-        _                                         => {},
     }
 	count += find_score![slot, map.players_score] as i128 * CAPTURE * 2;
 	count -= find_enemy_score![slot, map.players_score] as i128 * CAPTURE * 2;
