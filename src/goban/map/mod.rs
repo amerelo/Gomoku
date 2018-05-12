@@ -96,6 +96,7 @@ impl Map
 				}
 			}
 		}
+
 		if area.len() == 0
 		{
 			area.push((9, 9, 0));
@@ -135,6 +136,10 @@ impl Map
 
     fn is_double_three_move(&self, (x, y):(i128, i128), player: &Player) -> i128
     {
+        if self.number_captured_preview((x, y), find_slot_player![player]) > 0
+        {
+            return 0;
+        }
         match self.three_move_number((x, y), find_tm_player![player, (THREE_MOVE_P1, DTHREE_MOVE_P1), (THREE_MOVE_P2, DTHREE_MOVE_P2)])
         {
             0 | 1 => 0,
