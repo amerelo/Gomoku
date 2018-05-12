@@ -320,7 +320,10 @@ fn solver(depth: i128, map: &mut Map, turn: Turn, alpha_beta: (i128, i128), play
 pub fn start_min_max(map: &Map) -> Option<Action>
 {
 	let depth: i128 = find_kind_player![map.current_player, map.players_kind].depth();
-	let action = solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX), &map.current_player, MAX_VEC_AREA - depth as usize);
-
+	let action = match depth
+				{
+					1 ... 6 => solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX), &map.current_player, MAX_VEC_AREA - depth as usize),
+					x       => solver(depth, &mut map.clone(), Turn::MAX, (MIN, MAX), &map.current_player, 13 - x as usize)
+				};
 	return action;
 }
