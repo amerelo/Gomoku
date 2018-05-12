@@ -51,17 +51,16 @@ pub fn value_map(map: &Map, slot: &Player) -> i128
     count
 }
 
-fn value_slot_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, i128); 35], index: i128) -> i128
+fn value_slot_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, i128); 39], index: i128) -> i128
 {
 	let mut count:i128 = 0;
 
     count += match x // capture
     {
         18 => slot_value![map.value[y as usize], index ; mask_move; [9]],
-        17 => slot_value![map.value[y as usize], index ; mask_move; [9]],
-        16 => slot_value![map.value[y as usize], index ; mask_move; [9]],
-        15 => slot_value![map.value[y as usize], index ; mask_move; [9]],
-        _  => slot_value![map.value[y as usize], index ; mask_move; [9, 10]]
+        17 => slot_value![map.value[y as usize], index ; mask_move; [9, 35, 37]],
+        16 => slot_value![map.value[y as usize], index ; mask_move; [9, 35, 36, 37, 38]],
+        _  => slot_value![map.value[y as usize], index ; mask_move; [9, 10, 35, 36, 37, 38]]
     };
 
     count += match x // five align
@@ -104,17 +103,16 @@ fn value_slot_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, 
     count
 }
 
-fn value_slot_y(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, i128); 35], index: i128) -> i128
+fn value_slot_y(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, i128); 39], index: i128) -> i128
 {
 	let mut count:i128 = 0;
 
     count += match y // capture
     {
         0 => slot_value![map.value_rotate[x as usize], index ; mask_move; [9]],
-        1 => slot_value![map.value_rotate[x as usize], index ; mask_move; [9]],
-        2 => slot_value![map.value_rotate[x as usize], index ; mask_move; [9]],
-        3 => slot_value![map.value_rotate[x as usize], index ; mask_move; [9]],
-        _ => slot_value![map.value_rotate[x as usize], index ; mask_move; [9, 10]]
+        1 => slot_value![map.value_rotate[x as usize], index ; mask_move; [9, 35, 37]],
+        2 => slot_value![map.value_rotate[x as usize], index ; mask_move; [9, 35, 36, 37, 38]],
+        _ => slot_value![map.value_rotate[x as usize], index ; mask_move; [9, 10, 35, 36, 37, 38]]
     };
 
     count += match y // five align
@@ -157,15 +155,15 @@ fn value_slot_y(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, 
     count
 }
 
-fn value_slot_diagonale_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, i128); 35], index: i128) -> i128
+fn value_slot_diagonale_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, i128); 39], index: i128) -> i128
 {
 	let mut count:i128 = 0;
 
     count += match x // capture
     {
         0 ... 2 => 0,
-        3 ... 5 => slot_value![map.value_diagonale[y as usize], index ; mask_move; [9]],
-        _       => slot_value![map.value_diagonale[y as usize], index ; mask_move; [9, 10]],
+        3 ... 5 => slot_value![map.value_diagonale[y as usize], index ; mask_move; [9, 35, 36, 37, 38]],
+        _       => slot_value![map.value_diagonale[y as usize], index ; mask_move; [9, 10, 35, 36, 37, 38]],
     };
 
     count += match x // five align
@@ -205,7 +203,7 @@ fn value_slot_diagonale_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i1
     count
 }
 
-fn value_slot_diagonale_y(map: &Map, (x, _): (i128, i128), mask_move: [(i128, i128, i128, i128); 35], index: i128) -> i128
+fn value_slot_diagonale_y(map: &Map, (x, _): (i128, i128), mask_move: [(i128, i128, i128, i128); 39], index: i128) -> i128
 {
 	let mut count:i128 = 0;
     let m = index / 3;
@@ -213,8 +211,8 @@ fn value_slot_diagonale_y(map: &Map, (x, _): (i128, i128), mask_move: [(i128, i1
     count += match m // capture
     {
         0 ... 2 => 0,
-        3 ... 5 => slot_value![map.value_diagonale_rotate[x as usize], index ; mask_move; [9]],
-        _       => slot_value![map.value_diagonale_rotate[x as usize], index ; mask_move; [9, 10]],
+        3 ... 5 => slot_value![map.value_diagonale_rotate[x as usize], index ; mask_move; [9, 35, 36, 37, 38]],
+        _       => slot_value![map.value_diagonale_rotate[x as usize], index ; mask_move; [9, 10, 35, 36, 37, 38]],
     };
 
     count += match m // five align

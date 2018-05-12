@@ -93,6 +93,7 @@ pub const DTHREE_MOVE_P2: [(i128, i128, i128); 9] = [
 const THREE_ALIGN: i128 = 3;
 const THREE_ALIGN_CUT: i128 = 2;
 pub const CAPTURE: i128 = 4;
+const ENEMY_CAPTURE: i128 = -2;
 const ENEMY_FOUR_ALIGN: i128 = 8;
 const ENEMY_THREE_ALIGN: i128 = 7;
 const FOUR_ALIGN: i128 = 7;
@@ -122,7 +123,7 @@ const ENEMY_FIVE_ALIGN: i128 = 9;
 **
 */
 
-pub const MOVE_P1: [(i128, i128, i128, i128); 35] = [
+pub const MOVE_P1: [(i128, i128, i128, i128); 39] = [
                             /*00 00*/        (0o3333, 0o0110, 0, THREE_ALIGN),        // |.11X
                             /*01 01*/        (0o3333, 0o0101, 3, THREE_ALIGN),        // |.1X1
                             /*02 02*/        (0o3333, 0o0011, 6, THREE_ALIGN),        // |.X11
@@ -158,10 +159,13 @@ pub const MOVE_P1: [(i128, i128, i128, i128); 35] = [
                             /*32 02*/        (0o33333, 0o22022, 6, ENEMY_FIVE_ALIGN), // 22X22
                             /*33 03*/        (0o33333, 0o20222, 9, ENEMY_FIVE_ALIGN), // 2X222
                             /*34 04*/        (0o33333, 0o02222, 12, ENEMY_FIVE_ALIGN),// X2222
-
+                            /*35 01*/        (0o3333, 0o0102, 3, ENEMY_CAPTURE),      // |01X2
+                            /*36 02*/        (0o3333, 0o0012, 6, ENEMY_CAPTURE),      // |0X12
+                            /*37 01*/        (0o3333, 0o2100, 3, ENEMY_CAPTURE),      // |2X10
+                            /*38 02*/        (0o3333, 0o2010, 6, ENEMY_CAPTURE),      // |21X0
                                             ];
 
-pub const MOVE_P2: [(i128, i128, i128, i128); 35] = [
+pub const MOVE_P2: [(i128, i128, i128, i128); 39] = [
                             /*00 00*/        (0o3333, 0o0220, 0, THREE_ALIGN),        // |.22X
                             /*01 01*/        (0o3333, 0o0202, 3, THREE_ALIGN),        // |.2X2
                             /*02 02*/        (0o3333, 0o0022, 6, THREE_ALIGN),        // |.X22
@@ -197,10 +201,14 @@ pub const MOVE_P2: [(i128, i128, i128, i128); 35] = [
                             /*32 02*/        (0o33333, 0o11011, 6, ENEMY_FIVE_ALIGN), // 11X11
                             /*33 03*/        (0o33333, 0o10111, 9, ENEMY_FIVE_ALIGN), // 1X111
                             /*34 04*/        (0o33333, 0o01111, 12, ENEMY_FIVE_ALIGN),// X1111
+                            /*35 01*/        (0o3333, 0o0201, 3, ENEMY_CAPTURE),      // |02X1
+                            /*36 02*/        (0o3333, 0o0021, 6, ENEMY_CAPTURE),      // |0X21
+                            /*37 01*/        (0o3333, 0o1200, 3, ENEMY_CAPTURE),      // |1X20
+                            /*38 02*/        (0o3333, 0o1020, 6, ENEMY_CAPTURE),      // |12X0
 
                                             ];
 
-pub const DMOVE_P1: [(i128, i128, i128, i128); 35] = [
+pub const DMOVE_P1: [(i128, i128, i128, i128); 39] = [
                             /*00 00*/        (0o3333333, 0o0010100, 0, THREE_ALIGN),          // ||.'1'1'X
                             /*01 02*/        (0o3333333, 0o0010001, 6, THREE_ALIGN),          // ||.'1'X'1
                             /*02 04*/        (0o3333333, 0o0000101, 12, THREE_ALIGN),         // ||.'X'1'1
@@ -236,10 +244,14 @@ pub const DMOVE_P1: [(i128, i128, i128, i128); 35] = [
                             /*32 04*/        (0o333333333, 0o202000202, 12, ENEMY_FIVE_ALIGN),// 2'2'X'2'2
                             /*33 06*/        (0o333333333, 0o200020202, 18, ENEMY_FIVE_ALIGN),// 2'X'2'2'2
                             /*34 08*/        (0o333333333, 0o002020202, 24, ENEMY_FIVE_ALIGN),// X'2'2'2'2
+                            /*35 02*/        (0o3333333, 0o0010002, 6, ENEMY_CAPTURE),        // ||0'1'X'2
+                            /*36 04*/        (0o3333333, 0o0000102, 12, ENEMY_CAPTURE),       // ||0'X'1'2
+                            /*37 02*/        (0o3333333, 0o2010000, 6, ENEMY_CAPTURE),        // ||2'X'1'0
+                            /*38 04*/        (0o3333333, 0o2000100, 12, ENEMY_CAPTURE),       // ||2'1'X'0
 
                                             ];
 
-pub const DMOVE_P2: [(i128, i128, i128, i128); 35] = [
+pub const DMOVE_P2: [(i128, i128, i128, i128); 39] = [
                             /*00 00*/        (0o3333333, 0o0020200, 0, THREE_ALIGN),          // ||.'2'2'X
                             /*01 02*/        (0o3333333, 0o0020002, 6, THREE_ALIGN),          // ||.'2'X'2
                             /*02 04*/        (0o3333333, 0o0000202, 12, THREE_ALIGN),         // ||.'X'2'2
@@ -275,6 +287,10 @@ pub const DMOVE_P2: [(i128, i128, i128, i128); 35] = [
                             /*32 04*/        (0o333333333, 0o101000101, 12, ENEMY_FIVE_ALIGN),// 1'1'X'1'1
                             /*33 06*/        (0o333333333, 0o100010101, 18, ENEMY_FIVE_ALIGN),// 1'X'1'1'1
                             /*34 08*/        (0o333333333, 0o001010101, 24, ENEMY_FIVE_ALIGN),// X'1'1'1'1
+                            /*35 02*/        (0o3333333, 0o0020001, 6, ENEMY_CAPTURE),        // ||0'2'X'1
+                            /*36 04*/        (0o3333333, 0o0000201, 12, ENEMY_CAPTURE),       // ||0'X'2'1
+                            /*37 02*/        (0o3333333, 0o1020000, 6, ENEMY_CAPTURE),        // ||1'X'2'0
+                            /*38 04*/        (0o3333333, 0o1000200, 12, ENEMY_CAPTURE),       // ||1'2'X'0
 
                                             ];
 
