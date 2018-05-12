@@ -155,6 +155,9 @@ fn ai_move(map: &mut Map, my_time: &mut f64, file: &mut File)
 	match start_min_max(&map)
 	{
 		Some(action) => {
+			let elapsed = now.elapsed();
+			let sec = (elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1000_000_000.0);
+			*my_time = sec;
 			map.number_captured((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player![map.current_player], true);
 			map.set_value((action.x_y.0 as i128, action.x_y.1 as i128), find_slot_player!(map.current_player));
 			map.five_align();
@@ -163,9 +166,6 @@ fn ai_move(map: &mut Map, my_time: &mut f64, file: &mut File)
 	}
 	backtrace(file, map);
 	map.change_player_turn();
-	let elapsed = now.elapsed();
-	let sec = (elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1000_000_000.0);
-	*my_time = sec;
 }
 
 fn human_move(map: &mut Map, cursor: &mut Cursor, file: &mut File)
