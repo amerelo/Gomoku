@@ -136,7 +136,7 @@ impl Map
         }
     }
 
-     pub fn number_captured(&mut self, (x, y):(i128, i128), slot_player: i128, with_delete: bool) -> usize
+     pub fn number_captured(&mut self, (x, y):(i128, i128), slot_player: i128, with_delete: bool) -> i128
      {
         let conv:(i128, i128) = match x >= y
         {
@@ -146,6 +146,62 @@ impl Map
         
         self.is_capture((x, y, conv.0, conv.1), slot_player, with_delete)
      }
+
+     pub fn number_captured_preview(&self, (x, y):(i128, i128)) -> i128
+     {
+        let conv:(i128, i128) = match x >= y
+        {
+            true => (RSIZEMAP + (x - y) as i128, (x + y)as i128), 
+            _    => (RSIZEMAP - (y - x) as i128, (x + y)as i128)
+        };
+        
+        self.is_capture_preview((x, y, conv.0, conv.1))
+     }
+
+    fn is_capture_preview(&self, (x, y, x2, y2):(i128, i128, i128, i128)) -> i128
+    {
+       let masks = find_tm_player![self.current_player, CAPTURE_P1, CAPTURE_P2];
+       let mut count:i128 = 0;
+
+       if x >= 2 && slot_capture![self.value[y as usize], 3 * (RSIZEMAP - x); masks; 0]
+       {
+           count += 2;
+       }
+       if x <= RSIZEMAP - 3 && slot_capture![self.value[y as usize], 3 * (RSIZEMAP - x); masks; 1]
+       {
+           count += 2;
+       }
+
+       if y >= 0 && slot_capture![self.value_rotate[x as usize], 3 * y; masks; 0]
+       {
+           count += 2;
+       }
+
+       if y >= 3 && slot_capture![self.value_rotate[x as usize], 3 * y; masks; 1]
+       {
+           count += 2;
+       }
+       if x <= RSIZEMAP - 2 && y >= 2 && slot_capture![self.value_diagonale[y2 as usize], 3 * x2; masks; 2]
+       {
+           count += 2;
+       }
+
+       if y <= RSIZEMAP - 3 && x >= 3 && slot_capture![self.value_diagonale[y2 as usize], 3 * x2; masks; 3]
+       {
+           count += 2;
+       }
+
+       if x >= 2 && y >= 2 && slot_capture![self.value_diagonale_rotate[x2 as usize], 3 * (RSIZEMAP * 2 - y2); masks; 2]
+       {
+           count += 2;
+       }
+
+       if x <= RSIZEMAP - 3 && y <= RSIZEMAP - 3 && slot_capture![self.value_diagonale_rotate[x2 as usize], 3 * (RSIZEMAP * 2 - y2); masks; 3]
+       {
+           count += 2;
+       }
+       count
+    }
 
     fn conv_xy(&self, (x, y): (i128, i128)) -> (i128, i128)
     {
@@ -162,10 +218,10 @@ impl Map
         (x, y, conv.0, conv.1)
     }
 
-    fn is_capture(&mut self, (x, y, x2, y2):(i128, i128, i128, i128), slot_player: i128, with_delete: bool) -> usize
+    fn is_capture(&mut self, (x, y, x2, y2):(i128, i128, i128, i128), slot_player: i128, with_delete: bool) -> i128
     {
        let masks = find_tm_player![self.current_player, CAPTURE_P1, CAPTURE_P2];
-       let mut count:usize = 0;
+       let mut count:i128 = 0;
 
        if x >= 2 && slot_capture![self.value[y as usize], 3 * (RSIZEMAP - x); masks; 0]
        {

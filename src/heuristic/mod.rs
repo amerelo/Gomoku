@@ -9,11 +9,6 @@ pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128), player: &Player) -> i
     let mut count:i128 = 0;
     let masks_move = find_tm_player![player, (MOVE_P1, DMOVE_P1), (MOVE_P2, DMOVE_P2)];
 
-    if x < 0 || y < 0 || x > RSIZEMAP || y > RSIZEMAP
-    {
-        return 0;
-    }
-
     let conv:(i128, i128) = match x >= y
     {
         true => (RSIZEMAP + (x - y) as i128, (x + y) as i128),
@@ -22,8 +17,8 @@ pub fn value_slot(map: &Map, (y, x, _):(i128, i128, i128), player: &Player) -> i
 
     count += value_slot_x(map, (x, y), masks_move.0, (RSIZEMAP - x) * 3);
     count += value_slot_y(map, (x, y), masks_move.0, y * 3);
-    count += value_slot_diagonale_x(map, conv, masks_move.1, conv.0 * 3);
-    count += value_slot_diagonale_y(map, conv, masks_move.1, ((RSIZEMAP as i128) * 2 - conv.1) * 3);
+    count += value_slot_diagonale_x(map, (conv.0, conv.1, x, y), masks_move.1, conv.0 * 3);
+    count += value_slot_diagonale_y(map, (conv.0, conv.1, x, y), masks_move.1, ((RSIZEMAP as i128) * 2 - conv.1) * 3);
 
     count as i128
 }
@@ -62,6 +57,11 @@ fn value_slot_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, 
         16 => slot_value![map.value[y as usize], index ; mask_move; [9, 35, 36, 37, 38]],
         _  => slot_value![map.value[y as usize], index ; mask_move; [9, 10, 35, 36, 37, 38]]
     };
+
+    if count > 0 && find_score![map.current_player, map.players_score] + map.number_captured_preview((x, y)) >= 10
+    {
+        return 1000;
+    }
 
     count += match x // five align
     {
@@ -115,6 +115,11 @@ fn value_slot_y(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, 
         _ => slot_value![map.value_rotate[x as usize], index ; mask_move; [9, 10, 35, 36, 37, 38]]
     };
 
+    if count > 0 && find_score![map.current_player, map.players_score] + map.number_captured_preview((x, y)) >= 10
+    {
+        return 1000;
+    }
+
     count += match y // five align
     {
         0 => slot_value![map.value_rotate[x as usize], index ; mask_move; [25, 30]],
@@ -155,7 +160,7 @@ fn value_slot_y(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, 
     count
 }
 
-fn value_slot_diagonale_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i128, i128, i128); 39], index: i128) -> i128
+fn value_slot_diagonale_x(map: &Map, (x, y, r_x, r_y): (i128, i128, i128, i128), mask_move: [(i128, i128, i128, i128); 39], index: i128) -> i128
 {
 	let mut count:i128 = 0;
 
@@ -165,6 +170,11 @@ fn value_slot_diagonale_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i1
         3 ... 5 => slot_value![map.value_diagonale[y as usize], index ; mask_move; [9, 35, 36, 37, 38]],
         _       => slot_value![map.value_diagonale[y as usize], index ; mask_move; [9, 10, 35, 36, 37, 38]],
     };
+
+    if count > 0 && find_score![map.current_player, map.players_score] + map.number_captured_preview((r_x, r_y)) >= 10
+    {
+        return 1000;
+    }
 
     count += match x // five align
     {
@@ -203,7 +213,7 @@ fn value_slot_diagonale_x(map: &Map, (x, y): (i128, i128), mask_move: [(i128, i1
     count
 }
 
-fn value_slot_diagonale_y(map: &Map, (x, _): (i128, i128), mask_move: [(i128, i128, i128, i128); 39], index: i128) -> i128
+fn value_slot_diagonale_y(map: &Map, (x, _, r_x, r_y): (i128, i128, i128, i128), mask_move: [(i128, i128, i128, i128); 39], index: i128) -> i128
 {
 	let mut count:i128 = 0;
     let m = index / 3;
@@ -214,6 +224,11 @@ fn value_slot_diagonale_y(map: &Map, (x, _): (i128, i128), mask_move: [(i128, i1
         3 ... 5 => slot_value![map.value_diagonale_rotate[x as usize], index ; mask_move; [9, 35, 36, 37, 38]],
         _       => slot_value![map.value_diagonale_rotate[x as usize], index ; mask_move; [9, 10, 35, 36, 37, 38]],
     };
+
+    if count > 0 && find_score![map.current_player, map.players_score] + map.number_captured_preview((r_x, r_y)) >= 10
+    {
+        return 1000;
+    }
 
     count += match m // five align
     {

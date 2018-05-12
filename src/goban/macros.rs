@@ -155,8 +155,8 @@ macro_rules! find_score
     {
         match $n
         {
-            Player::One => $scores.0 as i32,
-            _           => $scores.1 as i32
+            Player::One => $scores.0,
+            _           => $scores.1
         };
     }
 }
@@ -168,8 +168,8 @@ macro_rules! find_enemy_score
     {
         match $n
         {
-            Player::Two => $scores.0 as i32,
-            _           => $scores.1 as i32
+            Player::Two => $scores.0,
+            _           => $scores.1
         };
     }
 }
