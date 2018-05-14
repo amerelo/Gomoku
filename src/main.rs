@@ -1,6 +1,5 @@
 
 extern crate piston;
-extern crate sdl2_window;
 extern crate piston_window;
 extern crate graphics;
 extern crate opengl_graphics;

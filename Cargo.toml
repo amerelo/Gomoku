@@ -12,6 +12,3 @@ piston_window = "0.79.0"
 find_folder = "*"
 crossbeam = "*"
 itertools = "*"
-
-[dependencies.pistoncore-sdl2_window]
-git = "https://github.com/PistonDevelopers/sdl2_window"

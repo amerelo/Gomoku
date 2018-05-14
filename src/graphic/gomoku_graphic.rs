@@ -1,7 +1,7 @@
 use piston::window::WindowSettings;
 
 use piston_window::*;
-use sdl2_window::Sdl2Window;
+// use sdl2_window::Sdl2Window;
 
 use opengl_graphics::{ OpenGL, GlyphCache };
 use find_folder::Search;
@@ -15,7 +15,7 @@ use graphic::{ game::{ Game } }; // , end_menu::{ EndMenu }
 pub fn start()
 {
 	let opengl = OpenGL::V3_2;
-	let mut window: PistonWindow<Sdl2Window> = WindowSettings::new(
+	let mut window: PistonWindow = WindowSettings::new(
 			"Gomoku",
 			[800, 700]
 		)
